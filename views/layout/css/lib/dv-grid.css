@@ -1,0 +1,57 @@
+/*******************
+ * dv-template v0.2
+ * 2015, devvoh.com, https://github.com/devvoh/dv-template
+ *
+ * dv-grid.css provides a robust grid system compatible with IE7+ and good browsers
+ */
+
+.dv-grid-row {
+    width: 100%;
+    position: relative;
+}
+.dv-grid-row:after {
+    content: ''; 
+    display: block; 
+    height: 0; 
+    clear: both; 
+    visibility: hidden;
+}
+ 
+[class*='dv-grid-column-'] {
+    position: relative;
+    float: left;
+    min-height: 1px;
+}
+
+.dv-grid-column-1 { width: 4.166666666666667%; }
+.dv-grid-column-2 { width: 8.333333333333333%; }
+.dv-grid-column-3 { width: 12.5%; }
+.dv-grid-column-4 { width: 16.66666666666667%; }
+.dv-grid-column-5 { width: 20.83333333333334%; }
+.dv-grid-column-6 { width: 25%; }
+.dv-grid-column-7 { width: 29.166666666666667%; }
+.dv-grid-column-8 { width: 33.333333333333333%; }
+.dv-grid-column-9 { width: 37.5%; }
+.dv-grid-column-10 { width: 41.66666666666667%; }
+.dv-grid-column-11 { width: 45.83333333333334%; }
+.dv-grid-column-12 { width: 50%; }
+.dv-grid-column-13 { width: 54.166666666666667%; }
+.dv-grid-column-14 { width: 58.333333333333333%; }
+.dv-grid-column-15 { width: 62.5%; }
+.dv-grid-column-16 { width: 66.66666666666667%; }
+.dv-grid-column-17 { width: 70.83333333333334%; }
+.dv-grid-column-18 { width: 75%; }
+.dv-grid-column-19 { width: 79.166666666666667%; }
+.dv-grid-column-20 { width: 83.333333333333333%; }
+.dv-grid-column-21 { width: 87.5%; }
+.dv-grid-column-22 { width: 91.66666666666667%; }
+.dv-grid-column-23 { width: 95.83333333333334%; }
+.dv-grid-column-24 { width: 100%; }
+
+/* break the grid system on small-screen devices */
+@media screen and (max-width: 640px) {
+    [class*='dv-grid-column-'] {
+        width: 100%;
+        float: none;
+    }
+}

@@ -1,0 +1,26 @@
+<?php
+$categories = (new category())->getAll();
+foreach ($categories as $category) {
+    $forums = (new forum())->getByField('category_id', $category['id']);
+    ?>
+    <strong><?=$category['title']?></strong><br />
+    <table style="width: 700px;" border="1">
+    <?php 
+    foreach ($forums as $forum) {
+        ?>
+        <tr>
+            <td>&bull;</td>
+            <td>
+                <?=$forum['title'];?><br />
+                <small style="color: grey"><?=$forum['description'];?></small>
+            </td>
+            <td>0</td>
+            <td>0</td>
+            <td>--</td>
+        </tr>
+        <?php
+    }
+    ?>
+    </table>
+    <?php 
+}

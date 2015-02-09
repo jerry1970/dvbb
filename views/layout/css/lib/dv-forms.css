@@ -1,0 +1,37 @@
+/*******************
+ * dv-template v0.2
+ * 2015, devvoh.com, https://github.com/devvoh/dv-template
+ *
+ * dv-forms.css provides some basic styles to make forms somewhat more attractive
+ */
+
+.dv-form-element {
+    border: 1px solid #999;
+    border-color: rgba(0, 0, 0, 0.4);
+    padding: 0.5em;
+    margin: 0 0 0.5em 0;
+    font-size: 0.9em;
+    color: rgba(0, 0, 0, 0.7);
+    outline: none;
+    background-color: #fff;
+    width: 100%;
+}
+
+.dv-form-button {
+    border: 1px solid #999;
+    border-color: rgba(0, 0, 0, 0.4);
+    padding: 0.35em 0.7em;
+    margin: 0 0 0.5em 0;
+    font-size: 0.9em;
+    color: rgba(0, 0, 0, 0.7);
+    outline: none;
+    background-color: rgba(0, 0, 0, 0.3);
+    
+    font-variant: small-caps;
+}
+
+.dv-form-element:focus {
+    box-shadow: 0 0 0.5em rgba(31, 139, 194, 1);
+    border-color: #333;
+    border-color: rgba(31, 139, 194, 1);
+}

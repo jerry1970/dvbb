@@ -1,0 +1,255 @@
+/*******************
+ * dv-template v0.2
+ * 2015, devvoh.com, https://github.com/devvoh/dv-template
+ *
+ * dv-classes.css provides default classes to use for specific goals
+ * and default notification message containers
+ */
+
+/* system colors */
+.dv-color-alert {
+    color: #ee0000 !important;
+}
+.dv-background-alert {
+    background-color: #ee0000 !important;
+}
+.dv-color-warning {
+    color: #e37900 !important;
+}
+.dv-background-warning {
+    background-color: #e37900 !important;
+}
+.dv-color-correct {
+    color: #4dbd71 !important;
+}
+.dv-background-correct {
+    background-color: #4dbd71 !important;
+}
+.dv-color-notice {
+    color: #777777 !important;
+}
+.dv-background-notice {
+    background-color: #777777 !important;
+}
+
+/* base colors (white/black/grey) */
+.dv-color-black {
+    color: black !important;
+}
+.dv-color-white {
+    color: white !important;
+}
+.dv-color-grey-light {
+    color: #ccc !important;
+}
+.dv-color-grey {
+    color: #999 !important;
+}
+.dv-color-grey-dark {
+    color: #777 !important;
+}
+.dv-color-grey-darker {
+    color: #555 !important;
+}
+
+/* base background colors */
+.dv-background-black {
+    background-color: black !important;
+}
+.dv-background-white {
+    background-color: white !important;
+}
+.dv-background-grey-light {
+    background-color: #ccc !important;
+}
+.dv-background-grey {
+    background-color: #999 !important;
+}
+.dv-background-grey-dark {
+    background-color: #777 !important;
+}
+.dv-background-grey-darker {
+    background-color: #555 !important;
+}
+
+/* colors */
+
+/* red */
+.dv-color-red-light {
+    color: #e65757 !important;
+}
+.dv-color-red {
+    color: #dd0000 !important;
+}
+.dv-color-red-dark {
+    color: #990000 !important;
+}
+
+/* green */
+.dv-color-green-light {
+    color: #68e868 !important;
+}
+.dv-color-green {
+    color: #29d529 !important;
+}
+.dv-color-green-dark {
+    color: #0b9c0b !important;
+}
+
+/* blue */
+.dv-color-blue-light {
+    color: #69b9ef !important;
+}
+.dv-color-blue {
+    color: #2097e6 !important;
+}
+.dv-color-blue-dark {
+    color: #0970b5 !important;
+}
+
+/* orange */
+.dv-color-orange-light {
+    color: #ffc05c !important;
+}
+.dv-color-orange {
+    color: #ff9c00 !important;
+}
+.dv-color-orange-dark {
+    color: #de7607 !important;
+}
+
+/* yellow */
+.dv-color-yellow-light {
+    color: #ffee82 !important;
+}
+.dv-color-yellow {
+    color: #fcdB05 !important;
+}
+.dv-color-yellow-dark {
+    color: #f7ca00 !important;
+}
+
+/* background colors */
+
+/* red */
+.dv-background-red-light {
+    background-color: #e65757 !important;
+}
+.dv-background-red {
+    background-color: #ee0000 !important;
+}
+.dv-background-red-dark {
+    background-color: #990000 !important;
+}
+
+/* green */
+.dv-background-green-light {
+    background-color: #68e868 !important;
+}
+.dv-background-green {
+    background-color: #29d529 !important;
+}
+.dv-background-green-dark {
+    background-color: #0b9c0b !important;
+}
+
+/* blue */
+.dv-background-blue-light {
+    background-color: #69b9ef !important;
+}
+.dv-background-blue {
+    background-color: #2097e6 !important;
+}
+.dv-background-blue-dark {
+    background-color: #0970b5 !important;
+}
+
+/* orange */
+.dv-background-orange-light {
+    background-color: #ffc05c !important;
+}
+.dv-background-orange {
+    background-color: #ff9c00 !important;
+}
+.dv-background-orange-dark {
+    background-color: #de7607 !important;
+}
+
+/* yellow */
+.dv-background-yellow-light {
+    background-color: #ffee82 !important;
+}
+.dv-background-yellow {
+    background-color: #fcdB05 !important;
+}
+.dv-background-yellow-dark {
+    background-color: #f7ca00 !important;
+}
+
+/* brand colors - these are predefined */
+.dv-color-brand-devvoh {
+    color: #1f8bc2 !important;
+}
+.dv-background-brand-devvoh {
+    background-color: #1f8bc2 !important;
+}
+
+.dv-color-brand-twitter {
+    color: #00aced !important;
+}
+.dv-background-brand-twitter {
+    background-color: #00aced !important;
+}
+
+.dv-color-brand-linkedin {
+    color: #007bb6 !important;
+}
+.dv-background-brand-linkedin {
+    background-color: #007bb6 !important;
+}
+
+.dv-color-brand-facebook {
+    color: #3b5998 !important;
+}
+.dv-background-brand-facebook {
+    background-color: #3b5998 !important;
+}
+
+.dv-color-brand-googleplus {
+    color: #dd4b39 !important;
+}
+.dv-background-brand-googleplus {
+    background-color: #dd4b39 !important;
+}
+
+.dv-color-brand-instagram {
+    color: #3f729b !important;
+}
+.dv-background-brand-instagram {
+    background-color: #3f729b !important;
+}
+
+.dv-color-brand-youtube {
+    color: #bb0000 !important;
+}
+.dv-background-brand-youtube {
+    background-color: #bb0000 !important;
+}
+
+/* notification container */
+.dv-notification {
+    position: relative;
+    width: 100%;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+    padding: 0.25rem 0.5rem;
+    color: rgba(0, 0, 0, 0.65);
+}
+.dv-notification.closable:after {
+    content: '\f00d';
+    font-family: FontAwesome;
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    color: rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+}

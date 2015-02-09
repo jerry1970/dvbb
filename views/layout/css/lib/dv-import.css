@@ -1,0 +1,17 @@
+/*******************
+ * dv-template v0.2
+ * 2015, devvoh.com, https://github.com/devvoh/dv-template
+ *
+ * dv-import.css provides an easy way to include all relevant files
+ * and sets box-sizing: border-box
+ */
+
+@import './dv-classes.css';
+@import './dv-colors.css';
+@import './dv-grid.css';
+@import './dv-forms.css';
+@import './font-awesome.min.css';
+
+* {
+    box-sizing: border-box;
+}
