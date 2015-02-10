@@ -23,7 +23,7 @@ foreach ($categories as $category) {
     </div>
     <?php 
     foreach ($forums as $forum) {
-        $url = tools::getRouter()->generate('forum', array('id' => $forum['id']));
+        $url = dvbb::getRouter()->generate('forum', array('id' => $forum['id']));
         ?>
         <div class="dvbb-legend dv-grid-row">
             <div class="dv-grid-column-1">&bull;</div>

@@ -4,38 +4,38 @@ error_reporting(-1);
 ini_set('display_errors', 'On');
 
 /*********************************************
- * require tools and tell it to initialize
+ * require dvbb class and tell it to initialize
  * this will allow the use of getPath(), getBasePath() and getUrl()
  *********************************************/
-require('./application/controller/tools.php');
-tools::initialize();
+require('./library/dvbb.php');
+dvbb::initialize();
 
 // set up autoloader
 spl_autoload_register(function ($class) {
     $locations = array('controller', 'model');
     
     if ($class === 'AltoRouter') {
-        require(tools::getPath() . '/library/AltoRouter/AltoRouter.php');
+        require(dvbb::getPath() . '/library/AltoRouter/AltoRouter.php');
     } else {
         foreach ($locations as $location) {
-            if (file_exists(tools::getPath() . '/application/' . $location . '/' . $class . '.php')) {
-                require(tools::getPath() . '/application/' . $location . '/' . $class . '.php');
+            if (file_exists(dvbb::getPath() . '/application/' . $location . '/' . $class . '.php')) {
+                require(dvbb::getPath() . '/application/' . $location . '/' . $class . '.php');
             }
         }
     }
 });
 
 // instantiate router
-tools::setRouter(new AltoRouter());
+dvbb::setRouter(new AltoRouter());
 // if we have a basePath, set it
-if (strlen(tools::getBasePath()) > 0) {
-    tools::getRouter()->setBasePath(tools::getBasePath());
+if (strlen(dvbb::getBasePath()) > 0) {
+    dvbb::getRouter()->setBasePath(dvbb::getBasePath());
 }
 
 // load routes, this will give us a $routes array to loop through and map the routes
 require('./application/routes/routes.php');
 foreach($routes as $route) {
-    tools::getRouter()->map(
+    dvbb::getRouter()->map(
         $route['method'], 
         $route['path'], 
         $route['controller'].'#'.$route['action'], 
@@ -44,7 +44,7 @@ foreach($routes as $route) {
 }
 
 // match the current request
-$match = tools::getRouter()->match();
+$match = dvbb::getRouter()->match();
 
 if ($match) {
     // split the target into controller & action
@@ -55,10 +55,10 @@ if ($match) {
     $controller = new $controllerName();
     $controller->$action($match['params']);
     // load the view associated with this controller & action
-    $view = tools::getViewParams();
+    $view = dvbb::getViewParams();
     
     // require header, view, then footer
-    require(tools::getPath() . '/application/view/layout/header.phtml');
-    require(tools::getPath() . '/application/view/' . $controllerName . '/' . $action . '.phtml');
-    require(tools::getPath() . '/application/view/layout/footer.phtml');
+    require(dvbb::getPath() . '/application/view/layout/header.phtml');
+    require(dvbb::getPath() . '/application/view/' . $controllerName . '/' . $action . '.phtml');
+    require(dvbb::getPath() . '/application/view/layout/footer.phtml');
 }

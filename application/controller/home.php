@@ -5,7 +5,7 @@ class home {
     }
     
     public function forum($params) {
-        tools::addToViewParams($params);
+        dvbb::addToViewParams($params);
     }
     
 }

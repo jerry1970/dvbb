@@ -1,5 +1,5 @@
 <?php
-class tools {
+class dvbb {
 
     static $path;
     static $basePath;
@@ -9,12 +9,12 @@ class tools {
     
     public static function initialize() {
         // set current working directory as path
-        tools::setPath(getcwd());
+        self::setPath(getcwd());
         // get the basepath if there is any
-        tools::setBasePath(str_replace($_SERVER['DOCUMENT_ROOT'], '', tools::getPath()));
+        self::setBasePath(str_replace($_SERVER['DOCUMENT_ROOT'], '', self::getPath()));
         // now get the complete public url & store it
         $url = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']);
-        tools::setUrl($url);
+        self::setUrl($url);
     }
     
     public static function setPath($path) {

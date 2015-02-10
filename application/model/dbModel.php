@@ -10,7 +10,7 @@ class dbModel {
     const QUERY_SIMPLE_KEY_DESC = 'SELECT * FROM :tableName WHERE :key = :value ORDER BY :tableKey DESC';
     
     public function __construct() {
-        $this->db = new SQLite3(tools::getPath() . '/application/storage/dvbb.db');
+        $this->db = new SQLite3(dvbb::getPath() . '/application/storage/dvbb.db');
     }
     
     protected function assemble($query, $params = array()) {
