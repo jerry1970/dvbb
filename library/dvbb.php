@@ -9,12 +9,12 @@ class dvbb {
     
     public static function initialize() {
         // set current working directory as path
-        self::setPath(getcwd());
+        self::setPath(str_replace('/public', '', getcwd()));
         // get the basepath if there is any
         self::setBasePath(str_replace($_SERVER['DOCUMENT_ROOT'], '', self::getPath()));
         // now get the complete public url & store it
         $url = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']);
-        self::setUrl($url);
+        self::setUrl(str_replace('/public', '', $url));
     }
     
     public static function setPath($path) {

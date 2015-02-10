@@ -1,0 +1,21 @@
+/*******************
+ * dv-template v0.2
+ * 2015, devvoh.com, https://github.com/devvoh/dv-template
+ *
+ * common.css is for your site-specific styles
+ */
+ 
+/* forum styling */
+.dvbb-category-container {
+    border-color: rgba(0,0,0,0.1);
+}
+.dvbb-category-title {
+    border-color: rgba(0,0,0,0.1);
+    background-color: rgba(0, 0, 0, 0.2);
+}
+.dvbb-legend {
+    border-color: rgba(0,0,0,0.1);
+}
+.dvbb-forum {
+    border-color: rgba(0,0,0,0.1);
+}

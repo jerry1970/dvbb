@@ -7,7 +7,7 @@ ini_set('display_errors', 'On');
  * require dvbb class and tell it to initialize
  * this will allow the use of getPath(), getBasePath() and getUrl()
  *********************************************/
-require('./library/dvbb.php');
+require('../library/dvbb.php');
 dvbb::initialize();
 
 // set up autoloader
@@ -33,7 +33,7 @@ if (strlen(dvbb::getBasePath()) > 0) {
 }
 
 // load routes, this will give us a $routes array to loop through and map the routes
-require('./application/routes/routes.php');
+require(dvbb::getPath() . '/application/routes/routes.php');
 foreach($routes as $route) {
     dvbb::getRouter()->map(
         $route['method'], 
@@ -61,4 +61,6 @@ if ($match) {
     require(dvbb::getPath() . '/application/view/layout/header.phtml');
     require(dvbb::getPath() . '/application/view/' . $controllerName . '/' . $action . '.phtml');
     require(dvbb::getPath() . '/application/view/layout/footer.phtml');
+} else {
+    echo '404 - requested path "' . dvbb::getUrl() . '/' .  $_GET['path'] . '" not found.';
 }

@@ -1,42 +1,33 @@
-<style>
-    table {
-        width: 900px;
-    }
-    th, td {
-        vertical-align: top;
-        text-align: left;
-        border: 1px solid rgba(0, 0, 0, 0.2);
-    }
-</style>
-
 <?php
 $categories = (new category())->getAll();
 foreach ($categories as $category) {
     $forums = (new forum())->getByField('category_id', $category['id']);
     ?>
-    <strong class="dvbb-category-title"><?=$category['title']?></strong>
-    <div class="dvbb-legend dv-grid-row">
-        <div class="dv-grid-column-13 dv-text-bold">Forum</div>
-        <div class="dv-grid-column-2 dv-text-bold">Threads</div>
-        <div class="dv-grid-column-2 dv-text-bold">Posts</div>
-        <div class="dv-grid-column-7 dv-text-bold">Last Post</div>
-    </div>
-    <?php 
-    foreach ($forums as $forum) {
-        $url = dvbb::getRouter()->generate('forum', array('id' => $forum['id']));
-        ?>
+    <div class="dvbb-forum-container">
+        <strong class="dvbb-category-title"><?=$category['title']?></strong>
         <div class="dvbb-legend dv-grid-row">
-            <div class="dv-grid-column-1">&bull;</div>
-            <div class="dv-grid-column-12">
-                <a href="<?=$url;?>"><?=$forum['title'];?></a><br />
-                <small style="color: grey"><?=$forum['description'];?></small>
-            </div>
-            <div class="dv-grid-column-2">0</div>
-            <div class="dv-grid-column-2">0</div>
-            <div class="dv-grid-column-7">--</div>
+            <div class="dv-grid-column-13 dv-text-bold">Forum</div>
+            <div class="dv-grid-column-2 dv-text-bold">Threads</div>
+            <div class="dv-grid-column-2 dv-text-bold">Posts</div>
+            <div class="dv-grid-column-7 dv-text-bold">Last Post</div>
         </div>
-        <?php
-    }
-    ?>
+        <?php 
+        foreach ($forums as $forum) {
+            $url = dvbb::getRouter()->generate('forum', array('id' => $forum['id']));
+            ?>
+            <div class="dvbb-forum dv-grid-row">
+                <div class="dv-grid-column-1">&bull;</div>
+                <div class="dv-grid-column-12">
+                    <a href="<?=$url;?>"><?=$forum['title'];?></a><br />
+                    <small style="color: grey"><?=$forum['description'];?></small>
+                </div>
+                <div class="dv-grid-column-2">0</div>
+                <div class="dv-grid-column-2">0</div>
+                <div class="dv-grid-column-7">--</div>
+            </div>
+            <?php
+        }
+        ?>
+    </div>
     <?php 
 }

@@ -4,3 +4,29 @@
  *
  * common.css is for your site-specific styles
  */
+
+body {
+    padding: 1em;
+}
+
+/* every grid-column deserves some padding */
+[class*='dv-grid-column-'] {
+    padding: 0.25em 0.5em;
+}
+ 
+/* forum styling */
+.dvbb-category-container {
+}
+.dvbb-category-title {
+    border: 1px solid;
+    display: block;
+    line-height: 1em;
+    padding: 0.5em;
+}
+.dvbb-legend {
+    border: 1px solid;
+    font-size: 0.8em;
+}
+.dvbb-forum {
+    border: 1px solid;
+}
