@@ -6,8 +6,8 @@ ini_set('display_errors', 'On');
 /*********************************************
  * require dvbb class and tell it to initialize
  * this will allow the use of getPath(), getBasePath() and getUrl()
- *********************************************/
-require('../library/dvbb.php');
+ */
+require('./library/dvbb.php');
 dvbb::initialize();
 
 // set up autoloader

@@ -14,6 +14,7 @@ foreach ($categories as $category) {
         <?php 
         foreach ($forums as $forum) {
             $url = dvbb::getRouter()->generate('forum', array('id' => $forum['id']));
+            $posts = count((new post())->getByField('forum_id', $forum['id']));
             ?>
             <div class="dvbb-forum dv-grid-row">
                 <div class="dv-grid-column-1">&bull;</div>
@@ -21,8 +22,8 @@ foreach ($categories as $category) {
                     <a href="<?=$url;?>"><?=$forum['title'];?></a><br />
                     <small style="color: grey"><?=$forum['description'];?></small>
                 </div>
-                <div class="dv-grid-column-2">0</div>
-                <div class="dv-grid-column-2">0</div>
+                <div class="dv-grid-column-2"><?=$posts;?></div>
+                <div class="dv-grid-column-2">--</div>
                 <div class="dv-grid-column-7">--</div>
             </div>
             <?php

@@ -69,6 +69,10 @@ class dvbb {
     public static function getViewParams() {
         return self::$viewParams;
     }
+
+    public static function getCurrentUrl() {
+        return self::$url . '/' . $_GET['path'];
+    }
     
     public static function dp($string) {
         echo '<pre>';

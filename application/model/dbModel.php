@@ -27,11 +27,7 @@ class dbModel {
             ':value' => $id,
         ));
         $dbResult = $this->db->query($query);
-        $return = array();
-        while ($row = $dbResult->fetchArray(SQLITE3_ASSOC)) {
-            $return[] = $row;
-        }
-        return $return;
+        return $dbResult->fetchArray(SQLITE3_ASSOC);
     }
     
     public function getAll() {
