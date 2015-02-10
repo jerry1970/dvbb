@@ -2,3 +2,9 @@ RewriteEngine on
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^([^?]*)$ ./index.php?path=$1 [NC,L,QSA]
+
+RewriteCond %{HTTPS} off
+RewriteRule .* - [E=REQUEST_SCHEME:http]
+
+RewriteCond %{HTTPS} on
+RewriteRule .* - [E=REQUEST_SCHEME:https]

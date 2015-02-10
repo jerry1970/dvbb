@@ -8,9 +8,9 @@ $routes[] = array(
 );
 
 $routes[] = array(
-    'name' => 'test',
+    'name' => 'forum',
     'method' => 'GET',
-    'path' => '/test/[i:id]',
+    'path' => '/forum/[i:id]',
     'controller' => 'home',
-    'action' => 'test',
+    'action' => 'forum',
 );
