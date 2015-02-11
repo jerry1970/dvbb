@@ -5,10 +5,10 @@ class home {
     }
     
     public function forum($params) {
-        dvbb::addToViewParams($params);
+        app::addToViewParams($params);
     }
     public function post($params) {
-        dvbb::addToViewParams($params);
+        app::addToViewParams($params);
     }
     
 }

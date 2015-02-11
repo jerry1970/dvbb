@@ -10,7 +10,7 @@ class dbModel {
     const QUERY_SIMPLE_KEY_DESC = 'SELECT * FROM :tableName WHERE :key = :value ORDER BY :tableKey DESC';
     
     public function __construct() {
-        $this->db = new SQLite3(dvbb::getPath() . '/application/storage/dvbb.db');
+        $this->db = new SQLite3(app::getPath() . '/application/storage/dvbb.db');
     }
     
     protected function assemble($query, $params = array()) {
@@ -27,7 +27,7 @@ class dbModel {
             ':value' => $id,
         ));
         $dbResult = $this->db->query($query);
-        return $dbResult->fetchArray(SQLITE3_ASSOC);
+        return $this->generateFromRow($dbResult->fetchArray(SQLITE3_ASSOC));
     }
     
     public function getAll() {
@@ -38,7 +38,7 @@ class dbModel {
         $dbResult = $this->db->query($query);
         $return = array();
         while ($row = $dbResult->fetchArray(SQLITE3_ASSOC)) {
-            $return[] = $row;
+            $return[] = $this->generateFromRow($row);
         }
         return $return;
     }
@@ -53,9 +53,18 @@ class dbModel {
         $dbResult = $this->db->query($query);
         $return = array();
         while ($row = $dbResult->fetchArray(SQLITE3_ASSOC)) {
-            $return[] = $row;
+            $return[] = $this->generateFromRow($row);
         }
         return $return;
+    }
+    
+    protected function generateFromRow($row) {
+        $class = get_called_class();
+        $item = new $class();
+        foreach ($row as $key => $value) {
+            $item->$key = $value;
+        }
+        return $item;
     }
     
 }

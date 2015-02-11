@@ -1,66 +1,85 @@
 <?php
-// enable or disable error reporting
-error_reporting(-1);
-ini_set('display_errors', 'On');
-
-/*********************************************
- * require dvbb class and tell it to initialize
- * this will allow the use of getPath(), getBasePath() and getUrl()
+/**
+ * dvbb index.php
+ * 
+ * This will load the app class and run initialize, then set up the autoloader, router, load the routes, try to match 
+ * the route and 'dispatch' (in quotation marks due to its ridiculous simplicity) the controller, action & view if 
+ * found.
+ * 
+ * @copyright   2015 Robin de Graaf, devvoh webdevelopment
+ * @license     MIT
+ * @author      Robin de Graaf (hello@devvoh.com)
  */
-require('./library/dvbb.php');
-dvbb::initialize();
 
-// set up autoloader
+/**
+ * Enable or disable debug mode
+ */
+$debug = true;
+
+/**
+ * If debug, show all errors
+ */
+if ($debug) {
+    error_reporting(-1);
+    ini_set('display_errors', 'On');
+}
+
+/**
+ * Require app class and tell it to initialize, this will allow the use of getPath(), getBasePath() ,getUrl(), etc.
+ */
+require('./library/app.php');
+app::initialize();
+
+/**
+ * We're going to need an autoloader to look in the directories where our classes live.
+ * We will look from most common (models) to least common (library)
+ */
 spl_autoload_register(function ($class) {
-    $locations = array('controller', 'model');
-    
-    if ($class === 'AltoRouter') {
-        require(dvbb::getPath() . '/library/AltoRouter/AltoRouter.php');
-    } else {
-        foreach ($locations as $location) {
-            if (file_exists(dvbb::getPath() . '/application/' . $location . '/' . $class . '.php')) {
-                require(dvbb::getPath() . '/application/' . $location . '/' . $class . '.php');
-            }
+    $locations = array('application/model', 'application/controller', 'library');
+    foreach ($locations as $location) {
+        if (file_exists(app::getPath() . '/' . $location . '/' . $class . '.php')) {
+            require(app::getPath() . '/' . $location . '/' . $class . '.php');
         }
     }
 });
 
-// instantiate router
-dvbb::setRouter(new AltoRouter());
-// if we have a basePath, set it
-if (strlen(dvbb::getBasePath()) > 0) {
-    dvbb::getRouter()->setBasePath(dvbb::getBasePath());
+/**
+ * We instantiate a new AltoRouter instance and store it in app
+ */
+app::setRouter(new AltoRouter());
+/**
+ * If we have a basePath, set it on AltoRouter so it knows how to deal with requests
+ */
+if (app::getBasePath()) {
+    app::getRouter()->setBasePath(app::getBasePath());
 }
 
-// load routes, this will give us a $routes array to loop through and map the routes
-require(dvbb::getPath() . '/application/routes/routes.php');
-foreach($routes as $route) {
-    dvbb::getRouter()->map(
-        $route['method'], 
-        $route['path'], 
-        $route['controller'].'#'.$route['action'], 
-        $route['name']
-    );
-}
+/**
+ * Load the routes file, which will define & loop through an array of routes and map the routes in AltoRouter
+ */
+require(app::getPath() . '/application/routes/routes.php');
 
-// match the current request
-$match = dvbb::getRouter()->match();
+/**
+ * Now that we have a router instance with routes defined, we can match the current request
+ */
+$match = app::getRouter()->match();
 
+/**
+ * $match is false if there's no match
+ */
 if ($match) {
-    // split the target into controller & action
+    // split the target into controller & action (targets are set as controller#action)
     $target = explode('#', $match['target']);
     $controllerName = $target[0];
     $action = $target[1];
     // instantiate controller & call action with params
     $controller = new $controllerName();
     $controller->$action($match['params']);
-    // load the view associated with this controller & action
-    $view = dvbb::getViewParams();
     
     // require header, view, then footer
-    require(dvbb::getPath() . '/application/view/layout/header.phtml');
-    require(dvbb::getPath() . '/application/view/' . $controllerName . '/' . $action . '.phtml');
-    require(dvbb::getPath() . '/application/view/layout/footer.phtml');
+    require(app::getPath() . '/application/view/layout/header.phtml');
+    require(app::getPath() . '/application/view/' . $controllerName . '/' . $action . '.phtml');
+    require(app::getPath() . '/application/view/layout/footer.phtml');
 } else {
-    echo '404 - requested path "' . dvbb::getUrl() . '/' .  $_GET['path'] . '" not found.';
+    echo '404 - requested path "' . app::getUrl() . '/' .  $_GET['path'] . '" not found.';
 }

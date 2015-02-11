@@ -1,10 +1,10 @@
 <?php
 $categories = (new category())->getAll();
 foreach ($categories as $category) {
-    $forums = (new forum())->getByField('category_id', $category['id']);
+    $forums = (new forum())->getByField('category_id', $category->id);
     ?>
     <div class="dvbb-forum-container">
-        <strong class="dvbb-category-title"><?=$category['title']?></strong>
+        <strong class="dvbb-category-title"><?=$category->title?></strong>
         <div class="dvbb-legend dv-grid-row">
             <div class="dv-grid-column-13 dv-text-bold">Forum</div>
             <div class="dv-grid-column-2 dv-text-bold">Threads</div>
@@ -13,14 +13,14 @@ foreach ($categories as $category) {
         </div>
         <?php 
         foreach ($forums as $forum) {
-            $url = dvbb::getRouter()->generate('forum', array('id' => $forum['id']));
-            $posts = count((new post())->getByField('forum_id', $forum['id']));
+            $url = app::getRouter()->generate('forum', array('id' => $forum->id));
+            $posts = count((new post())->getByField('forum_id', $forum->id));
             ?>
             <div class="dvbb-forum dv-grid-row">
                 <div class="dv-grid-column-1">&bull;</div>
                 <div class="dv-grid-column-12">
-                    <a href="<?=$url;?>"><?=$forum['title'];?></a><br />
-                    <small style="color: grey"><?=$forum['description'];?></small>
+                    <a href="<?=$url;?>"><?=$forum->title;?></a><br />
+                    <small style="color: grey"><?=$forum->description;?></small>
                 </div>
                 <div class="dv-grid-column-2"><?=$posts;?></div>
                 <div class="dv-grid-column-2">--</div>
