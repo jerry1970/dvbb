@@ -1,4 +1,14 @@
 <?php
+/**
+ * routes
+ * 
+ * This file contains all routes for the application and then maps them to AltoRouter
+ * 
+ * @copyright   2015 Robin de Graaf, devvoh webdevelopment
+ * @license     MIT
+ * @author      Robin de Graaf (hello@devvoh.com)
+ */
+
 $routes[] = array(
     'name' => 'home',
     'method' => 'GET|POST',

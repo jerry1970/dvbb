@@ -1,8 +1,15 @@
 <?php
-class user extends dbModel {
+/**
+ * user model class
+ * 
+ * @copyright   2015 Robin de Graaf, devvoh webdevelopment
+ * @license     MIT
+ * @author      Robin de Graaf (hello@devvoh.com)
+ */
+
+class user extends model {
 
     public $tableName = 'user';
-    public $tableKey = 'id';
     
     public $id;
     public $username;

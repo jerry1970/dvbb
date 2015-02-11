@@ -72,9 +72,9 @@ if ($match) {
     $target = explode('#', $match['target']);
     $controllerName = $target[0];
     $action = $target[1];
-    // instantiate controller & call action with params
-    $controller = new $controllerName();
-    $controller->$action($match['params']);
+    // instantiate controller with params & call action
+    $controller = new $controllerName($match['params']);
+    $controller->$action();
     
     // require header, view, then footer
     require(app::getPath() . '/application/view/layout/header.phtml');

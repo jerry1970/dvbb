@@ -1,14 +1,21 @@
 <?php
-class home {
+/**
+ * home controller class
+ * 
+ * @copyright   2015 Robin de Graaf, devvoh webdevelopment
+ * @license     MIT
+ * @author      Robin de Graaf (hello@devvoh.com)
+ */
+
+class home extends controller {
     
     public function index() {
     }
     
-    public function forum($params) {
-        app::addToViewParams($params);
+    public function forum() {
     }
-    public function post($params) {
-        app::addToViewParams($params);
+    
+    public function post() {
     }
     
 }

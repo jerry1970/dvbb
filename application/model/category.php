@@ -1,8 +1,15 @@
 <?php
-class category extends dbModel {
+/**
+ * category model class
+ * 
+ * @copyright   2015 Robin de Graaf, devvoh webdevelopment
+ * @license     MIT
+ * @author      Robin de Graaf (hello@devvoh.com)
+ */
+
+class category extends model {
 
     public $tableName = 'category';
-    public $tableKey = 'id';
     
     public $id;
     public $title;
