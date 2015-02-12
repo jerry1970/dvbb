@@ -38,7 +38,14 @@ $routes[] = array(
     'method' => 'GET|POST',
     'path' => '/user/list',
     'controller' => 'userController',
-    'action' => 'getList',
+    'action' => 'userlist',
+);
+$routes[] = array(
+    'name' => 'user-profile',
+    'method' => 'GET|POST',
+    'path' => '/user/[i:id]',
+    'controller' => 'userController',
+    'action' => 'profile',
 );
 
 

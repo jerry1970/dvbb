@@ -1,18 +1,18 @@
 <?php
 /**
- * user controller class
+ * password model class
  * 
  * @copyright   2015 Robin de Graaf, devvoh webdevelopment
  * @license     MIT
  * @author      Robin de Graaf (hello@devvoh.com)
  */
 
-class userController extends controller {
+class password extends model {
 
-    public function userlist() {
-    }
-
-    public function profile() {
-    }
+    public $tableName = 'password';
     
+    public $id;
+    public $user_id;
+    public $password;
+
 }

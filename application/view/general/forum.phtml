@@ -43,12 +43,13 @@ if (count($posts) > 0) {
     foreach ($posts as $post) {
         $url = app::getRouter()->generate('topic', array('id' => $post->id));
         $subPosts = count((new post())->getByField('parent_id', $post->id));
+        $user = (new user())->getById($post->user_id);
         ?>
         <div class="dvbb-forum dv-grid-row">
             <div class="dv-grid-column-1">&bull;</div>
             <div class="dv-grid-column-14">
                 <a href="<?=$url;?>"><?=$post->title;?></a><br />
-                <small style="color: grey"><?=$post->user_id;?></small>
+                <small style="color: grey"><?=$user->username;?> - posted <?=$post->created_at?></small>
             </div>
             <div class="dv-grid-column-2"><?=$subPosts;?></div>
             <div class="dv-grid-column-7">--</div>

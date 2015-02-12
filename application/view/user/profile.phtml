@@ -1,0 +1,38 @@
+<?php
+$user = (new user())->getById(app::getViewParam('id'));
+?>
+<div class="dvbb-category-container">
+    <strong class="dvbb-category-title">Profile of <?=$user->username;?></strong>
+    <div class="dvbb-forum dv-grid-column-24">
+        <?php 
+        $topics = (new post())->getByFields(array(
+            array(
+                'key' => 'user_id',
+                'match' => '=',
+                'value' => $user->id,
+            ),
+            array(
+                'key' => 'forum_id',
+                'match' => 'IS NOT',
+                'value' => 'NULL',
+            ),
+        ));
+        $topicCount = count($topics);
+        $replies = (new post())->getByFields(array(
+            array(
+                'key' => 'user_id',
+                'match' => '=',
+                'value' => $user->id,
+            ),
+            array(
+                'key' => 'parent_id',
+                'match' => 'IS NOT',
+                'value' => 'NULL',
+            ),
+        ));
+        $replyCount = count($replies);
+        ?>
+        Topics started: <?=$topicCount?><br />
+        Replies posted: <?=$replyCount?><br />
+    </div>
+</div>

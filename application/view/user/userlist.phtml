@@ -39,7 +39,9 @@ $users = (new user())->getAll();
         $replyCount = count($replies);
         ?>
         <div class="dvbb-forum dv-grid-row">
-            <div class="dv-grid-column-13"><?=$user->username;?></div>
+            <div class="dv-grid-column-13">
+                <a href="<?=app::getRouter()->generate('user-profile', array('id' => $user->id));?>"><?=$user->username;?></a>
+            </div>
             <div class="dv-grid-column-2"><?=$topicCount?></div>
             <div class="dv-grid-column-2"><?=$replyCount?></div>
             <div class="dv-grid-column-7">Last Post</div>
@@ -47,11 +49,4 @@ $users = (new user())->getAll();
         <?php
     }
     ?>
-</div>
-
-<strong class="dvbb-category-title">Forum statistics</strong>
-<div class="dvbb-forum dv-grid-column-24">
-    Total members: x<br />
-    Total posts: x<br />
-    Total replies: x<br />
 </div>

@@ -43,7 +43,7 @@ $topic = app::getViewParam('topic');
                 </div>
                 <div class="dv-grid-column-19">
                     <span class="dv-color-notice">
-                        <?=$subPost->title?> <small><?=$subPost->created_at?></small>
+                        <small><?=$subPost->title?> - posted <?=$subPost->created_at?></small>
                     </span>
                     <p>
                         <?=$subPost->body?>
