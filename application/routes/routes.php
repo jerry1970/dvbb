@@ -48,6 +48,23 @@ $routes[] = array(
     'action' => 'profile',
 );
 
+// Topic routes
+$routes[] = array(
+    'name' => 'topic-create',
+    'method' => 'GET|POST',
+    'path' => '/topic/create',
+    'controller' => 'topicController',
+    'action' => 'create',
+);
+$routes[] = array(
+    'name' => 'topic-update',
+    'method' => 'GET|POST',
+    'path' => '/topic/update',
+    'controller' => 'topicController',
+    'action' => 'update',
+);
+
+
 
 /**
  * Now map all the routes to AltoRouter if it exists

@@ -21,13 +21,7 @@ class app {
     static $router;
     static $viewParams = array();
     static $db;
-    static $config = array(
-        'name' => 'dvbb 200x test forum',
-        'sqliteDb' => 'dvbb.db',
-        'posts_per_page' => 4,
-        'users_per_page' => 1,
-        'maintenance_mode' => 0,
-    );
+    static $config = array();
     
     /**
      * Initializes some values necessary for the application to run
@@ -40,6 +34,8 @@ class app {
         // now get the complete public url & store it
         $url = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']);
         self::setUrl(str_replace('/public', '', $url));
+        // initialize config from config/app.ini
+        self::setConfig(parse_ini_file(self::getPath() . '/application/config/app.ini'));
         // open the database
         self::setDb(new SQLite3(app::getPath() . '/application/storage/' . app::getConfigKey('sqliteDb')));
     }

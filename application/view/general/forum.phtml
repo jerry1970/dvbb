@@ -22,7 +22,7 @@
         ?>
     </div>
     <div class="dv-grid-column-12 dv-align-right">
-        <a href="<?=app::getUrl();?>">new topic</a>
+        <a href="<?=app::getRouter()->generate('topic-create');?>">new topic</a>
     </div>
 </nav>
 
@@ -73,6 +73,6 @@ if (count($posts) > 0) {
         <?=$pages;?>
     </div>
     <div class="dv-grid-column-12 dv-align-right">
-        <a href="<?=app::getUrl();?>">new topic</a>
+        <a href="<?=app::getRouter()->generate('topic-create');?>">new topic</a>
     </div>
 </nav>
