@@ -17,7 +17,7 @@ class generalController extends controller {
         $forum = (new forum())->getById(app::getViewParam('id'));
         // get limit based on posts_per_page
         $originalLimit = app::getConfigKey('posts_per_page');
-        // see if there's a $_GET['page'] available so we have an offset for limit
+        // see if there's a page available so we have an offset for limit
         if (app::getViewParam('page')) {
             $limit = ($originalLimit * ((int)app::getViewParam('page') - 1)) . ', ' . $originalLimit;
         } else {
@@ -43,7 +43,7 @@ class generalController extends controller {
         $topic = (new post())->getById(app::getViewParam('id'));
         // get limit based on posts_per_page
         $originalLimit = app::getConfigKey('posts_per_page');
-        // see if there's a $_GET['page'] available so we have an offset for limit
+        // see if there's a page available so we have an offset for limit
         if (app::getViewParam('page')) {
             $limit = (($originalLimit - 1) * ((int)app::getViewParam('page') - 1)) . ', ' . $originalLimit;
         } else {
