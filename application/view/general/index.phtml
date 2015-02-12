@@ -3,13 +3,13 @@ $categories = (new category())->getAll();
 foreach ($categories as $category) {
     $forums = (new forum())->getByField('category_id', $category->id);
     ?>
-    <div class="dvbb-category-container">
-        <strong class="dvbb-category-title"><?=$category->title?></strong>
-        <div class="dvbb-legend dv-grid-row">
-            <div class="dv-grid-column-13 dv-text-bold">Forum</div>
-            <div class="dv-grid-column-2 dv-text-bold">Topics</div>
-            <div class="dv-grid-column-2 dv-text-bold">Replies</div>
-            <div class="dv-grid-column-7 dv-text-bold">Last Post</div>
+    <div class="dvbb-container">
+        <div class="dvbb-container-header"><?=$category->title?></div>
+        <div class="dvbb-container-legend dv-grid-row">
+            <div class="dv-grid-column-13">Forum</div>
+            <div class="dv-grid-column-2">Topics</div>
+            <div class="dv-grid-column-2">Replies</div>
+            <div class="dv-grid-column-7">Last Post</div>
         </div>
         <?php 
         foreach ($forums as $forum) {
@@ -24,7 +24,7 @@ foreach ($categories as $category) {
                 $replyCount = $replyCount + count($replies);
             }
             ?>
-            <div class="dvbb-forum dv-grid-row">
+            <div class="dvbb-container-row dv-grid-row">
                 <div class="dv-grid-column-1">&bull;</div>
                 <div class="dv-grid-column-12">
                     <a href="<?=$url;?>"><?=$forum->title;?></a><br />
@@ -42,9 +42,11 @@ foreach ($categories as $category) {
 }
 ?>
 
-<strong class="dvbb-category-title">Forum statistics</strong>
-<div class="dvbb-forum dv-grid-column-24">
-    Total members: x<br />
-    Total posts: x<br />
-    Total replies: x<br />
+<div class="dvbb-container">
+    <div class="dvbb-container-header">Forum statistics</div>
+    <div class="dvbb-container-row">
+        Total members: x<br />
+        Total posts: x<br />
+        Total replies: x<br />
+    </div>
 </div>

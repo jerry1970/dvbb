@@ -1,9 +1,9 @@
 <?php
 $user = (new user())->getById(app::getViewParam('id'));
 ?>
-<div class="dvbb-category-container">
-    <strong class="dvbb-category-title">Profile of <?=$user->username;?></strong>
-    <div class="dvbb-forum dv-grid-column-24">
+<div class="dvbb-container">
+    <div class="dvbb-container-header">Profile of <?=$user->username;?></div>
+    <div class="dvbb-container-row">
         <?php 
         $topics = (new post())->getByFields(array(
             array(

@@ -1,4 +1,4 @@
-<nav class="dv-grid-row sub-navigation">
+<nav class="dv-grid-row dvbb-subnavigation">
     <div class="dv-grid-column-12">
         <?=app::getConfigKey('posts_per_page')?> posts per page: 
         <?php
@@ -16,7 +16,7 @@
             } elseif (!app::getViewParam('page') && $i == 1) {
                 $active = 'active';
             }
-            $pages[] = '<a href="' . app::getCurrentUrl() . $param . '" class="' . $active . '">' . $i .'</a>';
+            $pages[] = '<a href="' . app::getCurrentUrl() . $param . '" class="dvbb-pagination-link ' . $active . '">' . $i .'</a>';
         }
         echo $pages = implode(' ', $pages);
         ?>
@@ -29,15 +29,15 @@
 <?php 
 $topic = app::getViewParam('topic');
 ?>
-<div class="dvbb-forum-container">
-    <strong class="dvbb-category-title"><?=$topic->title?></strong>
+<div class="dvbb-container">
+    <div class="dvbb-container-header"><?=$topic->title?></div>
     <?php 
     $posts = app::getViewParam('posts');
     if (count($posts) > 0) {
         foreach ($posts as $subPost) {
             $user = (new user())->getById($subPost->user_id);
             ?>
-            <div class="dvbb-forum dv-grid-row">
+            <div class="dvbb-container-row dv-grid-row">
                 <div class="dv-grid-column-5">
                     <strong><?=$user->username?></strong>
                 </div>
@@ -45,9 +45,7 @@ $topic = app::getViewParam('topic');
                     <span class="dv-color-notice">
                         <small><?=$subPost->title?> - posted <?=$subPost->created_at?></small>
                     </span>
-                    <p>
-                        <?=$subPost->body?>
-                    </p>
+                    <?=app::nl2p($subPost->body)?>
                 </div>
             </div>
             <?php
@@ -55,8 +53,8 @@ $topic = app::getViewParam('topic');
     }
     ?>
 </div>
-<br />
-<nav class="dv-grid-row sub-navigation">
+
+<nav class="dv-grid-row dvbb-subnavigation">
     <div class="dv-grid-column-12">
         <?=app::getConfigKey('posts_per_page')?> posts per page: 
         <?=$pages;?>

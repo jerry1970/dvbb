@@ -1,7 +1,12 @@
-<nav class="dv-grid-row sub-navigation">
+<?php 
+$forum = app::getViewParam('forum');
+?>
+
+<nav class="dv-grid-row dvbb-subnavigation">
     <div class="dv-grid-column-12">
         <?=app::getConfigKey('posts_per_page')?> topics per page: 
         <?php
+        $pages = array();
         for ($i = 1; $i <= app::getViewParam('pageTotal'); $i++) {
             $param = '';
             if ($i > 1) {
@@ -16,58 +21,59 @@
             } elseif (!app::getViewParam('page') && $i == 1) {
                 $active = 'active';
             }
-            $pages[] = '<a href="' . app::getCurrentUrl() . $param . '" class="' . $active . '">' . $i .'</a>';
+            $pages[] = '<a href="' . app::getCurrentUrl() . $param . '" class="dvbb-pagination-link ' . $active . '">' . $i .'</a>';
         }
-        echo $pages = implode(' ', $pages);
+        if (count($pages) > 1) {
+            echo $pages = implode(' ', $pages);
+        } else {
+            echo $pages = '<a href="' . app::getCurrentUrl() . '" >1</a>';
+        }
         ?>
     </div>
     <div class="dv-grid-column-12 dv-align-right">
-        <a href="<?=app::getRouter()->generate('topic-create');?>">new topic</a>
+        <a href="<?=app::getRouter()->generate('topic-create', array('id' => $forum->id));?>">new topic</a>
     </div>
 </nav>
 
-<?php 
-$forum = app::getViewParam('forum');
-?>
-<div class="dvbb-forum-container">
-    <strong class="dvbb-category-title"><?=$forum->title?></strong>
-    <div class="dvbb-legend dv-grid-row">
-        <div class="dv-grid-column-15 dv-text-bold">Thread / Author</div>
-        <div class="dv-grid-column-2 dv-text-bold">Replies</div>
-        <div class="dv-grid-column-7 dv-text-bold">Last Post</div>
-    </div>
-</div>
-<?php 
-$posts = app::getViewParam('posts');
-if (count($posts) > 0) {
-    foreach ($posts as $post) {
-        $url = app::getRouter()->generate('topic', array('id' => $post->id));
-        $subPosts = count((new post())->getByField('parent_id', $post->id));
-        $user = (new user())->getById($post->user_id);
-        ?>
-        <div class="dvbb-forum dv-grid-row">
-            <div class="dv-grid-column-1">&bull;</div>
-            <div class="dv-grid-column-14">
-                <a href="<?=$url;?>"><?=$post->title;?></a><br />
-                <small style="color: grey"><?=$user->username;?> - posted <?=$post->created_at?></small>
-            </div>
-            <div class="dv-grid-column-2"><?=$subPosts;?></div>
-            <div class="dv-grid-column-7">--</div>
-        </div>
-        <?php
-    }
-} else {
-    ?>
-    <div class="dvbb-forum dv-grid-row">
-        <div class="dv-grid-column-24">
-            <span class="dv-color-notice">No posts yet.</span>
-        </div>
+<div class="dvbb-container">
+    <div class="dvbb-container-header"><?=$forum->title?></div>
+    <div class="dvbb-container-legend dv-grid-row">
+        <div class="dv-grid-column-15">Thread / Author</div>
+        <div class="dv-grid-column-2">Replies</div>
+        <div class="dv-grid-column-7">Last Post</div>
     </div>
     <?php 
-}
-?>
-<br />
-<nav class="dv-grid-row sub-navigation">
+    $posts = app::getViewParam('posts');
+    if (count($posts) > 0) {
+        foreach ($posts as $post) {
+            $url = app::getRouter()->generate('topic', array('id' => $post->id));
+            $subPosts = count((new post())->getByField('parent_id', $post->id));
+            $user = (new user())->getById($post->user_id);
+            ?>
+            <div class="dvbb-container-row dv-grid-row">
+                <div class="dv-grid-column-1">&bull;</div>
+                <div class="dv-grid-column-14">
+                    <a href="<?=$url;?>"><?=$post->title;?></a><br />
+                    <small style="color: grey"><?=$user->username;?> - posted <?=$post->created_at?></small>
+                </div>
+                <div class="dv-grid-column-2"><?=$subPosts;?></div>
+                <div class="dv-grid-column-7">--</div>
+            </div>
+            <?php
+        }
+    } else {
+        ?>
+        <div class="dvbb-container-row dv-grid-row">
+            <div class="dv-grid-column-24">
+                <span class="dv-color-notice">No posts yet.</span>
+            </div>
+        </div>
+        <?php 
+    }
+    ?>
+</div>
+
+<nav class="dv-grid-row dvbb-subnavigation">
     <div class="dv-grid-column-12">
         <?=app::getConfigKey('posts_per_page')?> topics per page: 
         <?=$pages;?>

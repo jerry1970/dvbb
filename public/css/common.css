@@ -8,43 +8,90 @@
 body {
     padding: 1em;
 }
-
-header, nav {
-    border: 1px solid;
-    margin-bottom: 0.5rem;
-}
-header {
-    padding: 0.25em 0.5em;
-}
 a {
+    color: #1f8bc2;
     text-decoration: none;
 }
 a:hover {
+    color: #1d5b7a;
     text-decoration: underline;
 }
 a.active {
-    outline: 1px solid;
+    outline: 1px solid rgba(0, 0, 0, 0.5);
+}
+p {
+    margin: 0.5rem 0 1rem 0;
 }
 
-/* every grid-column deserves some padding */
-[class*='dv-grid-column-'] {
-    padding: 0.25em 0.5em;
-}
- 
-/* forum styling */
-.dvbb-category-container {
+/* container styling */
+.dvbb-header,
+.dvbb-navigation,
+.dvbb-subnavigation,
+.dvbb-container {
+    border: 1px solid rgba(0, 0, 0, 0.7);
     margin-bottom: 0.5rem;
 }
-.dvbb-category-title {
-    border: 1px solid;
-    display: block;
-    line-height: 1em;
-    padding: 0.5em;
+/* these elements all deserve some nice bottom borders */
+.dvbb-container-header,
+.dvbb-container-legend,
+.dvbb-container-row {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.7);
 }
-.dvbb-legend {
-    border: 1px solid;
-    font-size: 0.8em;
+/* but the last of these elements do not need borders */
+.dvbb-container-row:last-child {
+    border: none;
 }
-.dvbb-forum {
-    border: 1px solid;
+
+/* these elements all deserve some nice padding */
+.dvbb-header,
+.dvbb-navigation,
+.dvbb-subnavigation,
+.dvbb-container-header,
+.dvbb-container-legend,
+.dvbb-container-row {
+    padding: 0.25rem 0.5rem;
+}
+.dvbb-container-row [class*='dv-grid-column-'] {
+    padding-right: 1rem;
+}
+.dvbb-subnavigation .dvbb-pagination-link {
+    display: inline-block;
+    padding: 0 0.25rem;
+}
+
+/* header styling */
+.dvbb-header {
+    font-size: 2rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+/* legend styling */
+.dvbb-container-legend {
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+/* form styling */
+.dvbb-form textarea {
+    height: 15rem;
+    resize: none;
+}
+
+
+/* default colors and whatnot */
+.dvbb-header,
+.dvbb-navigation,
+.dvbb-container-header {
+    background-color: #1f8bc2;
+    color: #fff;
+    border-color: rgba(0, 0, 0, 0.7);
+}
+.dvbb-header a,
+.dvbb-navigation a,
+.dvbb-container-header a {
+    color: rgba(255, 255, 255, 0.7);
+}
+.dvbb-header a:hover,
+.dvbb-navigation a:hover,
+.dvbb-container-header a:hover {
+    color: rgba(255, 255, 255, 1);
 }

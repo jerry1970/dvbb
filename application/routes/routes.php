@@ -52,7 +52,7 @@ $routes[] = array(
 $routes[] = array(
     'name' => 'topic-create',
     'method' => 'GET|POST',
-    'path' => '/topic/create',
+    'path' => '/topic/[i:id]/create',
     'controller' => 'topicController',
     'action' => 'create',
 );

@@ -5,29 +5,34 @@
  * dv-forms.css provides some basic styles to make forms somewhat more attractive
  */
 
+.dv-form-label {
+    display: inline-block;
+    padding: 0.5em;
+}
 .dv-form-element {
     border: 1px solid #999;
     border-color: rgba(0, 0, 0, 0.4);
     padding: 0.5em;
-    margin: 0 0 0.5em 0;
+    margin: 0;
     font-size: 0.9em;
     color: rgba(0, 0, 0, 0.7);
     outline: none;
     background-color: #fff;
     width: 100%;
 }
+textarea.dv-form-element {
+    height: 5em;
+}
 
 .dv-form-button {
     border: 1px solid #999;
     border-color: rgba(0, 0, 0, 0.4);
     padding: 0.35em 0.7em;
-    margin: 0 0 0.5em 0;
+    margin: 0;
     font-size: 0.9em;
     color: rgba(0, 0, 0, 0.7);
     outline: none;
     background-color: rgba(0, 0, 0, 0.3);
-    
-    font-variant: small-caps;
 }
 
 .dv-form-element:focus {

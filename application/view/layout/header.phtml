@@ -9,7 +9,6 @@
         <link rel="stylesheet" type="text/css" media="all"  href="<?=app::getUrl();?>/public/css/lib/normalize.css" />
         <link rel="stylesheet" type="text/css" media="all"  href="<?=app::getUrl();?>/public/css/lib/dv-import.css" />
         <link rel="stylesheet" type="text/css" media="all"  href="<?=app::getUrl();?>/public/css/common.css" />
-        <link rel="stylesheet" type="text/css" media="all"  href="<?=app::getUrl();?>/public/css/default-theme.css" />
         
         <script src="<?=app::getUrl();?>/public/js/lib/jquery-1.11.2.min.js"></script>
         <script src="<?=app::getUrl();?>/public/js/lib/html5shiv.js"></script>
@@ -19,10 +18,10 @@
     </head>
     
     <body class="dv-width-site dv-margin-auto">
-        <header>
-            <h1><?=app::getConfigKey('name');?></h1>
+        <header class="dvbb-header">
+            <?=app::getConfigKey('name');?>
         </header>
-        <nav class="dv-grid-row">
+        <nav class="dvbb-navigation dv-grid-row">
             <div class="dv-grid-column-12">
                 <a href="<?=app::getRouter()->generate('home');?>">index</a> - 
                 <a href="<?=app::getRouter()->generate('user-list');?>">user list</a> - 

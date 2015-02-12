@@ -263,4 +263,18 @@ class app {
     public static function getDb() {
         return self::$db;
     }
+    
+    /**
+     * Returns a string with every paragraph wrapped with a <p /> tag
+     * 
+     * @param string $string
+     * @return string
+     */
+    public static function nl2p($string) {
+        $return = '';
+        foreach (explode("\n", trim($string)) as $part) {
+            $return .= '<p>' . $part . '</p>';
+        }
+        return $return;
+    }
 }
