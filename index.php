@@ -75,10 +75,12 @@ if ($match) {
     // instantiate controller with params & call action
     $controller = new $controllerName($match['params']);
     $controller->$action();
+    // get the Controller-less name
+    $controllerShortName = str_replace('Controller', '', $controllerName);
     
     // require header, view, then footer
     require(app::getPath() . '/application/view/layout/header.phtml');
-    require(app::getPath() . '/application/view/' . $controllerName . '/' . $action . '.phtml');
+    require(app::getPath() . '/application/view/' . $controllerShortName . '/' . $action . '.phtml');
     require(app::getPath() . '/application/view/layout/footer.phtml');
 } else {
     echo '404 - requested path "' . app::getUrl() . '/' .  $_GET['path'] . '" not found.';

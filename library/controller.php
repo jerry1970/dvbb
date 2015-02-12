@@ -11,12 +11,23 @@
 
 class controller {
     
+    protected $params;
+    
     /**
      * Makes the given $params available to the view by storing them using the app class
+     * and to controllers by storing it locally as $this->params
+     * 
+     * Also stores $_GET values in the view
      * 
      * @param array $params
      */
     public function __construct($params = array()) {
+        $this->params = $params;
+        foreach ($_GET as $key => $value) {
+            if ($key !== 'path') {
+                $params[$key] = $value;
+            }
+        }
         app::addToViewParams($params);
     }
     

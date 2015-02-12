@@ -3,18 +3,26 @@ $categories = (new category())->getAll();
 foreach ($categories as $category) {
     $forums = (new forum())->getByField('category_id', $category->id);
     ?>
-    <div class="dvbb-forum-container">
+    <div class="dvbb-category-container">
         <strong class="dvbb-category-title"><?=$category->title?></strong>
         <div class="dvbb-legend dv-grid-row">
             <div class="dv-grid-column-13 dv-text-bold">Forum</div>
-            <div class="dv-grid-column-2 dv-text-bold">Threads</div>
-            <div class="dv-grid-column-2 dv-text-bold">Posts</div>
+            <div class="dv-grid-column-2 dv-text-bold">Topics</div>
+            <div class="dv-grid-column-2 dv-text-bold">Replies</div>
             <div class="dv-grid-column-7 dv-text-bold">Last Post</div>
         </div>
         <?php 
         foreach ($forums as $forum) {
             $url = app::getRouter()->generate('forum', array('id' => $forum->id));
-            $posts = count((new post())->getByField('forum_id', $forum->id));
+            // only topics have a forum_id set
+            $topics = (new post())->getByField('forum_id', $forum->id);
+            $topicCount = count($topics);
+            // replies have a parent_id instead of a forum_id
+            $replyCount = 0;
+            foreach ($topics as $topic) {
+                $replies = (new post())->getByField('parent_id', $topic->id);
+                $replyCount = $replyCount + count($replies);
+            }
             ?>
             <div class="dvbb-forum dv-grid-row">
                 <div class="dv-grid-column-1">&bull;</div>
@@ -22,8 +30,8 @@ foreach ($categories as $category) {
                     <a href="<?=$url;?>"><?=$forum->title;?></a><br />
                     <small style="color: grey"><?=$forum->description;?></small>
                 </div>
-                <div class="dv-grid-column-2"><?=$posts;?></div>
-                <div class="dv-grid-column-2">--</div>
+                <div class="dv-grid-column-2"><?=$topicCount;?></div>
+                <div class="dv-grid-column-2"><?=$replyCount;?></div>
                 <div class="dv-grid-column-7">--</div>
             </div>
             <?php
@@ -32,3 +40,11 @@ foreach ($categories as $category) {
     </div>
     <?php 
 }
+?>
+
+<strong class="dvbb-category-title">Forum statistics</strong>
+<div class="dvbb-forum dv-grid-column-24">
+    Total members: x<br />
+    Total posts: x<br />
+    Total replies: x<br />
+</div>

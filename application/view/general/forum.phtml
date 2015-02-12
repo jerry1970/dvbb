@@ -1,0 +1,77 @@
+<nav class="dv-grid-row sub-navigation">
+    <div class="dv-grid-column-12">
+        <?=app::getConfigKey('posts_per_page')?> topics per page: 
+        <?php
+        for ($i = 1; $i <= app::getViewParam('pageTotal'); $i++) {
+            $param = '';
+            if ($i > 1) {
+                // only now do we actually add a parameter
+                $param = '?page=' . $i;
+            }
+            // check if current page is 1 or otherwise
+            $active = null;
+            if (app::getViewParam('page') && app::getViewParam('page') == $i) {
+                // not page 1 but we ARE on this page
+                $active = 'active';
+            } elseif (!app::getViewParam('page') && $i == 1) {
+                $active = 'active';
+            }
+            $pages[] = '<a href="' . app::getCurrentUrl() . $param . '" class="' . $active . '">' . $i .'</a>';
+        }
+        echo $pages = implode(' ', $pages);
+        ?>
+    </div>
+    <div class="dv-grid-column-12 dv-align-right">
+        <a href="<?=app::getUrl();?>">new topic</a>
+    </div>
+</nav>
+
+<?php 
+$forum = app::getViewParam('forum');
+?>
+<div class="dvbb-forum-container">
+    <strong class="dvbb-category-title"><?=$forum->title?></strong>
+    <div class="dvbb-legend dv-grid-row">
+        <div class="dv-grid-column-15 dv-text-bold">Thread / Author</div>
+        <div class="dv-grid-column-2 dv-text-bold">Replies</div>
+        <div class="dv-grid-column-7 dv-text-bold">Last Post</div>
+    </div>
+</div>
+<?php 
+$posts = app::getViewParam('posts');
+if (count($posts) > 0) {
+    foreach ($posts as $post) {
+        $url = app::getRouter()->generate('topic', array('id' => $post->id));
+        $subPosts = count((new post())->getByField('parent_id', $post->id));
+        ?>
+        <div class="dvbb-forum dv-grid-row">
+            <div class="dv-grid-column-1">&bull;</div>
+            <div class="dv-grid-column-14">
+                <a href="<?=$url;?>"><?=$post->title;?></a><br />
+                <small style="color: grey"><?=$post->user_id;?></small>
+            </div>
+            <div class="dv-grid-column-2"><?=$subPosts;?></div>
+            <div class="dv-grid-column-7">--</div>
+        </div>
+        <?php
+    }
+} else {
+    ?>
+    <div class="dvbb-forum dv-grid-row">
+        <div class="dv-grid-column-24">
+            <span class="dv-color-notice">No posts yet.</span>
+        </div>
+    </div>
+    <?php 
+}
+?>
+<br />
+<nav class="dv-grid-row sub-navigation">
+    <div class="dv-grid-column-12">
+        <?=app::getConfigKey('posts_per_page')?> topics per page: 
+        <?=$pages;?>
+    </div>
+    <div class="dv-grid-column-12 dv-align-right">
+        <a href="<?=app::getUrl();?>">new topic</a>
+    </div>
+</nav>

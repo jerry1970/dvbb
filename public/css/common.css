@@ -9,6 +9,23 @@ body {
     padding: 1em;
 }
 
+header, nav {
+    border: 1px solid;
+    margin-bottom: 0.5rem;
+}
+header {
+    padding: 0.25em 0.5em;
+}
+a {
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+a.active {
+    outline: 1px solid;
+}
+
 /* every grid-column deserves some padding */
 [class*='dv-grid-column-'] {
     padding: 0.25em 0.5em;
@@ -16,6 +33,7 @@ body {
  
 /* forum styling */
 .dvbb-category-container {
+    margin-bottom: 0.5rem;
 }
 .dvbb-category-title {
     border: 1px solid;

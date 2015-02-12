@@ -20,6 +20,14 @@ class app {
     static $url;
     static $router;
     static $viewParams = array();
+    static $db;
+    static $config = array(
+        'name' => 'dvbb 200x test forum',
+        'sqliteDb' => 'dvbb.db',
+        'posts_per_page' => 4,
+        'users_per_page' => 1,
+        'maintenance_mode' => 0,
+    );
     
     /**
      * Initializes some values necessary for the application to run
@@ -32,15 +40,19 @@ class app {
         // now get the complete public url & store it
         $url = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']);
         self::setUrl(str_replace('/public', '', $url));
+        // open the database
+        self::setDb(new SQLite3(app::getPath() . '/application/storage/' . app::getConfigKey('sqliteDb')));
     }
     
     /**
      * Sets the local path
      * 
      * @param string $path
+     * @return string
      */
     public static function setPath($path) {
         self::$path = $path;
+        return self::$path;
     }
 
     /**
@@ -56,9 +68,11 @@ class app {
      * Sets the base path the application is in (in addition to the local path, this is usually a directory)
      * 
      * @param string $basePath
+     * @return string
      */
     public static function setBasePath($basePath) {
         self::$basePath = $basePath;
+        return self::$basePath;
     }
 
     /**
@@ -77,9 +91,11 @@ class app {
      * Sets the public url used for links and front-end logic
      * 
      * @param string $url
+     * @return string
      */
     public static function setUrl($url) {
         self::$url = $url;
+        return self::$url;
     }
 
     /**
@@ -95,9 +111,11 @@ class app {
      * Sets the AltoRouter router instance
      * 
      * @param AltoRouter $router
+     * @return AltoRouter
      */
     public static function setRouter($router) {
         self::$router = $router;
+        return self::$router;
     }
     
     /**
@@ -184,5 +202,69 @@ class app {
         print_r($string);
         echo '</pre>';
         die();
+    }
+
+    /**
+     * Store config array and overwrite pre-existing config
+     * 
+     * @param array $array
+     * @return mixed
+     */
+    public static function setConfig($array = array()) {
+        self::$config = $array;
+        return self::$config;
+    }
+    
+    /**
+     * Merge $config with existing config values, overwriting pre-existing values
+     * 
+     * @param array $array
+     * @return array
+     */
+    public static function addToConfig($array = array()) {
+        foreach($array as $key => $value) {
+            self::$config[$key] = $value;
+        }
+        return self::$config;
+    }
+    
+    /**
+     * Returns entire config array
+     * 
+     * @return array
+     */
+    public static function getConfig() {
+        return self::$config;
+    }
+    
+    /**
+     * Returns specific config value by key
+     * 
+     * @param string $key
+     * @return mixed
+     */
+    public static function getConfigKey($key) {
+        if (isset(self::$config[$key])) {
+            return self::$config[$key];
+        }
+        return false;
+    }
+    
+    /**
+     * Store the database object
+     * 
+     * @param SQLite3 $db
+     */
+    public static function setDb($db) {
+        self::$db = $db;
+    }
+    
+    /**
+     * Returns the database object
+     * 
+     * @return SQLite3
+     */
+    public static function getDb() {
+        return self::$db;
     }
 }

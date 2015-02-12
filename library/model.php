@@ -11,7 +11,6 @@
 
 class model {
     
-    protected $db;
     protected $tableKey = 'id';
     
     const QUERY_SIMPLE = 'SELECT * FROM :tableName WHERE :key = :value';
@@ -19,13 +18,8 @@ class model {
     const QUERY_ALL_DESC = 'SELECT * FROM :tableName ORDER BY :tableKey DESC';
     const QUERY_SIMPLE_KEY_ASC = 'SELECT * FROM :tableName WHERE :key = :value ORDER BY :tableKey ASC';
     const QUERY_SIMPLE_KEY_DESC = 'SELECT * FROM :tableName WHERE :key = :value ORDER BY :tableKey DESC';
-    
-    /**
-     * Open & store the database connection
-     */
-    public function __construct() {
-        $this->db = new SQLite3(app::getPath() . '/application/storage/dvbb.db');
-    }
+    const QUERY_WHERE_KEY_ASC = 'SELECT * FROM :tableName WHERE :where ORDER BY :tableKey DESC';
+    const QUERY_WHERE_KEY_DESC = 'SELECT * FROM :tableName WHERE :where ORDER BY :tableKey DESC';
     
     /**
      * Assemble and return an escaped query string
@@ -53,7 +47,7 @@ class model {
             ':key' => $this->tableKey,
             ':value' => $id,
         ));
-        $dbResult = $this->db->query($query);
+        $dbResult = app::getDb()->query($query);
         return $this->generateFromRow($dbResult->fetchArray(SQLITE3_ASSOC));
     }
     
@@ -67,7 +61,7 @@ class model {
             ':tableName' => $this->tableName,
             ':tableKey' => $this->tableKey,
         ));
-        $dbResult = $this->db->query($query);
+        $dbResult = app::getDb()->query($query);
         $return = array();
         while ($row = $dbResult->fetchArray(SQLITE3_ASSOC)) {
             $return[] = $this->generateFromRow($row);
@@ -89,7 +83,42 @@ class model {
             ':value' => $value,
             ':tableKey' => $this->tableKey,
         ));
-        $dbResult = $this->db->query($query);
+        $dbResult = app::getDb()->query($query);
+        $return = array();
+        while ($row = $dbResult->fetchArray(SQLITE3_ASSOC)) {
+            $return[] = $this->generateFromRow($row);
+        }
+        return $return;
+    }
+    
+    /**
+     * Returns all rows of current type where array of key:value all match
+     * 
+     * @param array $fields
+     * @return array of objects
+     */
+    public function getByFields($fields = array()) {
+        $where = array();
+        foreach ($fields as $field) {
+            $where[] = $field['key'] . ' ' . $field['match'] . ' ' . $field['value'];
+        }
+        $where = implode(' AND ', $where);
+        
+        $query = $this->assemble(self::QUERY_WHERE_KEY_ASC, array(
+            ':tableName' => $this->tableName,
+            ':tableKey' => $this->tableKey,
+            ':where' => $where,
+        ));
+        $dbResult = app::getDb()->query($query);
+        $return = array();
+        while ($row = $dbResult->fetchArray(SQLITE3_ASSOC)) {
+            $return[] = $this->generateFromRow($row);
+        }
+        return $return;
+    }
+    
+    public function getByQuery($query) {
+        $dbResult = app::getDb()->query($query);
         $return = array();
         while ($row = $dbResult->fetchArray(SQLITE3_ASSOC)) {
             $return[] = $this->generateFromRow($row);

@@ -19,10 +19,17 @@
     </head>
     
     <body class="dv-width-site dv-margin-auto">
-        <div class="dv-grid-row">
-            <div class="dv-grid-column-12"><strong>dvbb test forum</strong></div>
-            <div class="dv-grid-column-12 dv-align-right">
-                <a href="<?=app::getUrl();?>">index</a>
+        <header>
+            <h1><?=app::getConfigKey('name');?></h1>
+        </header>
+        <nav class="dv-grid-row">
+            <div class="dv-grid-column-12">
+                <a href="<?=app::getRouter()->generate('home');?>">index</a> - 
+                <a href="<?=app::getRouter()->generate('user-list');?>">user list</a> - 
+                <a href="<?=app::getUrl();?>/settings">settings</a>
             </div>
-        </div>
+            <div class="dv-grid-column-12 dv-align-right">
+                <a href="<?=app::getUrl();?>">logout</a>
+            </div>
+        </nav>
         

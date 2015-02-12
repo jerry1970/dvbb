@@ -1,0 +1,57 @@
+<?php
+$users = (new user())->getAll();
+?>
+<div class="dvbb-category-container">
+    <strong class="dvbb-category-title">User list</strong>
+    <div class="dvbb-legend dv-grid-row">
+        <div class="dv-grid-column-13 dv-text-bold">Username</div>
+        <div class="dv-grid-column-2 dv-text-bold">Topics</div>
+        <div class="dv-grid-column-2 dv-text-bold">Replies</div>
+        <div class="dv-grid-column-7 dv-text-bold">Last Post</div>
+    </div>
+    <?php 
+    foreach ($users as $user) {
+        $topics = (new post())->getByFields(array(
+            array(
+                'key' => 'user_id',
+                'match' => '=',
+                'value' => $user->id,
+            ),
+            array(
+                'key' => 'forum_id',
+                'match' => 'IS NOT',
+                'value' => 'NULL',
+            ),
+        ));
+        $topicCount = count($topics);
+        $replies = (new post())->getByFields(array(
+            array(
+                'key' => 'user_id',
+                'match' => '=',
+                'value' => $user->id,
+            ),
+            array(
+                'key' => 'parent_id',
+                'match' => 'IS NOT',
+                'value' => 'NULL',
+            ),
+        ));
+        $replyCount = count($replies);
+        ?>
+        <div class="dvbb-forum dv-grid-row">
+            <div class="dv-grid-column-13"><?=$user->username;?></div>
+            <div class="dv-grid-column-2"><?=$topicCount?></div>
+            <div class="dv-grid-column-2"><?=$replyCount?></div>
+            <div class="dv-grid-column-7">Last Post</div>
+        </div>
+        <?php
+    }
+    ?>
+</div>
+
+<strong class="dvbb-category-title">Forum statistics</strong>
+<div class="dvbb-forum dv-grid-column-24">
+    Total members: x<br />
+    Total posts: x<br />
+    Total replies: x<br />
+</div>
