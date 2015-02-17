@@ -30,7 +30,7 @@ class app {
     public static function initialize() {
         
         // set current working directory as path
-        self::setPath(str_replace('/public/', '/', getcwd()));
+        self::setPath(getcwd());
         
         // get the basepath if there is any
         self::setBasePath(str_replace($_SERVER['DOCUMENT_ROOT'], '', self::getPath()));
