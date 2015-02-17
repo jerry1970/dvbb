@@ -1,0 +1,65 @@
+<?php 
+$new_username = null;
+$new_email = null;
+$new_email_confirm = null;
+if(app::getPost()) {
+    $new_username = app::getPostByKey('new_username');
+    $new_email = app::getPostByKey('new_email');
+    $new_email_confirm = app::getPostByKey('new_email_confirm');
+}
+if(app::getViewByKey('error')) {
+    ?>
+    <div class="dvbb-container dvbb-container-row dv-notification-message dv-background-alert dv-color-white">
+        The following errors have been found:
+    </div>
+    <div class="dvbb-container dvbb-container-row">
+        <ul>
+        <?php 
+        foreach (app::getViewByKey('error') as $error) {
+            ?>
+            <li><?=$error;?></li>
+            <?php 
+        }
+        ?>
+        </ul>
+    </div>
+    <?php 
+}
+?>
+
+<form method="post" action="<?=app::getCurrentUrl()?>" class="dvbb-form">
+    <div class="dvbb-container">
+        <div class="dvbb-container-header">New user account</div>
+        <div class="dvbb-container-row">
+        
+            <div class="dv-grid-row">
+                <label class="dv-grid-column-8 dv-form-label">Username</label>
+                <div class="dv-grid-column-16"><input type="text" name="new_username" class="dv-form-element" value="<?=$new_username?>" /></div>
+            </div>
+            <div class="dv-grid-row">
+                <label class="dv-grid-column-8 dv-form-label">Password</label>
+                <div class="dv-grid-column-16"><input type="password" name="new_password" class="dv-form-element" /></div>
+            </div>
+            <div class="dv-grid-row">
+                <label class="dv-grid-column-8 dv-form-label">Confirm password</label>
+                <div class="dv-grid-column-16"><input type="password" name="new_password_confirm" class="dv-form-element" /></div>
+            </div>
+            <div class="dv-grid-row">
+                <label class="dv-grid-column-8 dv-form-label">E-mail</label>
+                <div class="dv-grid-column-16"><input type="text" name="new_email" class="dv-form-element" value="<?=$new_email?>" /></div>
+            </div>
+            <div class="dv-grid-row">
+                <label class="dv-grid-column-8 dv-form-label">Confirm e-mail</label>
+                <div class="dv-grid-column-16"><input type="text" name="new_email_confirm" class="dv-form-element" value="<?=$new_email_confirm?>" /></div>
+            </div>
+        
+        </div>
+    </div>
+    <div class="dvbb-container">
+        <div class="dvbb-container-row dv-align-center">
+        
+            <input type="submit" name="post" value="post" class="dv-form-button" />
+        
+        </div>
+    </div>
+</form>

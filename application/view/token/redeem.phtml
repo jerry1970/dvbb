@@ -1,0 +1,33 @@
+<?php 
+$user = app::getViewByKey('user');
+if ($user) {
+    $title = 'Account validated';
+}
+?>
+
+    <div class="dvbb-container">
+        <div class="dvbb-container-header">Redeem token</div>
+        <div class="dvbb-container-row dv-grid-row">
+            <?php 
+            if ($user) {
+                ?>
+                <p>
+                    Welcome, <?=$user->username?>!
+                </p>
+                <p>
+                    Your account has been succesfully validated. You can now log in with your username and password.
+                </p>
+                <?php 
+            } else {
+                ?>
+                <p>
+                    The requested token is invalid and doesn't exist.
+                </p>
+                <?php 
+            }
+            ?>
+            <p>
+                <a href="<?=app::getRouter()->generate('home')?>">Back to index</a>
+            </p>
+        </div>
+    </div>

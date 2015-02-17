@@ -9,7 +9,7 @@
 
 class password extends model {
 
-    public $tableName = 'password';
+    protected $tableName = 'password';
     
     public $id;
     public $user_id;

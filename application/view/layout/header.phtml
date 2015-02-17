@@ -4,7 +4,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         
-        <title>dvbb prototype</title>
+        <title><?=app::getConfigKey('name');?></title>
         
         <link rel="stylesheet" type="text/css" media="all"  href="<?=app::getUrl();?>/public/css/lib/normalize.css" />
         <link rel="stylesheet" type="text/css" media="all"  href="<?=app::getUrl();?>/public/css/lib/dv-import.css" />
@@ -17,18 +17,52 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     </head>
     
-    <body class="dv-width-site dv-margin-auto">
-        <header class="dvbb-header">
-            <?=app::getConfigKey('name');?>
-        </header>
-        <nav class="dvbb-navigation dv-grid-row">
-            <div class="dv-grid-column-12">
-                <a href="<?=app::getRouter()->generate('home');?>">index</a> - 
-                <a href="<?=app::getRouter()->generate('user-list');?>">user list</a> - 
-                <a href="<?=app::getUrl();?>/settings">settings</a>
-            </div>
-            <div class="dv-grid-column-12 dv-align-right">
-                <a href="<?=app::getUrl();?>">logout</a>
-            </div>
-        </nav>
+    <body>
+        <div class="dvbb-forum dv-width-site dv-margin-auto">
+            <header class="dvbb-header">
+                <?=app::getConfigKey('name');?>
+            </header>
+            <?php 
+            if (app::getConfigKey('maintenance_mode') == 0) {
+                ?>
+                <nav class="dvbb-navigation dv-grid-row">
+                    <div class="dv-grid-column-12">
+                        <a href="<?=app::getRouter()->generate('home');?>">index</a> - 
+                        <a href="<?=app::getRouter()->generate('user-list');?>">user list</a> - 
+                        <a href="<?=app::getUrl();?>/settings">settings</a>
+                    </div>
+                    <div class="dv-grid-column-12 dv-align-right">
+                        <?php
+                        if (auth::getUser()) {
+                            ?>
+                            Logged in as <?=auth::getUser()->username?> - 
+                            <a href="#" class="dvbb-logout-link" data-ajax-url="<?=app::getRouter()->generate('logout');?>">logout</a>
+                            <?php 
+                        } else {
+                            ?>
+                            <a href="#" class="dvbb-login-link" data-ajax-url="<?=app::getRouter()->generate('login');?>">login</a> - 
+                            <a href="<?=app::getRouter()->generate('register');?>">register</a>
+                            <?php 
+                        }
+                        ?>
+                    </div>
+                </nav>
+                <div class="dvbb-login-form dvbb-subnavigation dv-grid-row" style="display: none;">
+                    <form method="post" action="<?=app::getCurrentUrl()?>">
+                        <div class="dv-grid-column-9">
+                            <input type="text" name="username" placeholder="username" class="dv-form-element" />
+                        </div>
+                        <div class="dv-grid-column-1"></div>
+                        <div class="dv-grid-column-9">
+                            <input type="password" name="password" placeholder="password" class="dv-form-element" />
+                        </div>
+                        <div class="dv-grid-column-1"></div>
+                        <div class="dv-grid-column-4">
+                            <input type="submit" value="login" class="dv-form-button dv-width-100" />
+                        </div>
+                    </form>
+                </div>
+                <?php 
+            }
+            ?>
         

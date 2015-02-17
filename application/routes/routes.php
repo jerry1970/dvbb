@@ -10,72 +10,107 @@
  */
 
 // General routes
-$routes[] = array(
-    'name' => 'home',
-    'method' => 'GET|POST',
+$routes['home'] = array(
+    'method' => 'GET',
     'path' => '/',
     'controller' => 'generalController',
     'action' => 'index',
 );
-$routes[] = array(
-    'name' => 'forum',
-    'method' => 'GET|POST',
+$routes['forum'] = array(
+    'method' => 'GET',
     'path' => '/forum/[i:id]',
     'controller' => 'generalController',
     'action' => 'forum',
 );
-$routes[] = array(
-    'name' => 'topic',
-    'method' => 'GET|POST',
+$routes['topic'] = array(
+    'method' => 'GET',
     'path' => '/topic/[i:id]',
     'controller' => 'generalController',
     'action' => 'topic',
 );
 
 // User routes
-$routes[] = array(
-    'name' => 'user-list',
-    'method' => 'GET|POST',
+$routes['user-list'] = array(
+    'method' => 'GET',
     'path' => '/user/list',
     'controller' => 'userController',
     'action' => 'userlist',
+    'secure' => true,
 );
-$routes[] = array(
-    'name' => 'user-profile',
-    'method' => 'GET|POST',
+$routes['user-profile'] = array(
+    'method' => 'GET',
     'path' => '/user/[i:id]',
     'controller' => 'userController',
     'action' => 'profile',
+    'secure' => true,
 );
 
-// Topic routes
-$routes[] = array(
-    'name' => 'topic-create',
+// Create routes
+$routes['topic-create'] = array(
     'method' => 'GET|POST',
-    'path' => '/topic/[i:id]/create',
+    'path' => '/forum/[i:id]/add-topic',
     'controller' => 'topicController',
     'action' => 'create',
+    'secure' => true,
 );
-$routes[] = array(
-    'name' => 'topic-update',
+$routes['reply-create'] = array(
     'method' => 'GET|POST',
-    'path' => '/topic/update',
-    'controller' => 'topicController',
-    'action' => 'update',
+    'path' => '/topic/[i:id]/add-reply',
+    'controller' => 'replyController',
+    'action' => 'create',
+    'secure' => true,
+);
+$routes['register'] = array(
+    'method' => 'GET|POST',
+    'path' => '/register',
+    'controller' => 'userController',
+    'action' => 'create',
+);
+$routes['register-done'] = array(
+    'method' => 'GET|POST',
+    'path' => '/register/done',
+    'controller' => 'userController',
+    'action' => 'createDone',
 );
 
+// AJAX routes
+$routes['login'] = array(
+    'method' => 'POST',
+    'path' => '/login',
+    'controller' => 'ajaxController',
+    'action' => 'login',
+    'output' => 'json',
+);
+$routes['logout'] = array(
+    'method' => 'GET',
+    'path' => '/logout',
+    'controller' => 'ajaxController',
+    'action' => 'logout',
+    'output' => 'json',
+);
 
+// Token routes
+$routes['token-redeem'] = array(
+    'method' => 'GET',
+    'path' => '/token-redeem/[a:token]',
+    'controller' => 'tokenController',
+    'action' => 'redeem',
+);
 
 /**
  * Now map all the routes to AltoRouter if it exists
  */
 if (app::getRouter() instanceof AltoRouter) {
-    foreach($routes as $route) {
+    foreach($routes as $name => $parameters) {
+        $output = null;
+        if (isset($parameters['output'])) {
+            $output = '#'.$parameters['output'];
+        }
         app::getRouter()->map(
-        $route['method'],
-        $route['path'],
-        $route['controller'].'#'.$route['action'],
-        $route['name']
+            $parameters['method'],
+            $parameters['path'],
+            $parameters['controller'].'#'.$parameters['action'].$output,
+            $name
         );
     }
 }

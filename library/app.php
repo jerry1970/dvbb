@@ -19,25 +19,48 @@ class app {
     static $basePath;
     static $url;
     static $router;
-    static $viewParams = array();
-    static $db;
+    static $view = array();
+    static $post = array();
     static $config = array();
+    static $db;
     
     /**
      * Initializes some values necessary for the application to run
      */
     public static function initialize() {
+        
         // set current working directory as path
         self::setPath(str_replace('/public/', '/', getcwd()));
+        
         // get the basepath if there is any
         self::setBasePath(str_replace($_SERVER['DOCUMENT_ROOT'], '', self::getPath()));
+        
         // now get the complete public url & store it
         $url = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']);
         self::setUrl(str_replace('/public', '', $url));
+        
         // initialize config from config/app.ini
         self::setConfig(parse_ini_file(self::getPath() . '/application/config/app.ini'));
+        
         // open the database
         self::setDb(new SQLite3(app::getPath() . '/application/storage/' . app::getConfigKey('sqliteDb')));
+        
+        // loop through get and add the values to the view params
+        $params = array();
+        foreach ($_GET as $key => $value) {
+            if ($key !== 'path') {
+                $params[$key] = $value;
+            }
+        }
+        app::addToView($params);
+        // loop through the post and add the values to the post params
+        $params = array();
+        foreach ($_POST as $key => $value) {
+            if ($key !== 'path') {
+                $params[$key] = $value;
+            }
+        }
+        app::addToPost($params);
     }
     
     /**
@@ -102,6 +125,16 @@ class app {
     public static function getUrl() {
         return self::$url;
     }
+
+    /**
+     * Returns the public url used for links and front-end logic
+     * 
+     * @param string
+     */
+    public static function getUrlWithoutBasePath() {
+        $url = str_replace(self::getBasePath(), '', self::getUrl());
+        return $url;
+    }
     
     /**
      * Sets the AltoRouter router instance
@@ -129,11 +162,11 @@ class app {
      * @param array $array
      * @return array
      */
-    public static function addToViewParams($array = array()) {
+    public static function addToView($array = array()) {
         foreach($array as $key => $value) {
-            self::$viewParams[$key] = $value;
+            self::$view[$key] = $value;
         }
-        return self::$viewParams;
+        return self::$view;
     }
     
     /**
@@ -142,19 +175,19 @@ class app {
      * @param string $key
      * @return array
      */
-    public static function removeFromViewParams($key) {
-        unset(self::$viewParams[$key]);
-        return self::$viewParams;
+    public static function removeFromView($key) {
+        unset(self::$view[$key]);
+        return self::$view;
     }
     
     /**
-     * Resets the view parameters and returns the empty viewParams
+     * Resets the view parameters and returns the empty view parameterss
      * 
      * @return array
      */
-    public static function resetViewParams() {
-        self::$viewParams = array();
-        return self::$viewParams;
+    public static function resetView() {
+        self::$view = array();
+        return self::$view;
     }
     
     /**
@@ -162,8 +195,8 @@ class app {
      * 
      * @return multitype:array
      */
-    public static function getViewParams() {
-        return self::$viewParams;
+    public static function getView() {
+        return self::$view;
     }
     
     /**
@@ -172,9 +205,9 @@ class app {
      * @param string $key
      * @return string|false
      */
-    public static function getViewParam($key) {
-        if (isset(self::$viewParams[$key])) {
-            return self::$viewParams[$key];
+    public static function getViewByKey($key) {
+        if (isset(self::$view[$key])) {
+            return self::$view[$key];
         }
         return false;
     }
@@ -185,7 +218,10 @@ class app {
      * @return string
      */
     public static function getCurrentUrl() {
-        return self::$url . '/' . $_GET['path'];
+        if (isset($_GET['path'])) {
+            return self::$url . '/' . $_GET['path'];
+        }
+        return self::$url;
     }
     
     /**
@@ -247,6 +283,41 @@ class app {
     }
     
     /**
+     * Merge $post with existing post values, overwriting pre-existing values
+     * 
+     * @param array $array
+     * @return array
+     */
+    public static function addToPost($array = array()) {
+        foreach($array as $key => $value) {
+            self::$post[$key] = $value;
+        }
+        return self::$post;
+    }
+    
+    /**
+     * Returns entire post array
+     * 
+     * @return array
+     */
+    public static function getPost() {
+        return self::$post;
+    }
+    
+    /**
+     * Returns specific post value by key
+     * 
+     * @param string $key
+     * @return mixed
+     */
+    public static function getPostByKey($key) {
+        if (isset(self::$post[$key])) {
+            return self::$post[$key];
+        }
+        return false;
+    }
+    
+    /**
      * Store the database object
      * 
      * @param SQLite3 $db
@@ -277,4 +348,14 @@ class app {
         }
         return $return;
     }
+    
+    public static function redirect($url) {
+        header('Location: ' . $url);
+        die();
+    }
+    
+    public static function redirectToRoute($name, $params = array()) {
+        self::redirect(app::getRouter()->generate($name, $params));
+    }
+    
 }

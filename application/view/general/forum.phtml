@@ -1,13 +1,13 @@
 <?php 
-$forum = app::getViewParam('forum');
+$forum = app::getViewByKey('forum');
 ?>
 
 <nav class="dv-grid-row dvbb-subnavigation">
-    <div class="dv-grid-column-12">
+    <div class="dv-grid-column-12 dvbb-subnavigation-left">
         <?=app::getConfigKey('posts_per_page')?> topics per page: 
         <?php
         $pages = array();
-        for ($i = 1; $i <= app::getViewParam('pageTotal'); $i++) {
+        for ($i = 1; $i <= app::getViewByKey('pageTotal'); $i++) {
             $param = '';
             if ($i > 1) {
                 // only now do we actually add a parameter
@@ -15,10 +15,10 @@ $forum = app::getViewParam('forum');
             }
             // check if current page is 1 or otherwise
             $active = null;
-            if (app::getViewParam('page') && app::getViewParam('page') == $i) {
+            if (app::getViewByKey('page') && app::getViewByKey('page') == $i) {
                 // not page 1 but we ARE on this page
                 $active = 'active';
-            } elseif (!app::getViewParam('page') && $i == 1) {
+            } elseif (!app::getViewByKey('page') && $i == 1) {
                 $active = 'active';
             }
             $pages[] = '<a href="' . app::getCurrentUrl() . $param . '" class="dvbb-pagination-link ' . $active . '">' . $i .'</a>';
@@ -30,12 +30,18 @@ $forum = app::getViewParam('forum');
         }
         ?>
     </div>
-    <div class="dv-grid-column-12 dv-align-right">
-        <a href="<?=app::getRouter()->generate('topic-create', array('id' => $forum->id));?>">new topic</a>
+    <div class="dv-grid-column-12 dvbb-subnavigation-right">
+        <?php 
+        if (auth::getUser()) {
+            ?>
+            <a href="<?=app::getRouter()->generate('topic-create', array('id' => $forum->id));?>">new topic</a>
+            <?php 
+        }
+        ?>
     </div>
 </nav>
 
-<div class="dvbb-container">
+<div class="dvbb-container dvbb-forum-list">
     <div class="dvbb-container-header"><?=$forum->title?></div>
     <div class="dvbb-container-legend dv-grid-row">
         <div class="dv-grid-column-15">Thread / Author</div>
@@ -43,21 +49,31 @@ $forum = app::getViewParam('forum');
         <div class="dv-grid-column-7">Last Post</div>
     </div>
     <?php 
-    $posts = app::getViewParam('posts');
-    if (count($posts) > 0) {
-        foreach ($posts as $post) {
-            $url = app::getRouter()->generate('topic', array('id' => $post->id));
-            $subPosts = count((new post())->getByField('parent_id', $post->id));
-            $user = (new user())->getById($post->user_id);
+    $topics = app::getViewByKey('topics');
+    if (count($topics) > 0) {
+        foreach ($topics as $topic) {
+            // set unread status to false
+            $unread = false;
+            
+            $unreadStatus = $topic->getUnreadStatus();
+            if ($unreadStatus === null || $topic->last_post_at > $unreadStatus->created_at) {
+                $unread = true;
+            }
+            
+            $url = app::getRouter()->generate('topic', array('id' => $topic->id));
+            $subPosts = count((new post())->getByField('parent_id', $topic->id));
+            $user = (new user())->getById($topic->user_id);
             ?>
             <div class="dvbb-container-row dv-grid-row">
-                <div class="dv-grid-column-1">&bull;</div>
+                <div class="dv-grid-column-1">
+                    <div class="dvbb-read-status<?=($unread ? ' unread' : '');?>"></div>
+                </div>
                 <div class="dv-grid-column-14">
-                    <a href="<?=$url;?>"><?=$post->title;?></a><br />
-                    <small style="color: grey"><?=$user->username;?> - posted <?=$post->created_at?></small>
+                    <a href="<?=$url;?>"><?=$topic->title;?></a><br />
+                    <small style="color: grey"><?=$user->username;?> - posted <?=$topic->created_at?></small>
                 </div>
                 <div class="dv-grid-column-2"><?=$subPosts;?></div>
-                <div class="dv-grid-column-7">--</div>
+                <div class="dv-grid-column-7"><?=$topic->last_post_at?></div>
             </div>
             <?php
         }
@@ -78,7 +94,13 @@ $forum = app::getViewParam('forum');
         <?=app::getConfigKey('posts_per_page')?> topics per page: 
         <?=$pages;?>
     </div>
-    <div class="dv-grid-column-12 dv-align-right">
-        <a href="<?=app::getRouter()->generate('topic-create');?>">new topic</a>
+    <div class="dv-grid-column-12 dvbb-subnavigation-right">
+        <?php 
+        if (auth::getUser()) {
+            ?>
+            <a href="<?=app::getRouter()->generate('topic-create', array('id' => $forum->id));?>">new topic</a>
+            <?php 
+        }
+        ?>
     </div>
 </nav>

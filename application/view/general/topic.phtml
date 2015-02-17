@@ -1,8 +1,12 @@
+<?php 
+$topic = app::getViewByKey('topic');
+?>
+
 <nav class="dv-grid-row dvbb-subnavigation">
-    <div class="dv-grid-column-12">
+    <div class="dv-grid-column-12 dvbb-subnavigation-left">
         <?=app::getConfigKey('posts_per_page')?> posts per page: 
         <?php
-        for ($i = 1; $i <= app::getViewParam('pageTotal'); $i++) {
+        for ($i = 1; $i <= app::getViewByKey('pageTotal'); $i++) {
             $param = '';
             if ($i > 1) {
                 // only now do we actually add a parameter
@@ -10,10 +14,10 @@
             }
             // check if current page is 1 or otherwise
             $active = null;
-            if (app::getViewParam('page') && app::getViewParam('page') == $i) {
+            if (app::getViewByKey('page') && app::getViewByKey('page') == $i) {
                 // not page 1 but we ARE on this page
                 $active = 'active';
-            } elseif (!app::getViewParam('page') && $i == 1) {
+            } elseif (!app::getViewByKey('page') && $i == 1) {
                 $active = 'active';
             }
             $pages[] = '<a href="' . app::getCurrentUrl() . $param . '" class="dvbb-pagination-link ' . $active . '">' . $i .'</a>';
@@ -21,18 +25,21 @@
         echo $pages = implode(' ', $pages);
         ?>
     </div>
-    <div class="dv-grid-column-12 dv-align-right">
-        <a href="<?=app::getUrl();?>">new reply</a>
+    <div class="dv-grid-column-12 dvbb-subnavigation-right">
+        <?php 
+        if (auth::getUser()) {
+            ?>
+            <a href="<?=app::getRouter()->generate('reply-create', array('id' => $topic->id));?>">new reply</a>
+            <?php 
+        }
+        ?>
     </div>
 </nav>
 
-<?php 
-$topic = app::getViewParam('topic');
-?>
 <div class="dvbb-container">
     <div class="dvbb-container-header"><?=$topic->title?></div>
     <?php 
-    $posts = app::getViewParam('posts');
+    $posts = app::getViewByKey('posts');
     if (count($posts) > 0) {
         foreach ($posts as $subPost) {
             $user = (new user())->getById($subPost->user_id);
@@ -43,7 +50,7 @@ $topic = app::getViewParam('topic');
                 </div>
                 <div class="dv-grid-column-19">
                     <span class="dv-color-notice">
-                        <small><?=$subPost->title?> - posted <?=$subPost->created_at?></small>
+                        <small>posted <?=$subPost->created_at?></small>
                     </span>
                     <?=app::nl2p($subPost->body)?>
                 </div>
@@ -59,7 +66,13 @@ $topic = app::getViewParam('topic');
         <?=app::getConfigKey('posts_per_page')?> posts per page: 
         <?=$pages;?>
     </div>
-    <div class="dv-grid-column-12 dv-align-right">
-        <a href="<?=app::getUrl();?>">new reply</a>
+    <div class="dv-grid-column-12 dvbb-subnavigation-right">
+        <?php 
+        if (auth::getUser()) {
+            ?>
+            <a href="<?=app::getRouter()->generate('reply-create', array('id' => $topic->id));?>">new reply</a>
+            <?php 
+        }
+        ?>
     </div>
 </nav>

@@ -9,12 +9,12 @@
 
 class forum extends model {
 
-    public $tableName = 'forum';
+    protected $tableName = 'forum';
     
     public $id;
     public $parent_id;
     public $category_id;
     public $title;
     public $description;
-
+    
 }

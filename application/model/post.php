@@ -9,7 +9,7 @@
 
 class post extends model {
 
-    public $tableName = 'post';
+    protected $tableName = 'post';
     
     public $id;
     public $forum_id;
@@ -19,5 +19,18 @@ class post extends model {
     public $body;
     public $created_at;
     public $updated_at;
+    public $last_post_at;
 
+    public function getUnreadStatus() {
+        if (auth::getUser()) {
+            $query = 'SELECT * FROM unread WHERE user_id = \'' . auth::getUser()->id . '\' AND post_id = \'' . $this->id . '\'';
+            $unreadStatus = (new unread())->getByQuery($query);
+        
+            if (count($unreadStatus)) {
+                return $unreadStatus[0];
+            }
+        }
+        return null;
+    }
+    
 }

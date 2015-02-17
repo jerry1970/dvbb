@@ -1,9 +1,10 @@
 <?php
 $categories = (new category())->getAll();
+$lastPostPerForum = app::getViewByKey('lastPostPerForum');
 foreach ($categories as $category) {
     $forums = (new forum())->getByField('category_id', $category->id);
     ?>
-    <div class="dvbb-container">
+    <div class="dvbb-container dvbb-forum-list">
         <div class="dvbb-container-header"><?=$category->title?></div>
         <div class="dvbb-container-legend dv-grid-row">
             <div class="dv-grid-column-13">Forum</div>
@@ -13,6 +14,10 @@ foreach ($categories as $category) {
         </div>
         <?php 
         foreach ($forums as $forum) {
+            // set unread status to false
+            $unread = false;
+            
+            // build url to forum
             $url = app::getRouter()->generate('forum', array('id' => $forum->id));
             // only topics have a forum_id set
             $topics = (new post())->getByField('forum_id', $forum->id);
@@ -23,16 +28,37 @@ foreach ($categories as $category) {
                 $replies = (new post())->getByField('parent_id', $topic->id);
                 $replyCount = $replyCount + count($replies);
             }
+            $lastPost = $lastPostPerForum[$forum->id];
+            if ($lastPost !== null) {
+                $unreadStatus = $lastPost->getUnreadStatus();
+                if ($unreadStatus === null || $lastPost->last_post_at > $unreadStatus->created_at) {
+                    $unread = true;
+                }
+            }
             ?>
             <div class="dvbb-container-row dv-grid-row">
-                <div class="dv-grid-column-1">&bull;</div>
+                <div class="dv-grid-column-1">
+                    <div class="dvbb-read-status<?=($unread ? ' unread' : '');?>"></div>
+                </div>
                 <div class="dv-grid-column-12">
                     <a href="<?=$url;?>"><?=$forum->title;?></a><br />
                     <small style="color: grey"><?=$forum->description;?></small>
                 </div>
                 <div class="dv-grid-column-2"><?=$topicCount;?></div>
                 <div class="dv-grid-column-2"><?=$replyCount;?></div>
-                <div class="dv-grid-column-7">--</div>
+                <div class="dv-grid-column-7">
+                    <?php 
+                    if ($lastPost) {
+                        $url = app::getRouter()->generate('topic', array('id' => $lastPost->id));
+                        ?>
+                        <a href="<?=$url;?>"><?=$lastPost->title;?></a><br />
+                        <small style="color: grey"><?=$lastPost->last_post_at;?></small>
+                        <?php 
+                    } else {
+                        echo '--';
+                    }
+                    ?>
+                </div>
             </div>
             <?php
         }
@@ -40,13 +66,27 @@ foreach ($categories as $category) {
     </div>
     <?php 
 }
+
+// get user statistics
+$users = count((new user())->getAll());
+// get post statistics
+$posts = (new post())->getAll();
+$topics = 0;
+$replies = 0;
+foreach ($posts as $post) {
+    if ($post->forum_id) {
+        $topics++;
+    } else {
+        $replies++;
+    }
+}
 ?>
 
 <div class="dvbb-container">
     <div class="dvbb-container-header">Forum statistics</div>
     <div class="dvbb-container-row">
-        Total members: x<br />
-        Total posts: x<br />
-        Total replies: x<br />
+        Total members: <?=$users;?><br />
+        Total topics: <?=$topics;?><br />
+        Total replies: <?=$replies;?><br />
     </div>
 </div>

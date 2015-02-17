@@ -9,11 +9,12 @@
 
 class user extends model {
 
-    public $tableName = 'user';
+    protected $tableName = 'user';
     
     public $id;
     public $username;
     public $email;
+    public $validated_at;
     public $created_at;
     public $updated_at;
 

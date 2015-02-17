@@ -23,12 +23,7 @@ class controller {
      */
     public function __construct($params = array()) {
         $this->params = $params;
-        foreach ($_GET as $key => $value) {
-            if ($key !== 'path') {
-                $params[$key] = $value;
-            }
-        }
-        app::addToViewParams($params);
+        app::addToView($params);
     }
     
 }

@@ -9,7 +9,7 @@
 
 class category extends model {
 
-    public $tableName = 'category';
+    protected $tableName = 'category';
     
     public $id;
     public $title;
