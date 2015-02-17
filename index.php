@@ -58,7 +58,11 @@ spl_autoload_register(function ($class) {
  */
 if (isset($_SESSION['id'])) {
     $user = (new user())->getById($_SESSION['id']);
-    auth::setUser($user);
+    if ($user->id) {
+        auth::setUser($user);
+    } else {
+        unset($_SESSION['id']);
+    }
 }
 
 /**

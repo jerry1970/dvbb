@@ -50,9 +50,10 @@ foreach ($categories as $category) {
                     <?php 
                     if ($lastPost) {
                         $url = app::getRouter()->generate('topic', array('id' => $lastPost->id));
+                        $user = (new user())->getById($lastPost->user_id);
                         ?>
                         <a href="<?=$url;?>"><?=$lastPost->title;?></a><br />
-                        <small style="color: grey"><?=$lastPost->last_post_at;?></small>
+                        <small style="color: grey"><?=$user->username?> at <?=$lastPost->last_post_at;?></small>
                         <?php 
                     } else {
                         echo '--';
