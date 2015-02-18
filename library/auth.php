@@ -53,7 +53,7 @@ class auth {
                         user.username = \'' . SQLite3::escapeString($username) . '\'
                         AND
                         password.password = \'' . $password . '\'';
-        $dbResult = app::getDb()->query($query);
+        $dbResult = store::getDb()->query($query);
         if ($row = $dbResult->fetchArray(SQLITE3_ASSOC)) {
             self::$user = (new user())->getById($row['id']);
         }

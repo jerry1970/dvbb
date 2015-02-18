@@ -1,6 +1,6 @@
 <?php
 $categories = (new category())->getAll();
-$lastPostPerForum = app::getViewByKey('lastPostPerForum');
+$lastPostPerForum = store::getParam('lastPostPerForum');
 foreach ($categories as $category) {
     $forums = (new forum())->getByField('category_id', $category->id);
     ?>
@@ -18,7 +18,7 @@ foreach ($categories as $category) {
             $unread = false;
             
             // build url to forum
-            $url = app::getRouter()->generate('forum', array('id' => $forum->id));
+            $url = store::getRouter()->generate('forum', array('id' => $forum->id));
             // only topics have a forum_id set
             $topics = (new post())->getByField('forum_id', $forum->id);
             $topicCount = count($topics);
@@ -49,7 +49,7 @@ foreach ($categories as $category) {
                 <div class="dv-grid-column-7">
                     <?php 
                     if ($lastPost) {
-                        $url = app::getRouter()->generate('topic', array('id' => $lastPost->id));
+                        $url = store::getRouter()->generate('topic', array('id' => $lastPost->id));
                         $user = (new user())->getById($lastPost->user_id);
                         ?>
                         <a href="<?=$url;?>"><?=$lastPost->title;?></a><br />

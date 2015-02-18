@@ -1,5 +1,5 @@
 <?php
-$user = (new user())->getById(app::getViewByKey('id'));
+$user = (new user())->getById(store::getParam('id'));
 ?>
 <div class="dvbb-container">
     <div class="dvbb-container-header">Profile of <?=$user->username;?></div>

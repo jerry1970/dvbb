@@ -1,20 +1,20 @@
 <?php 
 $body = null;
-if(app::getPost()) {
-    $body = app::getPostByKey('body');
+if(store::getPostValues()) {
+    $body = store::getPostValue('body');
 }
-if(app::getViewByKey('error')) {
+if(store::getParam('error')) {
     ?>
     <div class="dvbb-container dvbb-container-row dv-notification-message dv-background-alert dv-color-white">
-        <?=app::getViewByKey('error');?>
+        <?=store::getParam('error');?>
     </div> 
     <?php 
 }
 ?>
 
-<form method="post" action="<?=app::getCurrentUrl()?>" class="dvbb-form">
+<form method="post" action="<?=store::getCurrentUrl()?>" class="dvbb-form">
     <div class="dvbb-container">
-        <div class="dvbb-container-header">New reply to <?=app::getViewByKey('topic')->title;?></div>
+        <div class="dvbb-container-header">New reply to <?=store::getParam('topic')->title;?></div>
         <div class="dvbb-container-row">
         
             <div class="dv-grid-row">

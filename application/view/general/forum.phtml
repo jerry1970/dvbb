@@ -1,13 +1,13 @@
 <?php 
-$forum = app::getViewByKey('forum');
+$forum = store::getParam('forum');
 ?>
 
 <nav class="dv-grid-row dvbb-subnavigation">
     <div class="dv-grid-column-12 dvbb-subnavigation-left">
-        <?=app::getConfigKey('posts_per_page')?> topics per page: 
+        <?=store::getConfigParam('posts_per_page')?> topics per page: 
         <?php
         $pages = array();
-        for ($i = 1; $i <= app::getViewByKey('pageTotal'); $i++) {
+        for ($i = 1; $i <= store::getParam('pageTotal'); $i++) {
             $param = '';
             if ($i > 1) {
                 // only now do we actually add a parameter
@@ -15,18 +15,18 @@ $forum = app::getViewByKey('forum');
             }
             // check if current page is 1 or otherwise
             $active = null;
-            if (app::getViewByKey('page') && app::getViewByKey('page') == $i) {
+            if (store::getParam('page') && store::getParam('page') == $i) {
                 // not page 1 but we ARE on this page
                 $active = 'active';
-            } elseif (!app::getViewByKey('page') && $i == 1) {
+            } elseif (!store::getParam('page') && $i == 1) {
                 $active = 'active';
             }
-            $pages[] = '<a href="' . app::getCurrentUrl() . $param . '" class="dvbb-pagination-link ' . $active . '">' . $i .'</a>';
+            $pages[] = '<a href="' . store::getCurrentUrl() . $param . '" class="dvbb-pagination-link ' . $active . '">' . $i .'</a>';
         }
         if (count($pages) > 1) {
             echo $pages = implode(' ', $pages);
         } else {
-            echo $pages = '<a href="' . app::getCurrentUrl() . '" >1</a>';
+            echo $pages = '<a href="' . store::getCurrentUrl() . '" >1</a>';
         }
         ?>
     </div>
@@ -34,7 +34,7 @@ $forum = app::getViewByKey('forum');
         <?php 
         if (auth::getUser()) {
             ?>
-            <a href="<?=app::getRouter()->generate('topic-create', array('id' => $forum->id));?>">new topic</a>
+            <a href="<?=store::getRouter()->generate('topic-create', array('id' => $forum->id));?>">new topic</a>
             <?php 
         }
         ?>
@@ -49,7 +49,7 @@ $forum = app::getViewByKey('forum');
         <div class="dv-grid-column-7">Last Post</div>
     </div>
     <?php 
-    $topics = app::getViewByKey('topics');
+    $topics = store::getParam('topics');
     if (count($topics) > 0) {
         foreach ($topics as $topic) {
             // set unread status to false
@@ -60,7 +60,7 @@ $forum = app::getViewByKey('forum');
                 $unread = true;
             }
             
-            $url = app::getRouter()->generate('topic', array('id' => $topic->id));
+            $url = store::getRouter()->generate('topic', array('id' => $topic->id));
             $subPosts = count((new post())->getByField('parent_id', $topic->id));
             $user = (new user())->getById($topic->user_id);
             ?>
@@ -91,14 +91,14 @@ $forum = app::getViewByKey('forum');
 
 <nav class="dv-grid-row dvbb-subnavigation">
     <div class="dv-grid-column-12">
-        <?=app::getConfigKey('posts_per_page')?> topics per page: 
+        <?=store::getConfigParam('posts_per_page')?> topics per page: 
         <?=$pages;?>
     </div>
     <div class="dv-grid-column-12 dvbb-subnavigation-right">
         <?php 
         if (auth::getUser()) {
             ?>
-            <a href="<?=app::getRouter()->generate('topic-create', array('id' => $forum->id));?>">new topic</a>
+            <a href="<?=store::getRouter()->generate('topic-create', array('id' => $forum->id));?>">new topic</a>
             <?php 
         }
         ?>

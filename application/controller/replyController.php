@@ -10,14 +10,12 @@
 class replyController extends controller {
 
     public function create() {
-        $topic = (new post())->getById(app::getViewByKey('id'));
-        app::addToView(array(
-            'topic' => $topic,
-        ));
+        $topic = (new post())->getById(store::getParam('id'));
+        store::addParam('topic', $topic);
         
-        if (app::getPost()) {
+        if (store::getPostValues()) {
             // deal with post here
-            $values = app::getPost();
+            $values = store::getPostValues();
             if (!empty($values['body'])) {
                 $createdAt = (new DateTime)->format('Y-m-d H:i:s');
                 $post = (new post())->generateFromRowSafe(array(
@@ -36,15 +34,15 @@ class replyController extends controller {
                     // need to now calculate the number of pages in this topic and add ?page=x to the url
                     $postTotal = count((new post())->getByQuery('SELECT * FROM post WHERE parent_id = ' . $topic->id)) + 1;
                     // get some more info
-                    $pageTotal = ceil($postTotal / app::getConfigKey('posts_per_page'));
-                    $url = app::getRouter()->generate('topic', array('id' => $topic->id));
+                    $pageTotal = ceil($postTotal / store::getConfigParam('posts_per_page'));
+                    $url = store::getRouter()->generate('topic', array('id' => $topic->id));
                     if ($pageTotal > 1) {
                         $url .= '?page=' . $pageTotal;
                     }
-                    app::redirect($url);
+                    tool::redirect($url);
                 }
             } else {
-                app::addToView(array('error' => 'All fields are required.'));
+                store::addParam('error', 'All fields are required.');
             }
         }
     }

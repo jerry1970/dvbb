@@ -21,20 +21,18 @@ class generalController extends controller {
         }
         
         // now add the most recent data to the view
-        app::addToView(array(
-            'lastPostPerForum' => $lastPostPerForum
-        ));
+        store::addParam('lastPostPerForum', $lastPostPerForum);
     }
     
     public function forum() {
         // get forum based on id
-        $forum = (new forum())->getById(app::getViewByKey('id'));
+        $forum = (new forum())->getById(store::getParam('id'));
         
         // get limit based on posts_per_page
-        $originalLimit = app::getConfigKey('posts_per_page');
+        $originalLimit = store::getConfigParam('posts_per_page');
         // see if there's a page available so we have an offset for limit
-        if (app::getViewByKey('page')) {
-            $limit = ($originalLimit * ((int)app::getViewByKey('page') - 1)) . ', ' . $originalLimit;
+        if (store::getParam('page')) {
+            $limit = ($originalLimit * ((int)store::getParam('page') - 1)) . ', ' . $originalLimit;
         } else {
             $limit = $originalLimit;
         }
@@ -44,9 +42,9 @@ class generalController extends controller {
         $postTotal = count((new post())->getByQuery('SELECT * FROM post WHERE forum_id = ' . $forum->id));
         
         // get some more info
-        $pageTotal = ceil($postTotal / app::getConfigKey('posts_per_page'));
+        $pageTotal = ceil($postTotal / store::getConfigParam('posts_per_page'));
         
-        app::addToView(array(
+        store::addParams(array(
             'forum' => $forum,
             'topics' => $topics,
             'postTotal' => $postTotal,
@@ -56,7 +54,7 @@ class generalController extends controller {
     
     public function topic() {
         // get topic based on id
-        $topic = (new post())->getById(app::getViewByKey('id'));
+        $topic = (new post())->getById(store::getParam('id'));
 
         // store that the user has opened this topic now if we're logged in
         if (auth::getUser()) {
@@ -72,27 +70,27 @@ class generalController extends controller {
         }
         
         // get limit based on posts_per_page
-        $originalLimit = app::getConfigKey('posts_per_page');
+        $originalLimit = store::getConfigParam('posts_per_page');
         
         // see if there's a page available so we have an offset for limit
-        if (app::getViewByKey('page')) {
-            $limit = (($originalLimit - 1) * ((int)app::getViewByKey('page') - 1)) . ', ' . $originalLimit;
+        if (store::getParam('page')) {
+            $limit = (($originalLimit - 1) * ((int)store::getParam('page') - 1)) . ', ' . $originalLimit;
         } else {
             $limit = $originalLimit - 1;
         }
         
         // get posts based on parameters
         $posts = (new post())->getByQuery('SELECT * FROM post WHERE parent_id = ' . $topic->id . ' ORDER BY id ASC LIMIT ' . $limit);
-        if (!app::getViewByKey('page')) {
+        if (!store::getParam('page')) {
             // we're on page 1 so add the topic post to the front of the replies
             $posts = array_merge(array($topic), $posts);
         }
         $postTotal = count((new post())->getByQuery('SELECT * FROM post WHERE parent_id = ' . $topic->id)) + 1;
         
         // get some more info
-        $pageTotal = ceil($postTotal / app::getConfigKey('posts_per_page'));
+        $pageTotal = ceil($postTotal / store::getConfigParam('posts_per_page'));
 
-        app::addToView(array(
+        store::addParams(array(
             'topic' => $topic,
             'posts' => $posts,
             'postTotal' => $postTotal,

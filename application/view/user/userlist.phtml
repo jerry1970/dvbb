@@ -37,14 +37,16 @@ $users = (new user())->getAll();
             ),
         ));
         $replyCount = count($replies);
+        
+        $lastPost = (new post())->getByQuery('SELECT created_at FROM post WHERE user_id = \'' . $user->id . '\' ORDER BY id DESC LIMIT 1');
         ?>
         <div class="dvbb-container-row dv-grid-row">
             <div class="dv-grid-column-13">
-                <a href="<?=app::getRouter()->generate('user-profile', array('id' => $user->id));?>"><?=$user->username;?></a>
+                <a href="<?=store::getRouter()->generate('user-profile', array('id' => $user->id));?>"><?=$user->username;?></a>
             </div>
             <div class="dv-grid-column-2"><?=$topicCount?></div>
             <div class="dv-grid-column-2"><?=$replyCount?></div>
-            <div class="dv-grid-column-7">Last Post</div>
+            <div class="dv-grid-column-7"><?=(isset($lastPost[0]) ? $lastPost[0]->created_at : '--');?></div>
         </div>
         <?php
     }

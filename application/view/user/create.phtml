@@ -2,12 +2,12 @@
 $new_username = null;
 $new_email = null;
 $new_email_confirm = null;
-if(app::getPost()) {
-    $new_username = app::getPostByKey('new_username');
-    $new_email = app::getPostByKey('new_email');
-    $new_email_confirm = app::getPostByKey('new_email_confirm');
+if(store::getPostValues()) {
+    $new_username = store::getPostValue('new_username');
+    $new_email = store::getPostValue('new_email');
+    $new_email_confirm = store::getPostValue('new_email_confirm');
 }
-if(app::getViewByKey('error')) {
+if(store::getParam('error')) {
     ?>
     <div class="dvbb-container dvbb-container-row dv-notification-message dv-background-alert dv-color-white">
         The following errors have been found:
@@ -15,7 +15,7 @@ if(app::getViewByKey('error')) {
     <div class="dvbb-container dvbb-container-row">
         <ul>
         <?php 
-        foreach (app::getViewByKey('error') as $error) {
+        foreach (store::getParam('error') as $error) {
             ?>
             <li><?=$error;?></li>
             <?php 
@@ -27,7 +27,7 @@ if(app::getViewByKey('error')) {
 }
 ?>
 
-<form method="post" action="<?=app::getCurrentUrl()?>" class="dvbb-form">
+<form method="post" action="<?=store::getCurrentUrl()?>" class="dvbb-form">
     <div class="dvbb-container">
         <div class="dvbb-container-header">New user account</div>
         <div class="dvbb-container-row">

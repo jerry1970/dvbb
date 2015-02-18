@@ -100,13 +100,13 @@ $routes['token-redeem'] = array(
 /**
  * Now map all the routes to AltoRouter if it exists
  */
-if (app::getRouter() instanceof AltoRouter) {
+if (store::getRouter() instanceof AltoRouter) {
     foreach($routes as $name => $parameters) {
         $output = null;
         if (isset($parameters['output'])) {
             $output = '#'.$parameters['output'];
         }
-        app::getRouter()->map(
+        store::getRouter()->map(
             $parameters['method'],
             $parameters['path'],
             $parameters['controller'].'#'.$parameters['action'].$output,

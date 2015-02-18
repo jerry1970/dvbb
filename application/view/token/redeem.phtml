@@ -1,5 +1,5 @@
 <?php 
-$user = app::getViewByKey('user');
+$user = store::getParam('user');
 if ($user) {
     $title = 'Account validated';
 }
@@ -27,7 +27,7 @@ if ($user) {
             }
             ?>
             <p>
-                <a href="<?=app::getRouter()->generate('home')?>">Back to index</a>
+                <a href="<?=store::getRouter()->generate('home')?>">Back to index</a>
             </p>
         </div>
     </div>

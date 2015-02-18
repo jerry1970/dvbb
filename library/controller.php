@@ -23,7 +23,7 @@ class controller {
      */
     public function __construct($params = array()) {
         $this->params = $params;
-        app::addToView($params);
+        store::addParams($params);
     }
     
 }

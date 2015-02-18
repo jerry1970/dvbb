@@ -17,9 +17,9 @@ class userController extends controller {
     
     public function create() {
         // check to see if we've got posted values
-        if (app::getPost()) {
+        if (store::getPostValues()) {
             // deal with post here
-            $values = app::getPost();
+            $values = store::getPostValues();
             
             // set validation values
             $error = array();
@@ -31,7 +31,6 @@ class userController extends controller {
                     $error[] = 'Username can only contain alphanumeric characters and underscores.';
                 } else {
                     // Only check the database if the username is valid
-//                     $user = (new user())->getByQuery('SELECT * FROM user WHERE username = \'' . SQLite3::escapeString($values['new_username']) . '\'');
                     $user = (new user())->getByField('username', $values['new_username']);
                     if (count($user) > 0) {
                         $error[] = 'This username already exists in the database.';
@@ -70,7 +69,6 @@ class userController extends controller {
                     $error[] = 'E-mail doesn\'t seem to be valid.';
                 } else {
                     // Only check the database if the e-mail is valid
-//                     $user = (new user())->getByQuery('SELECT * FROM user WHERE email = \'' . SQLite3::escapeString($values['new_email']) . '\'');
                     $user = (new user())->getByField('email', $values['new_email']);
                     if (count($user) > 0) {
                         $error[] = 'This e-mail address already exists in the database.';
@@ -106,12 +104,12 @@ class userController extends controller {
                         $mail = new PHPMailer;
                         $mail->isHTML(true);
                         $mail->From = 'nobody@dvbb';
-                        $mail->FromName = app::getConfigKey('name');
+                        $mail->FromName = store::getConfigParam('name');
                         $mail->addAddress($user->email, $user->username);
                         $mail->Subject = 'Your account is almost ready - validate now';
                         
                         // set body now
-                        $tokenUrl = app::getUrlWithoutBasePath() . app::getRouter()->generate('token-redeem', array('token' => $token->token));
+                        $tokenUrl = store::getUrlWithoutBasePath() . store::getRouter()->generate('token-redeem', array('token' => $token->token));
                         
                         $mail->Body = 'Click or copy/paste the following link to validate your account:<br /><br />';
                         $mail->Body .= '<a href="' . $tokenUrl . '">' . $tokenUrl . '</a>';
@@ -120,13 +118,13 @@ class userController extends controller {
                             $error[] = 'Message could not be sent. Your registration is incomplete.';
                         } else {
                             $mail->ClearAddresses();
-                            app::redirectToRoute('register-done');
+                            tool::redirectToRoute('register-done');
                         }
                     }
                 }
             }
 
-            app::addToView(array('error' => $error));
+            store::addParam('error', $error);
         }
         
     }

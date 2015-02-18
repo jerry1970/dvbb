@@ -4,15 +4,15 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         
-        <title><?=app::getConfigKey('name');?></title>
+        <title><?=store::getConfigParam('name');?></title>
         
-        <link rel="stylesheet" type="text/css" media="all"  href="<?=app::getUrl();?>/public/css/lib/normalize.css" />
-        <link rel="stylesheet" type="text/css" media="all"  href="<?=app::getUrl();?>/public/css/lib/dv-import.css" />
-        <link rel="stylesheet" type="text/css" media="all"  href="<?=app::getUrl();?>/public/css/common.css" />
+        <link rel="stylesheet" type="text/css" media="all"  href="<?=store::getUrl();?>/public/css/lib/normalize.css" />
+        <link rel="stylesheet" type="text/css" media="all"  href="<?=store::getUrl();?>/public/css/lib/dv-import.css" />
+        <link rel="stylesheet" type="text/css" media="all"  href="<?=store::getUrl();?>/public/css/common.css" />
         
-        <script src="<?=app::getUrl();?>/public/js/lib/jquery-1.11.2.min.js"></script>
-        <script src="<?=app::getUrl();?>/public/js/lib/html5shiv.js"></script>
-        <script src="<?=app::getUrl();?>/public/js/common.js"></script>
+        <script src="<?=store::getUrl();?>/public/js/lib/jquery-1.11.2.min.js"></script>
+        <script src="<?=store::getUrl();?>/public/js/lib/html5shiv.js"></script>
+        <script src="<?=store::getUrl();?>/public/js/common.js"></script>
         
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     </head>
@@ -20,35 +20,35 @@
     <body>
         <div class="dvbb-forum dv-width-site dv-margin-auto">
             <header class="dvbb-header">
-                <?=app::getConfigKey('name');?>
+                <?=store::getConfigParam('name');?>
             </header>
             <?php 
-            if (app::getConfigKey('maintenance_mode') == 0) {
+            if (store::getConfigParam('maintenance_mode') == 0) {
                 ?>
                 <nav class="dvbb-navigation dv-grid-row">
                     <div class="dv-grid-column-12">
-                        <a href="<?=app::getRouter()->generate('home');?>">index</a> - 
-                        <a href="<?=app::getRouter()->generate('user-list');?>">user list</a> - 
-                        <a href="<?=app::getUrl();?>/settings">settings</a>
+                        <a href="<?=store::getRouter()->generate('home');?>">index</a> - 
+                        <a href="<?=store::getRouter()->generate('user-list');?>">user list</a> - 
+                        <a href="<?=store::getUrl();?>/settings">settings</a>
                     </div>
                     <div class="dv-grid-column-12 dv-align-right">
                         <?php
                         if (auth::getUser()) {
                             ?>
                             Logged in as <?=auth::getUser()->username?> - 
-                            <a href="#" class="dvbb-logout-link" data-ajax-url="<?=app::getRouter()->generate('logout');?>">logout</a>
+                            <a href="#" class="dvbb-logout-link" data-ajax-url="<?=store::getRouter()->generate('logout');?>">logout</a>
                             <?php 
                         } else {
                             ?>
-                            <a href="#" class="dvbb-login-link" data-ajax-url="<?=app::getRouter()->generate('login');?>">login</a> - 
-                            <a href="<?=app::getRouter()->generate('register');?>">register</a>
+                            <a href="#" class="dvbb-login-link" data-ajax-url="<?=store::getRouter()->generate('login');?>">login</a> - 
+                            <a href="<?=store::getRouter()->generate('register');?>">register</a>
                             <?php 
                         }
                         ?>
                     </div>
                 </nav>
                 <div class="dvbb-login-form dvbb-subnavigation dv-grid-row" style="display: none;">
-                    <form method="post" action="<?=app::getCurrentUrl()?>">
+                    <form method="post" action="<?=store::getCurrentUrl()?>">
                         <div class="dv-grid-column-9">
                             <input type="text" name="username" placeholder="username" class="dv-form-element" />
                         </div>

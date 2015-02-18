@@ -30,15 +30,15 @@ if ($debug) {
 }
 
 /**
- * Require app class and tell it to initialize, this will allow the use of getPath(), getBasePath() ,getUrl(), etc.
+ * Require boot class and tell it to initialize, this will allow the use of store to get path, url, etc.
  */
-require('./library/app.php');
-app::initialize();
+require('./library/boot.php');
+boot::initialize();
 
 /**
  * Because PHPMailer has its own autoloader, it's easiest to directly load it
  */
-require(app::getPath() . '/library/PHPMailer/PHPMailerAutoload.php');
+require(store::getPath() . '/library/PHPMailer/PHPMailerAutoload.php');
 
 /**
  * We're going to need an autoloader to look in the directories where our classes live.
@@ -47,8 +47,8 @@ require(app::getPath() . '/library/PHPMailer/PHPMailerAutoload.php');
 spl_autoload_register(function ($class) {
     $locations = array('application/model', 'application/controller', 'library', 'library/PHPMailer');
     foreach ($locations as $location) {
-        if (file_exists(app::getPath() . '/' . $location . '/' . $class . '.php')) {
-            require(app::getPath() . '/' . $location . '/' . $class . '.php');
+        if (file_exists(store::getPath() . '/' . $location . '/' . $class . '.php')) {
+            require(store::getPath() . '/' . $location . '/' . $class . '.php');
         }
     }
 });
@@ -68,34 +68,34 @@ if (isset($_SESSION['id'])) {
 /**
  * We instantiate a new AltoRouter instance and store it in app
  */
-app::setRouter(new AltoRouter());
+store::setRouter(new AltoRouter());
 
 /**
  * If we have a basePath, set it on AltoRouter so it knows how to deal with requests
  */
-if (app::getBasePath()) {
-    app::getRouter()->setBasePath(app::getBasePath());
+if (store::getBasePath()) {
+    store::getRouter()->setBasePath(store::getBasePath());
 }
 
 /**
  * Load the routes file, which will define & loop through an array of routes and map the routes in AltoRouter
  */
-require(app::getPath() . '/application/routes/routes.php');
+require(store::getPath() . '/application/routes/routes.php');
 
 /**
  * Check if maintenance mode is on, and if so, show the maintenance page
  */
-if (app::getConfigKey('maintenance_mode') == 1) {
-    require(app::getPath() . '/application/view/layout/header.phtml');
-    require(app::getPath() . '/application/view/layout/maintenance.phtml');
-    require(app::getPath() . '/application/view/layout/footer.phtml');
+if (store::getConfigParam('maintenance_mode') == 1) {
+    require(store::getPath() . '/application/view/layout/header.phtml');
+    require(store::getPath() . '/application/view/layout/maintenance.phtml');
+    require(store::getPath() . '/application/view/layout/footer.phtml');
     die();
 }
 
 /**
  * Now that we have a router instance with routes defined, we can match the current request
  */
-$match = app::getRouter()->match();
+$match = store::getRouter()->match();
 
 /**
  * $match is false if there's no match
@@ -107,7 +107,7 @@ if ($match) {
      * If secure is set on the route AND it's true AND the user isn't authorized, just toss 'm back to the index
      */
     if (isset($routes[$match['name']]['secure']) && $routes[$match['name']]['secure'] && !auth::getUser()) {
-        app::redirect(app::getRouter()->generate('home'));
+        tool::redirect(store::getRouter()->generate('home'));
     }
     
     /**
@@ -141,12 +141,12 @@ if ($match) {
     
     // require header, view, then footer
     if (!$output) {
-        require(app::getPath() . '/application/view/layout/header.phtml');
+        require(store::getPath() . '/application/view/layout/header.phtml');
     }
-    require(app::getPath() . '/application/view/' . $controllerShortName . '/' . $action . '.phtml');
+    require(store::getPath() . '/application/view/' . $controllerShortName . '/' . $action . '.phtml');
     if (!$output) {
-        require(app::getPath() . '/application/view/layout/footer.phtml');
+        require(store::getPath() . '/application/view/layout/footer.phtml');
     }
 } else {
-    echo '404 - requested path "' . app::getUrl() . '/' .  $_GET['path'] . '" not found.';
+    echo '404 - requested path "' . store::getUrl() . '/' .  $_GET['path'] . '" not found.';
 }

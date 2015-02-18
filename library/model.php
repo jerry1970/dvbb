@@ -47,7 +47,7 @@ class model {
             ':key' => $this->tableKey,
             ':value' => $id,
         ));
-        $dbResult = app::getDb()->query($query);
+        $dbResult = store::getDb()->query($query);
         return $this->generateFromRow($dbResult->fetchArray(SQLITE3_ASSOC));
     }
     
@@ -61,7 +61,7 @@ class model {
             ':tableName' => $this->tableName,
             ':tableKey' => $this->tableKey,
         ));
-        $dbResult = app::getDb()->query($query);
+        $dbResult = store::getDb()->query($query);
         $return = array();
         while ($row = $dbResult->fetchArray(SQLITE3_ASSOC)) {
             $return[] = $this->generateFromRow($row);
@@ -87,7 +87,7 @@ class model {
         if ((int)$value !== $value) {
             $query = str_replace($value, '\'' . $value . '\'', $query);
         }
-        $dbResult = app::getDb()->query($query);
+        $dbResult = store::getDb()->query($query);
         $return = array();
         while ($row = $dbResult->fetchArray(SQLITE3_ASSOC)) {
             $return[] = $this->generateFromRow($row);
@@ -113,7 +113,7 @@ class model {
             ':tableKey' => $this->tableKey,
             ':where' => $where,
         ));
-        $dbResult = app::getDb()->query($query);
+        $dbResult = store::getDb()->query($query);
         $return = array();
         while ($row = $dbResult->fetchArray(SQLITE3_ASSOC)) {
             $return[] = $this->generateFromRow($row);
@@ -122,7 +122,7 @@ class model {
     }
     
     public function getByQuery($query) {
-        $dbResult = app::getDb()->query($query);
+        $dbResult = store::getDb()->query($query);
         $return = array();
         while ($row = $dbResult->fetchArray(SQLITE3_ASSOC)) {
             $return[] = $this->generateFromRow($row);
@@ -165,10 +165,10 @@ class model {
             $query .= ')';
         }
         try {
-            app::getDb()->query($query);
+            store::getDb()->query($query);
             // add the inserted id to the model
             if (!$this->id) {
-                $this->id = app::getDb()->lastInsertRowID();
+                $this->id = store::getDb()->lastInsertRowID();
             }
         } catch (Exception $e) {
             return false;
@@ -179,7 +179,7 @@ class model {
     public function delete() {
         $query = 'DELETE FROM ' . $this->tableName . ' WHERE ' . $this->tableKey . ' = \'' . $this->id . '\'';
         try {
-            app::getDb()->query($query);
+            store::getDb()->query($query);
         } catch (Exception $e) {
             return false;
         }

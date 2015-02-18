@@ -1,67 +1,24 @@
 <?php
 /**
- * app class
+ * store class
  * 
- * This class provides the most central functionality for the application. This includes storing the main path, the 
- * base path if we're running from a subdirectory (required for AltoRouter), the url and the router.
- * 
- * This is also the view parameter 'registry', of sorts, so we can store these centrally from controllers and
- * reference them easily from the views. Debug functions are also found here (see dp).
+ * This class stores and returns values that are application-wide
  * 
  * @copyright   2015 Robin de Graaf, devvoh webdevelopment
  * @license     MIT
  * @author      Robin de Graaf (hello@devvoh.com)
  */
 
-class app {
+class store {
 
     static $path;
     static $basePath;
     static $url;
     static $router;
-    static $view = array();
+    static $params = array();
     static $post = array();
     static $config = array();
     static $db;
-    
-    /**
-     * Initializes some values necessary for the application to run
-     */
-    public static function initialize() {
-        
-        // set current working directory as path
-        self::setPath(getcwd());
-        
-        // get the basepath if there is any
-        self::setBasePath(str_replace($_SERVER['DOCUMENT_ROOT'], '', self::getPath()));
-        
-        // now get the complete public url & store it
-        $url = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']);
-        self::setUrl(str_replace('/public', '', $url));
-        
-        // initialize config from config/app.ini
-        self::setConfig(parse_ini_file(self::getPath() . '/application/config/app.ini'));
-        
-        // open the database
-        self::setDb(new SQLite3(app::getPath() . '/application/storage/' . app::getConfigKey('sqliteDb')));
-        
-        // loop through get and add the values to the view params
-        $params = array();
-        foreach ($_GET as $key => $value) {
-            if ($key !== 'path') {
-                $params[$key] = $value;
-            }
-        }
-        app::addToView($params);
-        // loop through the post and add the values to the post params
-        $params = array();
-        foreach ($_POST as $key => $value) {
-            if ($key !== 'path') {
-                $params[$key] = $value;
-            }
-        }
-        app::addToPost($params);
-    }
     
     /**
      * Sets the local path
@@ -127,7 +84,7 @@ class app {
     }
 
     /**
-     * Returns the public url used for links and front-end logic
+     * Returns the public url used for links and front-end logic with the basepath removed
      * 
      * @param string
      */
@@ -157,27 +114,39 @@ class app {
     }
     
     /**
-     * Adds an array of key/value pairs to the view parameters
+     * Adds an array of key/value pairs to the parameters
      * 
      * @param array $array
      * @return array
      */
-    public static function addToView($array = array()) {
+    public static function addParams($array = array()) {
         foreach($array as $key => $value) {
-            self::$view[$key] = $value;
+            self::$params[$key] = $value;
         }
-        return self::$view;
+        return self::$params;
     }
     
     /**
-     * Removes a key/value pair from the view parameters
+     * Adds a single key/value pair to the parameters
+     * 
+     * @param string $key
+     * @param mixed $value
+     * @return array
+     */
+    public static function addParam($key, $value) {
+        self::$params[$key] = $value;
+        return self::$params;
+    }
+    
+    /**
+     * Removes a key/value pair from the parameters
      * 
      * @param string $key
      * @return array
      */
-    public static function removeFromView($key) {
-        unset(self::$view[$key]);
-        return self::$view;
+    public static function removeParam($key) {
+        unset(self::$params[$key]);
+        return self::$params;
     }
     
     /**
@@ -185,9 +154,9 @@ class app {
      * 
      * @return array
      */
-    public static function resetView() {
-        self::$view = array();
-        return self::$view;
+    public static function resetParams() {
+        self::$params = array();
+        return self::$params;
     }
     
     /**
@@ -195,21 +164,21 @@ class app {
      * 
      * @return multitype:array
      */
-    public static function getView() {
-        return self::$view;
+    public static function getParams() {
+        return self::$params;
     }
     
     /**
      * Returns a view parameters by key or false if the key doesn't exist
      * 
      * @param string $key
-     * @return string|false
+     * @return string|null
      */
-    public static function getViewByKey($key) {
-        if (isset(self::$view[$key])) {
-            return self::$view[$key];
+    public static function getParam($key) {
+        if (isset(self::$params[$key])) {
+            return self::$params[$key];
         }
-        return false;
+        return null;
     }
 
     /**
@@ -225,24 +194,12 @@ class app {
     }
     
     /**
-     * Outputs print_r wrapped in pre tags, then dies 
-     * 
-     * @param string $string
-     */
-    public static function dp($string) {
-        echo '<pre>';
-        print_r($string);
-        echo '</pre>';
-        die();
-    }
-
-    /**
      * Store config array and overwrite pre-existing config
      * 
      * @param array $array
      * @return mixed
      */
-    public static function setConfig($array = array()) {
+    public static function setConfigParams($array = array()) {
         self::$config = $array;
         return self::$config;
     }
@@ -253,7 +210,7 @@ class app {
      * @param array $array
      * @return array
      */
-    public static function addToConfig($array = array()) {
+    public static function addConfigParams($array = array()) {
         foreach($array as $key => $value) {
             self::$config[$key] = $value;
         }
@@ -265,7 +222,7 @@ class app {
      * 
      * @return array
      */
-    public static function getConfig() {
+    public static function getConfigParams() {
         return self::$config;
     }
     
@@ -275,7 +232,7 @@ class app {
      * @param string $key
      * @return mixed
      */
-    public static function getConfigKey($key) {
+    public static function getConfigParam($key) {
         if (isset(self::$config[$key])) {
             return self::$config[$key];
         }
@@ -288,7 +245,7 @@ class app {
      * @param array $array
      * @return array
      */
-    public static function addToPost($array = array()) {
+    public static function addPostValues($array = array()) {
         foreach($array as $key => $value) {
             self::$post[$key] = $value;
         }
@@ -300,7 +257,7 @@ class app {
      * 
      * @return array
      */
-    public static function getPost() {
+    public static function getPostValues() {
         return self::$post;
     }
     
@@ -310,7 +267,7 @@ class app {
      * @param string $key
      * @return mixed
      */
-    public static function getPostByKey($key) {
+    public static function getPostValue($key) {
         if (isset(self::$post[$key])) {
             return self::$post[$key];
         }
@@ -333,29 +290,6 @@ class app {
      */
     public static function getDb() {
         return self::$db;
-    }
-    
-    /**
-     * Returns a string with every paragraph wrapped with a <p /> tag
-     * 
-     * @param string $string
-     * @return string
-     */
-    public static function nl2p($string) {
-        $return = '';
-        foreach (explode("\n", trim($string)) as $part) {
-            $return .= '<p>' . $part . '</p>';
-        }
-        return $return;
-    }
-    
-    public static function redirect($url) {
-        header('Location: ' . $url);
-        die();
-    }
-    
-    public static function redirectToRoute($name, $params = array()) {
-        self::redirect(app::getRouter()->generate($name, $params));
     }
     
 }

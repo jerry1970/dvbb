@@ -10,7 +10,7 @@
 class ajaxController extends controller {
 
     public function login() {
-        $values = app::getPost();
+        $values = store::getPostValues();
         if (!empty($values['username']) && !empty($values['password'])) {
             if (auth::authenticate($values['username'], $values['password'])) {
                 // check if user is validated yet

@@ -10,14 +10,12 @@
 class topicController extends controller {
 
     public function create() {
-        $forum = (new forum())->getById(app::getViewByKey('id'));
-        app::addToView(array(
-            'forum' => $forum,
-        ));
+        $forum = (new forum())->getById(store::getParam('id'));
+        store::addParam('forum', $forum);
         
-        if (app::getPost()) {
+        if (store::getPostValues()) {
             // deal with post here
-            $values = app::getPost();
+            $values = store::getPostValues();
             if (!empty($values['title']) && !empty($values['body'])) {
                 $createdAt = (new DateTime)->format('Y-m-d H:i:s');
                 $post = (new post())->generateFromRowSafe(array(
@@ -30,10 +28,10 @@ class topicController extends controller {
                     'last_post_at' => $createdAt,
                 ));
                 if ($post->save()) {
-                    app::redirectToRoute('topic', array('id' => $post->id));
+                    tool::redirectToRoute('topic', array('id' => $post->id));
                 }
             } else {
-                app::addToView(array('error' => 'All fields are required.'));
+                store::addParam(array('error' => 'All fields are required.'));
             }
         }
     }
