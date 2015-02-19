@@ -43,7 +43,6 @@ class generalController extends controller {
         
         // get topics based on parameters
         $query = 'SELECT * FROM post WHERE forum_id = ' . $forum->id . ' ORDER BY last_post_at DESC LIMIT ' . $limit;
-        echo $query;
         $topics = (new post())->getByQuery($query);
         $postTotal = count((new post())->getByQuery('SELECT * FROM post WHERE forum_id = ' . $forum->id));
         
@@ -91,7 +90,6 @@ class generalController extends controller {
         
         // get posts based on parameters
         $query = 'SELECT * FROM post WHERE parent_id = ' . $topic->id . ' ORDER BY id ASC LIMIT ' . $limit;
-        echo $query;
         $posts = (new post())->getByQuery($query);
         if (!store::getParam('page')) {
             // we're on page 1 so add the topic post to the front of the replies
