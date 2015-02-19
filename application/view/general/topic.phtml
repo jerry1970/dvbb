@@ -1,10 +1,15 @@
 <?php 
 $topic = store::getParam('topic');
+
+$posts_per_page = store::getConfigParam('posts_per_page');
+if (auth::getUser()) {
+    $posts_per_page = auth::getUser()->getDefinitiveSetting('posts_per_page');
+}
 ?>
 
 <nav class="dv-grid-row dvbb-subnavigation">
     <div class="dv-grid-column-12 dvbb-subnavigation-left">
-        <?=store::getConfigParam('posts_per_page')?> posts per page: 
+        <?=$posts_per_page?> posts per page: 
         <?php
         for ($i = 1; $i <= store::getParam('pageTotal'); $i++) {
             $param = '';
@@ -109,7 +114,7 @@ $topic = store::getParam('topic');
 
 <nav class="dv-grid-row dvbb-subnavigation">
     <div class="dv-grid-column-12">
-        <?=store::getConfigParam('posts_per_page')?> posts per page: 
+        <?=$posts_per_page?> posts per page: 
         <?=$pages;?>
     </div>
     <div class="dv-grid-column-12 dvbb-subnavigation-right">

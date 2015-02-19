@@ -29,20 +29,26 @@ class generalController extends controller {
         $forum = (new forum())->getById(store::getParam('id'));
         
         // get limit based on posts_per_page
-        $originalLimit = store::getConfigParam('posts_per_page');
-        // see if there's a page available so we have an offset for limit
+        $posts_per_page = store::getConfigParam('posts_per_page');
+        if (auth::getUser()) {
+            $posts_per_page = auth::getUser()->getDefinitiveSetting('posts_per_page');
+        }
+
         if (store::getParam('page')) {
-            $limit = ($originalLimit * ((int)store::getParam('page') - 1)) . ', ' . $originalLimit;
+            $limit = ($posts_per_page * store::getParam('page'));
+            $limit = ($limit - $posts_per_page) . ', ' . $posts_per_page;
         } else {
-            $limit = $originalLimit;
+            $limit = $posts_per_page;
         }
         
         // get topics based on parameters
-        $topics = (new post())->getByQuery('SELECT * FROM post WHERE forum_id = ' . $forum->id . ' ORDER BY last_post_at DESC LIMIT ' . $limit);
+        $query = 'SELECT * FROM post WHERE forum_id = ' . $forum->id . ' ORDER BY last_post_at DESC LIMIT ' . $limit;
+        echo $query;
+        $topics = (new post())->getByQuery($query);
         $postTotal = count((new post())->getByQuery('SELECT * FROM post WHERE forum_id = ' . $forum->id));
         
         // get some more info
-        $pageTotal = ceil($postTotal / store::getConfigParam('posts_per_page'));
+        $pageTotal = ceil($postTotal / $posts_per_page);
         
         store::addParams(array(
             'forum' => $forum,
@@ -70,17 +76,23 @@ class generalController extends controller {
         }
         
         // get limit based on posts_per_page
-        $originalLimit = store::getConfigParam('posts_per_page');
+        $posts_per_page = store::getConfigParam('posts_per_page');
+        if (auth::getUser()) {
+            $posts_per_page = auth::getUser()->getDefinitiveSetting('posts_per_page');
+        }
         
         // see if there's a page available so we have an offset for limit
         if (store::getParam('page')) {
-            $limit = (($originalLimit - 1) * ((int)store::getParam('page') - 1)) . ', ' . $originalLimit;
+            $limit = ($posts_per_page * store::getParam('page')) - $posts_per_page;
+            $limit = ($limit - 1) . ', ' . $posts_per_page;
         } else {
-            $limit = $originalLimit - 1;
+            $limit = $posts_per_page - 1;
         }
         
         // get posts based on parameters
-        $posts = (new post())->getByQuery('SELECT * FROM post WHERE parent_id = ' . $topic->id . ' ORDER BY id ASC LIMIT ' . $limit);
+        $query = 'SELECT * FROM post WHERE parent_id = ' . $topic->id . ' ORDER BY id ASC LIMIT ' . $limit;
+        echo $query;
+        $posts = (new post())->getByQuery($query);
         if (!store::getParam('page')) {
             // we're on page 1 so add the topic post to the front of the replies
             $posts = array_merge(array($topic), $posts);
@@ -88,7 +100,7 @@ class generalController extends controller {
         $postTotal = count((new post())->getByQuery('SELECT * FROM post WHERE parent_id = ' . $topic->id)) + 1;
         
         // get some more info
-        $pageTotal = ceil($postTotal / store::getConfigParam('posts_per_page'));
+        $pageTotal = ceil($postTotal / $posts_per_page);
 
         store::addParams(array(
             'topic' => $topic,

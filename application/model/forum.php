@@ -19,19 +19,6 @@ class forum extends model {
 
     public function getUnreadStatus() {
         
-        /*
-         * logic: get last post date of all underlying topics
-         *        compare with unread entries and it is unread if they are null or of a later date
-         *        
-         * loop through topics in this forum
-         *     unreadstatus = getunreadstatus
-         *     if unreadstatus->date < topic->last_post_at or unreadstatus = null
-         *         return unread
-         *     else
-         *         return read
-         * end loop
-         */
-        
         if (auth::getUser()) {
             $topics = (new post())->getByField('forum_id', $this->id);
             foreach ($topics as $topic) {

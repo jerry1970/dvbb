@@ -30,6 +30,18 @@ class user extends model {
         return $return;
     }
     
+    public function getDefinitiveSetting($key) {
+        // by default we're going to return the app config value
+        $return = store::getConfigParam($key);
+        
+        // get settings and see if we have a user setting
+        $settings = $this->getSettings();
+        if (isset($settings[$key])) {
+            $return = $settings[$key]->value;
+        }
+        return $return;
+    }
+    
     public function getAvatar() {
         $avatar = (new avatar())->getByField('user_id', $this->id);
         if (count($avatar) > 0) {
