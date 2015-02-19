@@ -22,7 +22,7 @@ class topicController extends controller {
                     'forum_id' => $forum->id,
                     'user_id' => auth::getUser()->id,
                     'title' => $values['title'],
-                    'body' => trim($values['body']),
+                    'body' => strip_tags(trim($values['body'])),
                     'created_at' => $createdAt,
                     'updated_at' => $createdAt,
                     'last_post_at' => $createdAt,

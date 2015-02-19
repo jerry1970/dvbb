@@ -44,6 +44,13 @@ $routes['user-profile'] = array(
     'action' => 'profile',
     'secure' => true,
 );
+$routes['user-settings'] = array(
+    'method' => 'GET|POST',
+    'path' => '/user/settings',
+    'controller' => 'userController',
+    'action' => 'settings',
+    'secure' => true,
+);
 
 // Create routes
 $routes['topic-create'] = array(

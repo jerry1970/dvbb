@@ -14,9 +14,6 @@ foreach ($categories as $category) {
         </div>
         <?php 
         foreach ($forums as $forum) {
-            // set unread status to false
-            $unread = false;
-            
             // build url to forum
             $url = store::getRouter()->generate('forum', array('id' => $forum->id));
             // only topics have a forum_id set
@@ -30,11 +27,17 @@ foreach ($categories as $category) {
             }
             $lastPost = $lastPostPerForum[$forum->id];
             if ($lastPost !== null) {
-                $unreadStatus = $lastPost->getUnreadStatus();
-                if ($unreadStatus === null || $lastPost->last_post_at > $unreadStatus->created_at) {
-                    $unread = true;
+                // get date & user of this lastPost
+                $user = (new user())->getById($lastPost->user_id);
+                $date = 
+                
+                // get last reply, if any
+                $lastReply = $lastPost->getLastReply();
+                if ($lastReply) {
+                    $user = (new user())->getById($lastReply->user_id);
                 }
             }
+            $unread = $forum->getUnreadStatus();
             ?>
             <div class="dvbb-container-row dv-grid-row">
                 <div class="dv-grid-column-1">
@@ -50,10 +53,9 @@ foreach ($categories as $category) {
                     <?php 
                     if ($lastPost) {
                         $url = store::getRouter()->generate('topic', array('id' => $lastPost->id));
-                        $user = (new user())->getById($lastPost->user_id);
                         ?>
                         <a href="<?=$url;?>"><?=$lastPost->title;?></a><br />
-                        <small style="color: grey"><?=$user->username?> at <?=$lastPost->last_post_at;?></small>
+                        <small style="color: grey"><?=$user->username?> at <?=tool::getDateFormatted($lastPost->last_post_at);?></small>
                         <?php 
                     } else {
                         echo '--';

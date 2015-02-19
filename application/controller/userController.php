@@ -131,4 +131,88 @@ class userController extends controller {
     
     public function createDone() {
     }
+    
+    public function settings() {
+        $user = auth::getUser();
+        // set default return values
+        $success = false;
+        $error = array();
+        if (store::getPostValues()) {
+            // get values
+            $values = store::getPostValues();
+            // remove the submit button
+            unset($values['post']);
+            
+            // if e-mail is set, we need to update the user
+            if (!empty($values['email'])) {
+                $user->email = $values['email'];
+                $user->save();
+                auth::setUser($user);
+            } else {
+                $error[] = 'E-mail address can\'t be empty.';
+            }
+            
+            // if there's a file upload for the avatar, deal with it here
+            if (isset($_FILES['avatar']) && !empty($_FILES['avatar']['type'])) {
+                $upload = $_FILES['avatar'];
+                unset($_FILES['avatar']);
+                $realType = finfo_file(finfo_open(FILEINFO_MIME_TYPE), $upload['tmp_name']);
+                list($width, $height) = getimagesize($upload['tmp_name']);
+                
+                $allowedTypes = tool::getAllowedImageTypes();
+                
+                if ($width <= store::getConfigParam('avatar_width') && $height <= store::getConfigParam('avatar_height')) {
+                    if ($upload['type'] === $realType && in_array($realType, $allowedTypes)) {
+                        // remove existing avatars
+                        $avatars = (new avatar())->getByField('user_id', $user->id);
+                        foreach ($avatars as $avatar) {
+                            $avatar->delete();
+                        }
+                        
+                        $data = base64_encode(file_get_contents($upload['tmp_name']));
+                        
+                        $avatar = (new avatar())->generateFromRowSafe(array(
+                            'user_id' => $user->id,
+                            'data' => $data,
+                            'type' => $realType,
+                        ));
+                        $avatar->save();
+                    } else {
+                        $error[] = 'Files of type ' . $realType . ' are not allowed.';
+                    }
+                } else {
+                    $error[] = 'Avatars can\'t be bigger than ' . store::getConfigParam('avatar_width') . 'x' . store::getConfigParam('avatar_height');
+                }
+            }
+
+            // since we're done checking email, remove it from the values
+            unset($values['email']);
+            
+            // everything else goes into settings, but first we delete existing values
+            $settings = $user->getSettings();
+            foreach ($settings as $setting) {
+                $setting->delete();
+            }
+            // now loop through the post settings
+            foreach ($values as $key => $value) {
+                if ($value === '0' || !empty($value)) {
+                    $setting = (new setting())->generateFromRowSafe(array(
+                        'user_id' => $user->id,
+                        'key' => $key,
+                        'value' => $value,
+                    ));
+                    $setting->save();
+                }
+            }
+            
+            if (count($error) == 0) {
+                // no errors
+                $success = true;
+            }
+        }
+        store::addParams(array(
+            'success' => $success,
+            'error' => $error,
+        ));
+    }
 }

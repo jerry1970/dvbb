@@ -43,16 +43,62 @@ $topic = store::getParam('topic');
     if (count($posts) > 0) {
         foreach ($posts as $subPost) {
             $user = (new user())->getById($subPost->user_id);
+            $settings = $user->getSettings();
             ?>
             <div class="dvbb-container-row dv-grid-row">
                 <div class="dv-grid-column-5">
-                    <strong><?=$user->username?></strong>
+                    <p>
+                        <strong><?=$user->username?></strong>
+                        <?php 
+                        $avatar = $user->getAvatar();
+                        $src = tool::getBase64ImageSrc($avatar);
+                        if ($src) {
+                            ?>
+                            <div class="dvbb-user-avatar">
+                                <img src="<?=$src;?>" />
+                            </div>
+                            <?php 
+                        }
+                        ?>
+                    </p>
+                    <p class="dv-color-notice">
+                        <?php 
+                        if (isset($settings['location'])) {
+                            if (!isset($settings['location_visible']) || $settings['location_visible']->value) {
+                                ?>
+                                Location: <?=$settings['location']->value;?>
+                                <?php 
+                            }
+                        }
+                        ?>
+                    </p>
+                    <p>
+                        <?php
+                        // show some links to logged in users 
+                        if (auth::getUser()) {
+                            ?>
+                            <a href="<?=store::getRouter()->generate('user-profile', array('id' => $user->id));?>">profile</a><br />
+                            <?php 
+                        }
+                        ?>
+                    </p>
                 </div>
-                <div class="dv-grid-column-19">
+                <div class="dv-grid-column-19 dvbb-post">
                     <span class="dv-color-notice">
-                        <small>posted <?=$subPost->created_at?></small>
+                        <small>posted <?=tool::getDateFormatted($subPost->created_at)?></small>
                     </span>
-                    <?=tool::nl2p($subPost->body)?>
+                    
+                    <?=tool::nl2p(tool::fromBB($subPost->body));?>
+                    
+                    <?php 
+                    if (isset($settings['signature'])) {
+                        ?>
+                        <div class="dvbb-signature">
+                            <?=nl2br(tool::fromBB($settings['signature']->value));?>
+                        </div>
+                        <?php 
+                    }
+                    ?>
                 </div>
             </div>
             <?php

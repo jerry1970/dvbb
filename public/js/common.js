@@ -50,3 +50,23 @@ $(function() {
     });
 
 });
+
+function checkVisibleSelect(element) {
+    // add handler for this element
+    $(element).on('change', function() {
+        checkVisibleSelectValue(element);
+    });
+
+    $(element).trigger('change');
+
+    $(element).find('option').css('background', 'white');
+}
+
+function checkVisibleSelectValue(element) {
+    // check value
+    if ($(element).val() == 0) {
+        $(element).removeClass('dv-background-correct').addClass('dv-background-alert');
+    } else if ($(element).val() == 1) {
+        $(element).removeClass('dv-background-alert').addClass('dv-background-correct');
+    }
+}

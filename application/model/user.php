@@ -17,5 +17,25 @@ class user extends model {
     public $validated_at;
     public $created_at;
     public $updated_at;
+    
+    public function getSettings() {
+        $return = array();
+        
+        // get settings, loop through and build one array
+        $settings = (new setting())->getByField('user_id', $this->id);
+        foreach ($settings as $setting) {
+            $return[$setting->key] = $setting;
+        }
+        
+        return $return;
+    }
+    
+    public function getAvatar() {
+        $avatar = (new avatar())->getByField('user_id', $this->id);
+        if (count($avatar) > 0) {
+            $avatar = $avatar[0];
+        }
+        return $avatar;
+    }
 
 }

@@ -1,0 +1,280 @@
+<?php
+// get the user
+$user = auth::getUser();
+// get the user's settings
+$settings = (new setting())->getByField('user_id', $user->id);
+foreach ($settings as $key => $setting) {
+    $settings[$setting->key] = $setting;
+}
+
+if(store::getParam('error')) {
+    ?>
+    <div class="dvbb-container dvbb-container-row dv-notification-message dv-background-alert dv-color-white">
+        The following errors have been found:
+    </div>
+    <div class="dvbb-container dvbb-container-row">
+        <ul>
+        <?php 
+        foreach (store::getParam('error') as $error) {
+            ?>
+            <li><?=$error;?></li>
+            <?php 
+        }
+        ?>
+        </ul>
+    </div>
+    <?php 
+} elseif (store::getParam('success')) {
+    ?>
+    <div class="dvbb-container dvbb-container-row dv-notification-message dv-background-correct dv-color-white">
+        Your settings have been saved.
+    </div>
+    <?php 
+}
+?>
+
+<link rel="stylesheet" type="text/css" media="all"  href="<?=store::getUrl();?>/public/js/lib/jquery.datetimepicker.css" />
+<script src="<?=store::getUrl();?>/public/js/lib/jquery.datetimepicker.js"></script>
+
+<form method="post" action="<?=store::getCurrentUrl();?>" enctype="multipart/form-data">
+    <div class="dvbb-container">
+        <div class="dvbb-container-header">Settings for <?=$user->username;?></div>
+        <div class="dvbb-container-row">
+            <p>
+                Here you can update your password, settings for the forum and your profile.
+            </p>
+    
+            <div class="dvbb-container">
+                <div class="dvbb-container-header">Change password</div>
+                <div class="dvbb-container-row">
+                    <p>
+                        By clicking the below button, you will be sent an e-mail with a link to a password reset page.
+                    </p>
+                    <p>
+                        <div class="dv-align-center">
+                            <a href="@" class="dv-form-button">reset password</a>
+                        </div>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="dvbb-container">
+                <div class="dvbb-container-header">Forum settings</div>
+                <div class="dvbb-container-row">
+                
+                    <?php 
+                    $posts_per_page = store::getConfigParam('posts_per_page');
+                    if (isset($settings['posts_per_page'])) {
+                        $posts_per_page = $settings['posts_per_page']->value;
+                    }
+                    $posts_per_page_values = array(10, 25, 50);
+                    ?>
+                    <div class="dv-grid-row">
+                        <label class="dv-grid-column-8 dv-form-label" for="posts_per_page">
+                            Posts per page
+                        </label>
+                        <div class="dv-grid-column-16">
+                            <select name="posts_per_page" id="posts_per_page" class="dv-form-element">
+                                <?php 
+                                foreach($posts_per_page_values as $value) {
+                                    ?>
+                                    <option value="<?=$value;?>" <?=($value == $posts_per_page ? ' selected' : '');?>><?=$value;?></option>
+                                    <?php 
+                                }
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+                
+                    <?php 
+                    $timezone = store::getConfigParam('timezone');
+                    if (isset($settings['timezone'])) {
+                        $timezone = $settings['timezone']->value;
+                    }
+                    ?>
+                    <div class="dv-grid-row">
+                        <label class="dv-grid-column-8 dv-form-label" for="timezone">
+                            Timezone settings<br />
+                        </label>
+                        <div class="dv-grid-column-16">
+                            <select name="timezone" id="timezone" class="dv-form-element">
+                                <?php 
+                                foreach (tool::getTimeZones() as $zone => $text) {
+                                    if ($zone === $timezone) {
+                                        ?>
+                                        <option value="<?=$zone;?>" selected><?=$text;?></option>
+                                        <?php 
+                                    } else {
+                                        ?>
+                                        <option value="<?=$zone;?>"><?=$text;?></option>
+                                        <?php
+                                    } 
+                                    ?>
+                                    <?php 
+                                }
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="dv-grid-row">
+                        <div class="dv-grid-column-8 dv-form-label">
+                            <small class="dv-color-notice">Current UTC time (+0:00): <?=(new DateTime())->format('H:i:s')?></small>
+                        </div>
+                        <div class="dv-grid-column-16" style="padding: 0.5em 0;">
+                            <small class="dv-color-notice">Corrected time: <?=tool::getDateTime(new DateTime())->format('H:i:s')?></small>
+                        </div>
+                    
+                    </div>
+                    
+                </div>
+            </div>
+            
+            <div class="dvbb-container">
+                <div class="dvbb-container-header">User profile</div>
+                <div class="dvbb-container-row">
+                    
+                    <?php 
+                    $visible = true;
+                    if (isset($settings['email_visible'])) {
+                        $visible = (bool)$settings['email_visible']->value;
+                    }
+                    ?>
+                    <div class="dv-grid-row">
+                        <label class="dv-grid-column-8 dv-form-label" for="email">
+                            E-mail address
+                        </label>
+                        <div class="dv-grid-column-12">
+                            <input name="email" id="email" type="text" value="<?=$user->email;?>" class="dv-form-element" />
+                        </div>
+                        <div class="dv-grid-column-4">
+                            <select name="email_visible" id="email_visible" class="dv-form-element">
+                                <option value="1" <?=($visible ? ' selected' : '');?>>visible</option>
+                                <option value="0" <?=(!$visible ? ' selected' : '');?>>hidden</option>
+                            </select>
+                            <script>
+                                checkVisibleSelect('#email_visible');
+                            </script>
+                        </div>
+                    </div>
+                
+                    <?php 
+                    $visible = true;
+                    if (isset($settings['birthdate_visible'])) {
+                        $visible = (bool)$settings['birthdate_visible']->value;
+                    }
+                    $birthdate = null;
+                    if (isset($settings['birthdate'])) {
+                        $birthdate = $settings['birthdate']->value;
+                    }
+                    ?>
+                    <div class="dv-grid-row">
+                        <label class="dv-grid-column-8 dv-form-label" for="birthdate">
+                            Birthdate
+                        </label>
+                        <div class="dv-grid-column-12">
+                            <input name="birthdate" id="birthdate" type="text" value="<?=$birthdate;?>" class="dv-form-element" />
+                            <script>
+                                $('#birthdate').datetimepicker({timepicker:false, format: 'd-m-Y'});
+                            </script>
+                        </div>
+                        <div class="dv-grid-column-4">
+                            <select name="birthdate_visible" id="birthdate_visible" class="dv-form-element">
+                                <option value="1" <?=($visible ? ' selected' : '');?>>visible</option>
+                                <option value="0" <?=(!$visible ? ' selected' : '');?>>hidden</option>
+                            </select>
+                            <script>
+                                checkVisibleSelect('#birthdate_visible');
+                            </script>
+                        </div>
+                    </div>
+                
+                    <?php 
+                    $visible = true;
+                    if (isset($settings['location_visible'])) {
+                        $visible = (bool)$settings['location_visible']->value;
+                    }
+                    $location = null;
+                    if (isset($settings['location'])) {
+                        $location = $settings['location']->value;
+                    }
+                    ?>
+                    <div class="dv-grid-row">
+                        <label class="dv-grid-column-8 dv-form-label" for="location">
+                            Location
+                        </label>
+                        <div class="dv-grid-column-12">
+                            <input name="location" id="location" type="text" value="<?=$location;?>" class="dv-form-element" />
+                        </div>
+                        <div class="dv-grid-column-4">
+                            <select name="location_visible" id="location_visible" class="dv-form-element">
+                                <option value="1" <?=($visible ? ' selected' : '');?>>visible</option>
+                                <option value="0" <?=(!$visible ? ' selected' : '');?>>hidden</option>
+                            </select>
+                            <script>
+                                checkVisibleSelect('#location_visible');
+                            </script>
+                        </div>
+                    </div>
+                
+                    <div class="dv-grid-row">
+                        <label class="dv-grid-column-8 dv-form-label" for="avatar">
+                            Avatar upload
+                        </label>
+                        <div class="dv-grid-column-16">
+                            <input type="file" name="avatar" id="avatar" class="dv-form-element" />
+                        </div>
+                    </div>
+                    <?php 
+                    $avatar = $user->getAvatar();
+                    if($avatar) {
+                        $src = tool::getBase64ImageSrc($avatar);
+                        ?>
+                        <div class="dv-grid-row">
+                            <label class="dv-grid-column-8 dv-form-label" for="avatar">
+                                Current avatar
+                            </label>
+                            <div class="dv-grid-column-16">
+                                <img src="<?=$src?>" />
+                            </div>
+                        </div>
+                        <?php 
+                    }
+                    ?>
+                    
+                    <?php 
+                    $signature = null;
+                    if (isset($settings['signature'])) {
+                        $signature = $settings['signature']->value;
+                    }
+                    ?>
+                    <div class="dv-grid-row">
+                        <label class="dv-grid-column-8 dv-form-label" for="signature">
+                            Signature
+                        </label>
+                        <div class="dv-grid-column-16">
+                            <textarea name="signature" id="signature" class="dv-form-element"><?=$signature;?></textarea>
+                        </div>
+                    </div>
+                    <div class="dv-grid-row">
+                        <label class="dv-grid-column-8 dv-form-label" for="signature">
+                            Preview current signature
+                        </label>
+                        <div class="dv-grid-column-16">
+                            <div class="dvbb-signature-preview">
+                                <?=nl2br($signature);?>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="dvbb-container">
+        <div class="dvbb-container-row dv-align-center">
+            <input type="submit" value="save settings" class="dv-form-button" />
+        </div>
+    </div>
+    
+</form>

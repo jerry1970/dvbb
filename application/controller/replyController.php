@@ -22,7 +22,7 @@ class replyController extends controller {
                     'parent_id' => $topic->id,
                     'user_id' => auth::getUser()->id,
                     'title' => $topic->title,
-                    'body' => trim($values['body']),
+                    'body' => strip_tags(trim($values['body'])),
                     'created_at' => $createdAt,
                     'updated_at' => $createdAt,
                 ));

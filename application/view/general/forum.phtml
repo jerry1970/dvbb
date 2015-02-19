@@ -52,13 +52,7 @@ $forum = store::getParam('forum');
     $topics = store::getParam('topics');
     if (count($topics) > 0) {
         foreach ($topics as $topic) {
-            // set unread status to false
-            $unread = false;
-            
-            $unreadStatus = $topic->getUnreadStatus();
-            if ($unreadStatus === null || $topic->last_post_at > $unreadStatus->created_at) {
-                $unread = true;
-            }
+            $unread = $topic->getUnreadStatus();
             
             $url = store::getRouter()->generate('topic', array('id' => $topic->id));
             $subPosts = count((new post())->getByField('parent_id', $topic->id));
@@ -70,10 +64,10 @@ $forum = store::getParam('forum');
                 </div>
                 <div class="dv-grid-column-14">
                     <a href="<?=$url;?>"><?=$topic->title;?></a><br />
-                    <small style="color: grey"><?=$user->username;?> - posted <?=$topic->created_at?></small>
+                    <small style="color: grey"><?=$user->username;?> - posted <?=tool::getDateFormatted($topic->created_at)?></small>
                 </div>
                 <div class="dv-grid-column-2"><?=$subPosts;?></div>
-                <div class="dv-grid-column-7"><?=$topic->last_post_at?></div>
+                <div class="dv-grid-column-7"><?=tool::getDateFormatted($topic->last_post_at)?></div>
             </div>
             <?php
         }

@@ -46,7 +46,7 @@ $users = (new user())->getAll();
             </div>
             <div class="dv-grid-column-2"><?=$topicCount?></div>
             <div class="dv-grid-column-2"><?=$replyCount?></div>
-            <div class="dv-grid-column-7"><?=(isset($lastPost[0]) ? $lastPost[0]->created_at : '--');?></div>
+            <div class="dv-grid-column-7"><?=(isset($lastPost[0]) ? tool::getDateFormatted($lastPost[0]->created_at) : '--');?></div>
         </div>
         <?php
     }

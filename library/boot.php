@@ -19,6 +19,9 @@ class boot {
         // require store class
         require('./library/store.php');
         
+        // force UTC as default timezone
+        date_default_timezone_set("UTC");
+        
         // set current working directory as path
         store::setPath(getcwd());
         
@@ -30,7 +33,7 @@ class boot {
         store::setUrl(str_replace('/public', '', $url));
         
         // initialize config from config/app.ini
-        store::setConfigParams(parse_ini_file(store::getPath() . '/application/config/app.ini'));
+        store::setConfigParams(parse_ini_file(store::getPath() . '/application/config/config.ini'));
         
         // open the database
         store::setDb(new SQLite3(store::getPath() . '/application/storage/' . store::getConfigParam('sqliteDb')));
