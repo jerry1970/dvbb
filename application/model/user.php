@@ -19,19 +19,20 @@ class user extends model {
     public $validated_at;
     public $created_at;
     public $updated_at;
+    protected $settings;
     
     protected $rights = null;
     
     public function getSettings() {
-        $return = array();
-        
-        // get settings, loop through and build one array
-        $settings = (new setting())->getByCondition('user_id = ?', $this->id);
-        foreach ($settings as $setting) {
-            $return[$setting->key] = $setting;
+        if (!$this->settings) {
+            // get settings, loop through and build one array
+            $settings = (new setting())->getByCondition('user_id = ?', $this->id);
+            foreach ($settings as $setting) {
+                $this->settings[$setting->key] = $setting;
+            }
         }
         
-        return $return;
+        return $this->settings;
     }
     
     public function getDefinitiveSetting($key) {
