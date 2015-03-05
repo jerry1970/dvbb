@@ -23,7 +23,7 @@ $userGroup = store::getViewValue('userGroup');
                         <?php 
                         $userGroups = (new group())->getAll();
                         foreach($userGroups as $group) {
-                            if ($group->id !== $userGroup->id && $group->title !== 'admin') {
+                            if ($group->id !== $userGroup->id && $group->id !== 1) {
                                 ?>
                                 <option value="<?=$group->id;?>" <?=($group->title == 'guest' ? ' selected' : '');?>><?=$group->title;?></option>
                                 <?php
