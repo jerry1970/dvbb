@@ -10,9 +10,17 @@
 class userController extends controller {
 
     public function userlist() {
+        if (!auth::can('read', 'page', 'user-list')) {
+            // not allowed
+            tool::redirectToRoute('home');
+        }
     }
 
     public function profile() {
+        if (!auth::can('read', 'page', 'user-profile')) {
+            // not allowed
+            tool::redirectToRoute('home');
+        }
     }
     
     public function create() {
@@ -31,7 +39,7 @@ class userController extends controller {
                     $error[] = 'Username can only contain alphanumeric characters and underscores.';
                 } else {
                     // Only check the database if the username is valid
-                    $user = (new user())->getByField('username', $values['new_username']);
+                    $user = (new user())->getByCondition('username = ?', $values['new_username']);
                     if (count($user) > 0) {
                         $error[] = 'This username already exists in the database.';
                     }
@@ -69,7 +77,7 @@ class userController extends controller {
                     $error[] = 'E-mail doesn\'t seem to be valid.';
                 } else {
                     // Only check the database if the e-mail is valid
-                    $user = (new user())->getByField('email', $values['new_email']);
+                    $user = (new user())->getByCondition('email = ?', $values['new_email']);
                     if (count($user) > 0) {
                         $error[] = 'This e-mail address already exists in the database.';
                     }
@@ -80,16 +88,25 @@ class userController extends controller {
             
             if (count($error) == 0) {
                 $createdAt = (new DateTime)->format('Y-m-d H:i:s');
+                
+                // see if this user is the first user or not. If so, make them admin, if not, guest
+                $users = (new user())->getAll();
+                $userGroup = 2; // 2 = guest
+                if (count($users) === 0) {
+                    $userGroup = 1; // 1 = admin
+                }
+                
                 // generate new user item model
-                $user = (new user())->generateFromRowSafe(array(
+                $user = (new user())->generateFromRow(array(
                     'username' => $values['new_username'],
                     'email' => $values['new_email'],
+                    'group_id' => $userGroup,
                     'created_at' => $createdAt,
                     'updated_at' => $createdAt,
                 ));
                 if ($user->save()) {
                     // generate new password item model
-                    $password = (new password())->generateFromRowSafe(array(
+                    $password = (new password())->generateFromRow(array(
                         'user_id' => $user->id,
                         'password' => md5($values['new_password']),
                     ));
@@ -104,7 +121,7 @@ class userController extends controller {
                         $mail = new PHPMailer;
                         $mail->isHTML(true);
                         $mail->From = 'nobody@dvbb';
-                        $mail->FromName = store::getConfigParam('name');
+                        $mail->FromName = store::getConfigValue('name');
                         $mail->addAddress($user->email, $user->username);
                         $mail->Subject = 'Your account is almost ready - validate now';
                         
@@ -124,7 +141,7 @@ class userController extends controller {
                 }
             }
 
-            store::addParam('error', $error);
+            store::addViewValue('error', $error);
         }
         
     }
@@ -133,86 +150,92 @@ class userController extends controller {
     }
     
     public function settings() {
-        $user = auth::getUser();
-        // set default return values
-        $success = false;
-        $error = array();
-        if (store::getPostValues()) {
-            // get values
-            $values = store::getPostValues();
-            // remove the submit button
-            unset($values['post']);
-            
-            // if e-mail is set, we need to update the user
-            if (!empty($values['email'])) {
-                $user->email = $values['email'];
-                $user->save();
-                auth::setUser($user);
-            } else {
-                $error[] = 'E-mail address can\'t be empty.';
-            }
-            
-            // if there's a file upload for the avatar, deal with it here
-            if (isset($_FILES['avatar']) && !empty($_FILES['avatar']['type'])) {
-                $upload = $_FILES['avatar'];
-                unset($_FILES['avatar']);
-                $realType = finfo_file(finfo_open(FILEINFO_MIME_TYPE), $upload['tmp_name']);
-                list($width, $height) = getimagesize($upload['tmp_name']);
+        if (auth::getUser()) {
+            $user = auth::getUser();
+            // set default return values
+            $success = false;
+            $error = array();
+            if (store::getPostValues()) {
+                // get values
+                $values = store::getPostValues();
+                // remove the submit button
+                unset($values['post']);
                 
-                $allowedTypes = tool::getAllowedImageTypes();
-                
-                if ($width <= store::getConfigParam('avatar_width') && $height <= store::getConfigParam('avatar_height')) {
-                    if ($upload['type'] === $realType && in_array($realType, $allowedTypes)) {
-                        // remove existing avatars
-                        $avatars = (new avatar())->getByField('user_id', $user->id);
-                        foreach ($avatars as $avatar) {
-                            $avatar->delete();
-                        }
-                        
-                        $data = base64_encode(file_get_contents($upload['tmp_name']));
-                        
-                        $avatar = (new avatar())->generateFromRowSafe(array(
-                            'user_id' => $user->id,
-                            'data' => $data,
-                            'type' => $realType,
-                        ));
-                        $avatar->save();
-                    } else {
-                        $error[] = 'Files of type ' . $realType . ' are not allowed.';
-                    }
+                // if e-mail is set, we need to update the user
+                if (!empty($values['email'])) {
+                    $user->email = $values['email'];
+                    $user->save();
+                    auth::setUser($user);
                 } else {
-                    $error[] = 'Avatars can\'t be bigger than ' . store::getConfigParam('avatar_width') . 'x' . store::getConfigParam('avatar_height');
+                    $error[] = 'E-mail address can\'t be empty.';
+                }
+                
+                // if there's a file upload for the avatar, deal with it here
+                if (isset($_FILES['avatar']) && !empty($_FILES['avatar']['type'])) {
+                    $upload = $_FILES['avatar'];
+                    unset($_FILES['avatar']);
+                    $realType = finfo_file(finfo_open(FILEINFO_MIME_TYPE), $upload['tmp_name']);
+                    list($width, $height) = getimagesize($upload['tmp_name']);
+                    
+                    $allowedTypes = tool::getAllowedImageTypes();
+                    
+                    if ($width <= store::getConfigValue('avatar_width') && $height <= store::getConfigValue('avatar_height')) {
+                        if ($upload['type'] === $realType && in_array($realType, $allowedTypes)) {
+                            // remove existing avatars
+                            $avatars = (new avatar())->getByCondition('user_id = ?', $user->id);
+                            foreach ($avatars as $avatar) {
+                                $avatar->delete();
+                            }
+                            
+                            $data = base64_encode(file_get_contents($upload['tmp_name']));
+                            
+                            $avatar = (new avatar())->generateFromRow(array(
+                                'user_id' => $user->id,
+                                'data' => $data,
+                                'type' => $realType,
+                            ));
+                            $avatar->save();
+                        } else {
+                            $error[] = 'Files of type ' . $realType . ' are not allowed.';
+                        }
+                    } else {
+                        $error[] = 'Avatars can\'t be bigger than ' . store::getConfigValue('avatar_width') . 'x' . store::getConfigValue('avatar_height');
+                    }
+                }
+    
+                // since we're done checking email, remove it from the values
+                unset($values['email']);
+                
+                // everything else goes into settings, but first we delete existing values
+                $settings = $user->getSettings();
+                foreach ($settings as $setting) {
+                    $setting->delete();
+                }
+                // now loop through the post settings
+                foreach ($values as $key => $value) {
+                    if ($value === '0' || !empty($value)) {
+                        $setting = (new setting())->generateFromRow(array(
+                            'user_id' => $user->id,
+                            'key' => $key,
+                            'value' => $value,
+                        ));
+                        $setting->save();
+                    }
+                }
+                
+                if (count($error) == 0) {
+                    // no errors
+                    $success = true;
                 }
             }
-
-            // since we're done checking email, remove it from the values
-            unset($values['email']);
-            
-            // everything else goes into settings, but first we delete existing values
-            $settings = $user->getSettings();
-            foreach ($settings as $setting) {
-                $setting->delete();
-            }
-            // now loop through the post settings
-            foreach ($values as $key => $value) {
-                if ($value === '0' || !empty($value)) {
-                    $setting = (new setting())->generateFromRowSafe(array(
-                        'user_id' => $user->id,
-                        'key' => $key,
-                        'value' => $value,
-                    ));
-                    $setting->save();
-                }
-            }
-            
-            if (count($error) == 0) {
-                // no errors
-                $success = true;
-            }
+            store::addViewValues(array(
+                'success' => $success,
+                'error' => $error,
+            ));
+        } else {
+            // not logged in so redirect to home
+            tool::redirectToRoute('home');
         }
-        store::addParams(array(
-            'success' => $success,
-            'error' => $error,
-        ));
+        
     }
 }

@@ -13,28 +13,6 @@ class model {
     
     protected $tableKey = 'id';
     
-    const QUERY_SIMPLE = 'SELECT * FROM :tableName WHERE :key = :value';
-    const QUERY_ALL_ASC = 'SELECT * FROM :tableName ORDER BY :tableKey ASC';
-    const QUERY_ALL_DESC = 'SELECT * FROM :tableName ORDER BY :tableKey DESC';
-    const QUERY_SIMPLE_KEY_ASC = 'SELECT * FROM :tableName WHERE :key = :value ORDER BY :tableKey ASC';
-    const QUERY_SIMPLE_KEY_DESC = 'SELECT * FROM :tableName WHERE :key = :value ORDER BY :tableKey DESC';
-    const QUERY_WHERE_KEY_ASC = 'SELECT * FROM :tableName WHERE :where ORDER BY :tableKey DESC';
-    const QUERY_WHERE_KEY_DESC = 'SELECT * FROM :tableName WHERE :where ORDER BY :tableKey DESC';
-    
-    /**
-     * Assemble and return an escaped query string
-     * 
-     * @param string $query
-     * @param array $params
-     * @return string
-     */
-    protected function assemble($query, $params = array()) {
-        foreach ($params as $target => $value) {
-            $query = str_replace($target, SQLite3::escapeString($value), $query);
-        } 
-        return $query;
-    }
-    
     /**
      * Returns a row of current type based on the given id
      * 
@@ -42,11 +20,7 @@ class model {
      * @return object
      */
     public function getById($id) {
-        $query = $this->assemble(self::QUERY_SIMPLE, array(
-            ':tableName' => $this->tableName,
-            ':key' => $this->tableKey,
-            ':value' => $id,
-        ));
+        $query = (new query($this))->where($this->tableKey . ' = ?', $id);
         $dbResult = store::getDb()->query($query);
         return $this->generateFromRow($dbResult->fetchArray(SQLITE3_ASSOC));
     }
@@ -57,10 +31,7 @@ class model {
      * @return array of objects
      */
     public function getAll() {
-        $query = $this->assemble(self::QUERY_ALL_ASC, array(
-            ':tableName' => $this->tableName,
-            ':tableKey' => $this->tableKey,
-        ));
+        $query = new query($this);
         $dbResult = store::getDb()->query($query);
         $return = array();
         while ($row = $dbResult->fetchArray(SQLITE3_ASSOC)) {
@@ -70,23 +41,15 @@ class model {
     }
     
     /**
-     * Returns all rows of current type where key matches value
+     * Returns all rows of current type where condition matches value
      * 
      * @param string $key
      * @param mixed $value
      * @return array of objects
      */
-    public function getByField($key, $value) {
-        $query = $this->assemble(self::QUERY_SIMPLE_KEY_ASC, array(
-            ':tableName' => $this->tableName,
-            ':key' => $key,
-            ':value' => $value,
-            ':tableKey' => $this->tableKey,
-        ));
-        // if it's a string, we need to escape it
-        if ((int)$value !== $value) {
-            $query = str_replace($value, '\'' . $value . '\'', $query);
-        }
+    public function getByCondition($condition, $value) {
+        $query = new query($this);
+        $query->where($condition, $value);
         $dbResult = store::getDb()->query($query);
         $return = array();
         while ($row = $dbResult->fetchArray(SQLITE3_ASSOC)) {
@@ -101,18 +64,12 @@ class model {
      * @param array $fields
      * @return array of objects
      */
-    public function getByFields($fields = array()) {
-        $where = array();
-        foreach ($fields as $field) {
-            $where[] = $field['key'] . ' ' . $field['match'] . ' ' . $field['value'];
+    public function getByConditions($fields = array()) {
+        $query = new query($this);
+        foreach ($fields as $condition => $value) {
+            $query->where($condition, $value);
         }
-        $where = implode(' AND ', $where);
-        
-        $query = $this->assemble(self::QUERY_WHERE_KEY_ASC, array(
-            ':tableName' => $this->tableName,
-            ':tableKey' => $this->tableKey,
-            ':where' => $where,
-        ));
+
         $dbResult = store::getDb()->query($query);
         $return = array();
         while ($row = $dbResult->fetchArray(SQLITE3_ASSOC)) {
@@ -122,6 +79,10 @@ class model {
     }
     
     public function getByQuery($query) {
+        // check if it's a query object and if it has a tablename set, if not, default to current model
+        if ($query instanceof query && $query->getTableName() === null) {
+            $query->setTableName($this->getTableName());
+        }
         $dbResult = store::getDb()->query($query);
         $return = array();
         while ($row = $dbResult->fetchArray(SQLITE3_ASSOC)) {
@@ -145,24 +106,20 @@ class model {
         $array = $this->toArray();
 
         if ($this->id) {
-            $query = 'UPDATE ' . $this->tableName . ' SET ';
-            foreach ($array as $key => $value) {
-                $queryParts[] = $key . '=\'' . $value . '\'';
-            }
-            $query .= implode(',', $queryParts);
-            $query .= ' WHERE id = ' . $this->id;
-        } else {
-            // split keys and values
-            $values = array_values($array);
+            $query = (new query($this));
+            $query->setAction('update');
+            $query->addValue($this->tableKey, $this->id);
             
-            $query = 'INSERT INTO ' . $this->tableName . ' (';
-            $query .= implode(',', array_keys($array));
-            $query .= ') VALUES (';
-            foreach (array_values($array) as $value) {
-                $queryParts[] = '\'' . $value . '\'';
+            foreach ($array as $key => $value) {
+                $query->addValue($key, $value);
             }
-            $query .= implode(',', $queryParts);
-            $query .= ')';
+        } else {
+            $query = (new query($this));
+            $query->setAction('insert');
+            
+            foreach ($array as $key => $value) {
+                $query->addValue($key, $value);
+            }
         }
         try {
             store::getDb()->query($query);
@@ -177,7 +134,10 @@ class model {
     }
     
     public function delete() {
-        $query = 'DELETE FROM ' . $this->tableName . ' WHERE ' . $this->tableKey . ' = \'' . $this->id . '\'';
+        $query = (new query($this));
+        $query->setAction('delete');
+        $query->where($this->tableKey . ' = ?', $this->id);
+
         try {
             store::getDb()->query($query);
         } catch (Exception $e) {
@@ -202,20 +162,13 @@ class model {
         }
         return $item;
     }
-    
-    /**
-     * Returns object of current type populated with values from $row, which have been SQLite3::escapeString'd
-     * 
-     * @param array $row
-     * @return object
-     */
-    public function generateFromRowSafe($row) {
-        $class = get_called_class();
-        $item = new $class();
-        foreach ($row as $key => $value) {
-            $item->$key = SQLite3::escapeString($value);
-        }
-        return $item;
+
+    public function getTableName() {
+        return $this->tableName;
+    }
+
+    public function getTableKey() {
+        return $this->tableKey;
     }
     
 }

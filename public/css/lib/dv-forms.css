@@ -28,6 +28,7 @@ textarea.dv-form-element {
 }
 
 .dv-form-button {
+    display: inline-block;
     border: 1px solid #999;
     border-color: rgba(0, 0, 0, 0.4);
     padding: 0.5em;
@@ -36,7 +37,6 @@ textarea.dv-form-element {
     color: rgba(0, 0, 0, 0.7);
     outline: none;
     background-color: rgba(0, 0, 0, 0.3);
-    min-width: 100px;
     
     text-decoration: none;
 }

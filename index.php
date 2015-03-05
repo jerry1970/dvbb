@@ -85,7 +85,7 @@ require(store::getPath() . '/application/routes/routes.php');
 /**
  * Check if maintenance mode is on, and if so, show the maintenance page
  */
-if (store::getConfigParam('maintenance_mode') == 1) {
+if (store::getConfigValue('maintenance_mode') == 1) {
     require(store::getPath() . '/application/view/layout/header.phtml');
     require(store::getPath() . '/application/view/layout/maintenance.phtml');
     require(store::getPath() . '/application/view/layout/footer.phtml');
@@ -142,9 +142,7 @@ if ($match) {
     // require header, view, then footer
     if (!$output) {
         require(store::getPath() . '/application/view/layout/header.phtml');
-    }
-    require(store::getPath() . '/application/view/' . $controllerShortName . '/' . $action . '.phtml');
-    if (!$output) {
+        require(store::getPath() . '/application/view/' . $controllerShortName . '/' . $action . '.phtml');
         require(store::getPath() . '/application/view/layout/footer.phtml');
     }
 } else {

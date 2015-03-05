@@ -13,5 +13,11 @@ class category extends model {
     
     public $id;
     public $title;
+    public $sort;
 
+    public function getAllSorted() {
+        $query = (new query($this))->orderBy('sort', 'ASC');
+        return $this->getByQuery($query);
+    }
+    
 }

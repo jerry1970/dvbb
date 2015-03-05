@@ -14,42 +14,53 @@ class generalController extends controller {
         $lastPostPerForum = array();
         foreach ($forums as $forum) {
             $lastPostPerForum[$forum->id] = null;
-            $topic = (new post())->getByQuery('SELECT * FROM post WHERE forum_id = ' . $forum->id . ' ORDER BY last_post_at DESC LIMIT 1');
+            
+            $query = (new query(new post()))
+                ->where('forum_id = ?', $forum->id)
+                ->orderBy('last_post_at')
+                ->limit(1);
+            
+            $topic = (new post())->getByQuery($query);
             if (count($topic) > 0) {
                 $lastPostPerForum[$forum->id] = $topic[0];
             }
         }
         
         // now add the most recent data to the view
-        store::addParam('lastPostPerForum', $lastPostPerForum);
+        store::addViewValue('lastPostPerForum', $lastPostPerForum);
     }
     
     public function forum() {
         // get forum based on id
-        $forum = (new forum())->getById(store::getParam('id'));
+        $forum = (new forum())->getById(store::getViewValue('id'));
+        
+        if (!auth::can('read', 'forum', $forum->id)) {
+            // not allowed
+            tool::redirectToRoute('home');
+        }
         
         // get limit based on posts_per_page
-        $posts_per_page = store::getConfigParam('posts_per_page');
-        if (auth::getUser()) {
-            $posts_per_page = auth::getUser()->getDefinitiveSetting('posts_per_page');
-        }
+        $posts_per_page = tool::getPostsPerPage();
 
-        if (store::getParam('page')) {
-            $limit = ($posts_per_page * store::getParam('page'));
-            $limit = ($limit - $posts_per_page) . ', ' . $posts_per_page;
-        } else {
-            $limit = $posts_per_page;
+        $limit = $posts_per_page;
+        $offset = null;
+        if (store::getViewValue('page')) {
+            $offset = ($posts_per_page * store::getViewValue('page'));
+            $offset = ($offset - $posts_per_page);
         }
         
-        // get topics based on parameters
-        $query = 'SELECT * FROM post WHERE forum_id = ' . $forum->id . ' ORDER BY last_post_at DESC LIMIT ' . $limit;
+        $query = (new query())
+            ->where('forum_id = ?', $forum->id)
+            ->orderBy('last_post_at')
+            ->limit($limit, $offset);
+        
         $topics = (new post())->getByQuery($query);
-        $postTotal = count((new post())->getByQuery('SELECT * FROM post WHERE forum_id = ' . $forum->id));
+        $postTotal = count((new post())->getByCondition('forum_id = ?', $forum->id));
         
         // get some more info
         $pageTotal = ceil($postTotal / $posts_per_page);
         
-        store::addParams(array(
+        store::addViewValues(array(
             'forum' => $forum,
             'topics' => $topics,
             'postTotal' => $postTotal,
@@ -59,8 +70,40 @@ class generalController extends controller {
     
     public function topic() {
         // get topic based on id
-        $topic = (new post())->getById(store::getParam('id'));
+        $topic = (new post())->getById(store::getViewValue('id'));
+        
+        // handle post before we do any of the remaining logic so new replies are taken into account immediately
+        if (store::getPostValues()) {
+            $body = store::getPostValue('body');
+            if (!empty($body)) {
+                $now = (new DateTime())->format('Y-m-d H:i:s');
+                
+                $reply = new post();
+                $reply->created_at = $now;
+                $reply->updated_at = $now;
+                
+                $reply->user_id = auth::getUser()->id;
+                
+                $reply->title = $topic->title;
+                $reply->parent_id = $topic->id;
+                
+                $reply->body = store::getPostValue('body');
+                $reply->save();
+                
+                $topic->last_post_at = $now;
+                $topic->save();
+                
+                // now redirect to ourselves
+                $currentUrl = store::getCurrentUrl() . '?page=' . $topic->getLastPage() . '#post-' . $reply->id;
+                tool::redirect($currentUrl);
+            }
+        }
 
+        if (!auth::can('read', 'forum', $topic->forum_id)) {
+            // not allowed
+            tool::redirectToRoute('home');
+        }
+        
         // store that the user has opened this topic now if we're logged in
         if (auth::getUser()) {
             // create new item for the topic
@@ -75,32 +118,34 @@ class generalController extends controller {
         }
         
         // get limit based on posts_per_page
-        $posts_per_page = store::getConfigParam('posts_per_page');
-        if (auth::getUser()) {
-            $posts_per_page = auth::getUser()->getDefinitiveSetting('posts_per_page');
-        }
+        $posts_per_page = tool::getPostsPerPage();
         
-        // see if there's a page available so we have an offset for limit
-        if (store::getParam('page')) {
-            $limit = ($posts_per_page * store::getParam('page')) - $posts_per_page;
-            $limit = ($limit - 1) . ', ' . $posts_per_page;
+        $limit = $posts_per_page;
+        $offset = null;
+        if (store::getViewValue('page') && store::getViewValue('page') !== '1') {
+            $offset = ($posts_per_page * store::getViewValue('page')) - $posts_per_page;
+            $offset = $offset - 1;
         } else {
             $limit = $posts_per_page - 1;
         }
         
+        $query = (new query())
+            ->where('parent_id = ?', $topic->id)
+            ->orderBy('id', 'ASC')
+            ->limit($limit, $offset);
+        
         // get posts based on parameters
-        $query = 'SELECT * FROM post WHERE parent_id = ' . $topic->id . ' ORDER BY id ASC LIMIT ' . $limit;
         $posts = (new post())->getByQuery($query);
-        if (!store::getParam('page')) {
+        if (!store::getViewValue('page') || store::getViewValue('page') == 1) {
             // we're on page 1 so add the topic post to the front of the replies
             $posts = array_merge(array($topic), $posts);
         }
-        $postTotal = count((new post())->getByQuery('SELECT * FROM post WHERE parent_id = ' . $topic->id)) + 1;
+        $postTotal = count((new post())->getByCondition('parent_id = ?', $topic->id)) + 1;
         
         // get some more info
         $pageTotal = ceil($postTotal / $posts_per_page);
 
-        store::addParams(array(
+        store::addViewValues(array(
             'topic' => $topic,
             'posts' => $posts,
             'postTotal' => $postTotal,

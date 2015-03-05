@@ -3,10 +3,10 @@ $body = null;
 if(store::getPostValues()) {
     $body = store::getPostValue('body');
 }
-if(store::getParam('error')) {
+if(store::getViewValue('error')) {
     ?>
     <div class="dvbb-container dvbb-container-row dv-notification-message dv-background-alert dv-color-white">
-        <?=store::getParam('error');?>
+        <?=store::getViewValue('error');?>
     </div> 
     <?php 
 }
@@ -14,20 +14,10 @@ if(store::getParam('error')) {
 
 <form method="post" action="<?=store::getCurrentUrl()?>" class="dvbb-form">
     <div class="dvbb-container">
-        <div class="dvbb-container-header">New reply to <?=store::getParam('topic')->title;?></div>
+        <div class="dvbb-container-header">New reply to <?=store::getViewValue('topic')->title;?></div>
         <div class="dvbb-container-row">
         
-            <div class="dv-grid-row">
-                <label class="dv-grid-column-8 dv-form-label">Reply content</label>
-                <div class="dv-grid-column-16"><textarea name="body" class="dv-form-element"><?=$body;?></textarea></div>
-            </div>
-        
-        </div>
-    </div>
-    <div class="dvbb-container">
-        <div class="dvbb-container-row dv-align-center">
-        
-            <input type="submit" name="post" value="post" class="dv-form-button" />
+            <?=tool::partial('general/partial/reply.phtml')?>
         
         </div>
     </div>

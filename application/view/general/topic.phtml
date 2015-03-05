@@ -1,17 +1,13 @@
 <?php 
-$topic = store::getParam('topic');
-
-$posts_per_page = store::getConfigParam('posts_per_page');
-if (auth::getUser()) {
-    $posts_per_page = auth::getUser()->getDefinitiveSetting('posts_per_page');
-}
+$topic = store::getViewValue('topic');
+$posts_per_page = tool::getPostsPerPage();
 ?>
 
 <nav class="dv-grid-row dvbb-subnavigation">
     <div class="dv-grid-column-12 dvbb-subnavigation-left">
         <?=$posts_per_page?> posts per page: 
         <?php
-        for ($i = 1; $i <= store::getParam('pageTotal'); $i++) {
+        for ($i = 1; $i <= store::getViewValue('pageTotal'); $i++) {
             $param = '';
             if ($i > 1) {
                 // only now do we actually add a parameter
@@ -19,10 +15,10 @@ if (auth::getUser()) {
             }
             // check if current page is 1 or otherwise
             $active = null;
-            if (store::getParam('page') && store::getParam('page') == $i) {
+            if (store::getViewValue('page') && store::getViewValue('page') == $i) {
                 // not page 1 but we ARE on this page
                 $active = 'active';
-            } elseif (!store::getParam('page') && $i == 1) {
+            } elseif (!store::getViewValue('page') && $i == 1) {
                 $active = 'active';
             }
             $pages[] = '<a href="' . store::getCurrentUrl() . $param . '" class="dvbb-pagination-link ' . $active . '">' . $i .'</a>';
@@ -32,10 +28,16 @@ if (auth::getUser()) {
     </div>
     <div class="dv-grid-column-12 dvbb-subnavigation-right">
         <?php 
-        if (auth::getUser()) {
+        if ($topic->closed) {
             ?>
-            <a href="<?=store::getRouter()->generate('reply-create', array('id' => $topic->id));?>">new reply</a>
+            <span class="dv-color-notice">Topic is closed</span>
             <?php 
+        } else {
+            if (auth::can('create', 'forum', $topic->forum_id)) {
+                ?>
+                <a href="<?=store::getRouter()->generate('reply-create', array('id' => $topic->id));?>">new reply</a>
+                <?php
+            } 
         }
         ?>
     </div>
@@ -44,18 +46,33 @@ if (auth::getUser()) {
 <div class="dvbb-container">
     <div class="dvbb-container-header"><?=$topic->title?></div>
     <?php 
-    $posts = store::getParam('posts');
+    $posts = store::getViewValue('posts');
     if (count($posts) > 0) {
         foreach ($posts as $subPost) {
             $user = (new user())->getById($subPost->user_id);
-            $settings = $user->getSettings();
+            $userGroup = $user->getGroup();
+            $userSubGroup = $user->getSubGroup();
+            $avatar = $user->getAvatar();
+            if ($user->id) {
+                $settings = $user->getSettings();
+            } else {
+                $settings = array();
+            }
             ?>
+            <a name="post-<?=$subPost->id;?>"></a>
             <div class="dvbb-container-row dv-grid-row">
                 <div class="dv-grid-column-5">
-                    <p>
-                        <strong><?=$user->username?></strong>
+                    <div>
+                        <strong><?=$user->username?></strong><br />
+                        <?=$userGroup->title?><br />
                         <?php 
-                        $avatar = $user->getAvatar();
+                        if ($userSubGroup) {
+                            ?>
+                            <small class="dv-color-notice"><?=$userSubGroup->title;?></small>
+                            <?php 
+                        }
+                        ?>
+                        <?php 
                         $src = tool::getBase64ImageSrc($avatar);
                         if ($src) {
                             ?>
@@ -65,7 +82,7 @@ if (auth::getUser()) {
                             <?php 
                         }
                         ?>
-                    </p>
+                    </div>
                     <p class="dv-color-notice">
                         <?php 
                         if (isset($settings['location'])) {
@@ -79,8 +96,8 @@ if (auth::getUser()) {
                     </p>
                     <p>
                         <?php
-                        // show some links to logged in users 
-                        if (auth::getUser()) {
+                        // show some links to logged in users and only if a user has an id
+                        if (auth::getUser() && $user->id) {
                             ?>
                             <a href="<?=store::getRouter()->generate('user-profile', array('id' => $user->id));?>">profile</a><br />
                             <?php 
@@ -90,12 +107,40 @@ if (auth::getUser()) {
                 </div>
                 <div class="dv-grid-column-19 dvbb-post">
                     <span class="dv-color-notice">
-                        <small>posted <?=tool::getDateFormatted($subPost->created_at)?></small>
+                        <small>
+                            posted <?=tool::getDateFormatted($subPost->created_at)?>
+                        </small>
                     </span>
                     
                     <?=tool::nl2p(tool::fromBB($subPost->body));?>
                     
                     <?php 
+                    // look for updates
+                    $updated = null;
+                    $updateUser = null;
+                    if ($subPost->updated_user_id) {
+                        $updateUser = (new user())->getById($subPost->updated_user_id);
+                    }
+                    if ($subPost->created_at !== $subPost->updated_at) {
+                        $updated = 'updated ' . tool::getDateFormatted($subPost->updated_at);
+                        if ($updateUser) {
+                            // admins do silent edits, always
+                            if ($updateUser->group_id == 1) {
+                                $updated = null;
+                            } else {
+                                $updated .= ' by ' . $updateUser->username;
+                            }
+                        }
+                    }
+                    if ($updated) {
+                        ?>
+                        <small class="dv-color-notice"><?=$updated;?></small>
+                        <?php 
+                    }
+                    ?>
+                    
+                    <?php 
+                    // if the user has a signature, show it
                     if (isset($settings['signature'])) {
                         ?>
                         <div class="dvbb-signature">
@@ -106,11 +151,104 @@ if (auth::getUser()) {
                     ?>
                 </div>
             </div>
-            <?php
+            
+            <?php 
+            // user must be able to at least update or create in this forum for this bar to make any sense
+            if (
+                auth::can('create', 'forum', $topic->forum_id)
+                || auth::can('update', 'forum', $topic->forum_id)
+                || auth::can('update', 'forum', $topic->forum_id)
+                || auth::can('admin')
+            ) {
+                ?>
+                <div class="dvbb-container-row dv-grid-row">
+                    <div class="dv-grid-column-5"></div>
+                    <?php 
+                    $canQuote = auth::can('create', 'forum', $topic->forum_id);
+                    $canUpdateOwn = (auth::can('update', 'forum', $topic->forum_id) && auth::getUser()->id === $subPost->user_id);
+                    $canMod = auth::can('mod', 'forum', $topic->forum_id);
+                    ?>
+                    
+                    <div class="dv-grid-column-9 dv-text-small">
+                        <?php 
+                        if ($canQuote) {
+                            ?>
+                            <a href="<?=store::getRouter()->generate('reply-create-quote', array('id' => $topic->id, 'quoteId' => $subPost->id));?>">quote post</a>
+                            <?php
+                        }
+                        if ($canUpdateOwn || $canMod) {
+                            ?>
+                            - <a href="<?=store::getRouter()->generate('reply-update', array('id' => $subPost->id));?>">edit post</a> <?=($canMod && !$canUpdateOwn? '(as mod)': '');?>
+                            <?php 
+                        }
+                        ?>
+                    </div>
+                    
+                    <?php 
+                    if ($canMod) {
+                        $isTopic = ($topic->id === $subPost->id);
+                        ?>
+                        <div class="dv-grid-column-10 dv-align-right dv-text-small">
+                            moderate: 
+                            <a href="<?=store::getRouter()->generate('mod-reply-delete', array('id' => $subPost->id));?>">delete <?=($isTopic ? 'topic':'post');?></a>
+                        </div>
+                        <?php 
+                    }
+                    ?>
+                </div>
+                <?php
+            } 
         }
     }
     ?>
 </div>
+<?php 
+$currentUrl = store::getCurrentUrl();
+if (store::getViewValue('page')) {
+    $currentUrl = store::getCurrentUrl() . '?page=' . store::getViewValue('page');
+}
+if (auth::can('create', 'forum', $topic->forum_id)) {
+    ?>
+    <form method="post" action="<?=$currentUrl;?>" style="margin-bottom: 0.5em;">
+        <div class="dvbb-container">
+            <div class="dvbb-container-header">Post new reply as <?=auth::getUser()->username;?></div>
+            <div class="dvbb-container-row">
+    
+                <?php 
+                if ($topic->closed) {
+                    ?>
+                    <span class="dv-color-notice">Topic is closed</span>
+                    <?php 
+                } else {
+                    echo tool::partial('general/partial/reply.phtml');
+                }
+                ?>
+                
+            </div>
+        </div>
+    </form>
+    <?php 
+}
+?>
+
+<?php 
+if (auth::can('mod', 'forum', $topic->forum_id)) {
+    $ajaxUrl = store::getRouter()->generate('ajax-topic-sticky', array('id' => $topic->id));
+    $ajaxRedirect = store::getRouter()->generate('forum', array('id' => $topic->forum_id));
+    ?>
+    <div class="dvbb-container">
+        <div class="dvbb-container-row">
+            <div class="dv-align-right dv-text-small">
+                moderator options: 
+                <a href="<?=store::getRouter()->generate('mod-topic-close', array('id' => $topic->id));?>"><?=($topic->closed ? 'open' : 'close');?> topic</a> - 
+                <a href="<?=store::getRouter()->generate('mod-topic-delete', array('id' => $topic->id));?>">delete topic</a> - 
+                <a href="#" data-ajax-url="<?=$ajaxUrl;?>" data-ajax-redirect="<?=$ajaxRedirect;?>"><?=($topic->sticky ? 'un' : '');?>sticky topic</a>
+            </div>
+        </div>
+    </div>
+    <?php 
+}
+?>
 
 <nav class="dv-grid-row dvbb-subnavigation">
     <div class="dv-grid-column-12">
@@ -119,10 +257,16 @@ if (auth::getUser()) {
     </div>
     <div class="dv-grid-column-12 dvbb-subnavigation-right">
         <?php 
-        if (auth::getUser()) {
+        if ($topic->closed) {
             ?>
-            <a href="<?=store::getRouter()->generate('reply-create', array('id' => $topic->id));?>">new reply</a>
+            <span class="dv-color-notice">Topic is closed</span>
             <?php 
+        } else {
+            if (auth::can('create', 'forum', $topic->forum_id)) {
+                ?>
+                <a href="<?=store::getRouter()->generate('reply-create', array('id' => $topic->id));?>">new reply</a>
+                <?php
+            } 
         }
         ?>
     </div>

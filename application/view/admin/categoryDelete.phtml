@@ -1,0 +1,24 @@
+<?=tool::partial('admin/partial/nav.phtml')?>
+
+<?php 
+$category = store::getViewValue('category');
+?>
+
+<div class="dvbb-container">
+    <div class="dvbb-container-header">Delete category '<?=$category->title;?>'</div>
+    <div class="dvbb-container-row">
+        <p>
+            If you delete this category, all forums and topics within this category will be deleted as well! This cannot 
+            be undone!
+        </p>
+    </div>
+</div>
+<form method="post" action="<?=store::getCurrentUrl();?>">
+    <div class="dvbb-container">
+        <div class="dvbb-container-row dv-align-center">
+        
+            <input type="submit" name="post" value="delete" class="dv-form-button dv-background-alert" />
+        
+        </div>
+    </div>
+</form>

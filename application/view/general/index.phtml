@@ -1,71 +1,130 @@
 <?php
-$categories = (new category())->getAll();
-$lastPostPerForum = store::getParam('lastPostPerForum');
+$categories = (new category())->getAllSorted();
+$lastPostPerForum = store::getViewValue('lastPostPerForum');
+
+$categoriesShown = false;
+$forumShown = false;
+
+$posts_per_page = tool::getPostsPerPage();
+
 foreach ($categories as $category) {
-    $forums = (new forum())->getByField('category_id', $category->id);
-    ?>
-    <div class="dvbb-container dvbb-forum-list">
-        <div class="dvbb-container-header"><?=$category->title?></div>
-        <div class="dvbb-container-legend dv-grid-row">
-            <div class="dv-grid-column-13">Forum</div>
-            <div class="dv-grid-column-2">Topics</div>
-            <div class="dv-grid-column-2">Replies</div>
-            <div class="dv-grid-column-7">Last Post</div>
-        </div>
-        <?php 
+
+    // first check the user's rights
+    if (auth::can('read', 'category', $category->id)) {
+    
+        $forums = (new forum())->getByCondition('category_id = ?', $category->id);
+        
+        $visibleForums = array();
+        $forumsToShow = false;
         foreach ($forums as $forum) {
-            // build url to forum
-            $url = store::getRouter()->generate('forum', array('id' => $forum->id));
-            // only topics have a forum_id set
-            $topics = (new post())->getByField('forum_id', $forum->id);
-            $topicCount = count($topics);
-            // replies have a parent_id instead of a forum_id
-            $replyCount = 0;
-            foreach ($topics as $topic) {
-                $replies = (new post())->getByField('parent_id', $topic->id);
-                $replyCount = $replyCount + count($replies);
+            if (auth::can('read', 'forum', $forum->id)) {
+                $forumsToShow = true;
+                $visibleForums[] = $forum;
             }
-            $lastPost = $lastPostPerForum[$forum->id];
-            if ($lastPost !== null) {
-                // get date & user of this lastPost
-                $user = (new user())->getById($lastPost->user_id);
-                $date = 
-                
-                // get last reply, if any
-                $lastReply = $lastPost->getLastReply();
-                if ($lastReply) {
-                    $user = (new user())->getById($lastReply->user_id);
-                }
-            }
-            $unread = $forum->getUnreadStatus();
+        }
+        if ($forumsToShow) {
             ?>
-            <div class="dvbb-container-row dv-grid-row">
-                <div class="dv-grid-column-1">
-                    <div class="dvbb-read-status<?=($unread ? ' unread' : '');?>"></div>
+            <div class="dvbb-container dvbb-forum-list">
+                <div class="dvbb-container-header"><?=$category->title?></div>
+                <div class="dvbb-container-legend dv-grid-row">
+                    <div class="dv-grid-column-13">Forum</div>
+                    <div class="dv-grid-column-2">Topics</div>
+                    <div class="dv-grid-column-2">Replies</div>
+                    <div class="dv-grid-column-7">Last Post</div>
                 </div>
-                <div class="dv-grid-column-12">
-                    <a href="<?=$url;?>"><?=$forum->title;?></a><br />
-                    <small style="color: grey"><?=$forum->description;?></small>
-                </div>
-                <div class="dv-grid-column-2"><?=$topicCount;?></div>
-                <div class="dv-grid-column-2"><?=$replyCount;?></div>
-                <div class="dv-grid-column-7">
-                    <?php 
-                    if ($lastPost) {
-                        $url = store::getRouter()->generate('topic', array('id' => $lastPost->id));
-                        ?>
-                        <a href="<?=$url;?>"><?=$lastPost->title;?></a><br />
-                        <small style="color: grey"><?=$user->username?> at <?=tool::getDateFormatted($lastPost->last_post_at);?></small>
-                        <?php 
-                    } else {
-                        echo '--';
+                <?php 
+                foreach ($visibleForums as $forum) {
+                    // build url to forum
+                    $url = store::getRouter()->generate('forum', array('id' => $forum->id));
+                    // only topics have a forum_id set
+                    $topics = (new post())->getByCondition('forum_id = ?', $forum->id);
+                    $topicCount = count($topics);
+                    // replies have a parent_id instead of a forum_id
+                    $replyCount = 0;
+                    foreach ($topics as $topic) {
+                        $replies = (new post())->getByCondition('parent_id = ?', $topic->id);
+                        $replyCount = $replyCount + count($replies);
                     }
+                    $lastPost = $lastPostPerForum[$forum->id];
+                    if ($lastPost !== null) {
+                        // get date & user of this lastPost
+                        $user = (new user())->getById($lastPost->user_id);
+                        
+                        // get last reply, if any
+                        $lastReply = $lastPost->getReplyLast();
+                        if ($lastReply) {
+                            $user = (new user())->getById($lastReply->user_id);
+                        }
+                    }
+                    $unread = $forum->getUnreadStatus();
                     ?>
-                </div>
+                    <div class="dvbb-container-row dv-grid-row">
+                        <div class="dv-grid-column-1">
+                            <div class="dvbb-read-status<?=($unread ? ' unread' : '');?>"></div>
+                        </div>
+                        <div class="dv-grid-column-12">
+                            <a href="<?=$url;?>"><?=$forum->title;?></a><br />
+                            <small style="color: grey"><?=$forum->description;?></small>
+                        </div>
+                        <div class="dv-grid-column-2"><?=$topicCount;?></div>
+                        <div class="dv-grid-column-2"><?=$replyCount;?></div>
+                        <div class="dv-grid-column-7">
+                            <?php 
+                            if ($lastPost) {
+                                $url = store::getRouter()->generate('topic', array('id' => $lastPost->id));
+                                $anchorId = $lastPost->id;
+                                $page = null;
+                                if ($lastReply) {
+                                    $anchorId = $lastReply->id;
+                                    $page = $lastReply->getReplyPage();
+
+                                    if (auth::getUser()) {
+                                        $firstUnseen = $lastPost->getReplyFirstUnseen();
+
+                                        if ($firstUnseen) {
+                                            $anchorId = $firstUnseen->id;
+                                            $page = $firstUnseen->getReplyPage();
+                                        }
+                                    }
+                                }
+                                if ($page) {
+                                    $url .= '?page=' . $page;
+                                }
+                                ?>
+                                <a href="<?=$url;?>#post-<?=$anchorId;?>"><?=$lastPost->title;?></a><br />
+                                <small style="color: grey"><?=$user->username?> at <?=tool::getDateFormatted($lastPost->last_post_at);?></small>
+                                <?php 
+                            } else {
+                                echo '--';
+                            }
+                            ?>
+                        </div>
+                    </div>
+                    <?php
+                    $forumShown = true;
+                }
+                
+                if (!$forumShown) {
+                    ?>
+                    <div class="dvbb-container-row dv-grid-row">
+                        <div class="dv-grid-column-24">
+                            <span class="dv-color-notice">No forums</span>
+                        </div>
+                    </div>
+                    <?php 
+                }
+                ?>
             </div>
             <?php
+            $categoriesShown = true;
         }
-        ?>
+        
+    }
+}
+if (!$categoriesShown) {
+    ?>
+    <div class="dvbb-container dvbb-container-row">
+        <span class="dv-color-notice">No categories</span>
     </div>
     <?php 
 }
@@ -88,8 +147,17 @@ foreach ($posts as $post) {
 <div class="dvbb-container">
     <div class="dvbb-container-header">Forum statistics</div>
     <div class="dvbb-container-row">
-        Total members: <?=$users;?><br />
-        Total topics: <?=$topics;?><br />
-        Total replies: <?=$replies;?><br />
+        <div class="dv-grid-row">
+            <div class="dv-grid-column-4">Total members</div>
+            <div class="dv-grid-column-4"><?=$users;?></div>
+        </div>
+        <div class="dv-grid-row">
+            <div class="dv-grid-column-4">Total topics</div>
+            <div class="dv-grid-column-4"><?=$topics;?></div>
+        </div>
+        <div class="dv-grid-row">
+            <div class="dv-grid-column-4">Total replies</div>
+            <div class="dv-grid-column-4"><?=$replies;?></div>
+        </div>
     </div>
 </div>

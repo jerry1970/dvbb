@@ -1,0 +1,61 @@
+<?=tool::partial('admin/partial/nav.phtml')?>
+
+<?php 
+$forum = store::getViewValue('forum');
+
+if(store::getViewValue('error')) {
+    ?>
+    <div class="dvbb-container dvbb-container-row dv-notification-message dv-background-alert dv-color-white">
+        The following errors have been found:
+    </div>
+    <div class="dvbb-container dvbb-container-row">
+        <ul>
+        <?php 
+        foreach (store::getViewValue('error') as $error) {
+            ?>
+            <li><?=$error;?></li>
+            <?php 
+        }
+        ?>
+        </ul>
+    </div>
+    <?php 
+}
+?>
+
+<form method="post" action="<?=store::getCurrentUrl();?>">
+    <div class="dvbb-container">
+        <div class="dvbb-container-header">Forum edit</div>
+        <div class="dvbb-container-row">
+
+            <div class="dv-grid-row">
+                <label class="dv-grid-column-8 dv-form-label" for="title">
+                    Title
+                </label>
+                <div class="dv-grid-column-16">
+                    <input name="title" id="title" type="text" value="<?=$forum->title;?>" class="dv-form-element" />
+                </div>
+            </div>
+
+            <div class="dv-grid-row">
+                <label class="dv-grid-column-8 dv-form-label" for="description">
+                    Description
+                </label>
+                <div class="dv-grid-column-16">
+                    <input name="description" id="description" type="text" value="<?=$forum->description;?>" class="dv-form-element" />
+                </div>
+            </div>
+        
+        </div>
+    </div>
+    
+    <?=tool::partial('admin/partial/rights.phtml')?>
+
+    <div class="dvbb-container">
+        <div class="dvbb-container-row dv-align-center">
+        
+            <input type="submit" name="post" value="save" class="dv-form-button" />
+        
+        </div>
+    </div>
+</form>

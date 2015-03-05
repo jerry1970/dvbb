@@ -1,3 +1,14 @@
+        
+            <nav class="dvbb-navigation dv-grid-row">
+                <div class="dv-grid-column-12">
+                    <a href="<?=store::getRouter()->generate('home');?>">index</a>
+                </div>
+                <div class="dv-grid-column-12 dv-align-right">
+                    <small>
+                        load time: <?=store::endExecutionTimer();?> sec
+                    </small>
+                </div>
+            </nav>
         </div>
     </body>
 

@@ -1,0 +1,110 @@
+<?=tool::partial('admin/partial/nav.phtml')?>
+
+<?php 
+$users = store::getViewValue('users');
+?>
+
+<div class="dvbb-container">
+    <div class="dvbb-container-header">Users</div>
+    <div class="dvbb-container-row">
+        <p>
+            Here you can delete users and edit certain aspects of users (like what user group they belong to, etc.)
+        </p>
+    </div>
+</div>
+
+<form method="post" action="<?=store::getCurrentUrl();?>">
+    <div class="dvbb-container">
+        <div class="dvbb-container-header">Manage existing</div>
+        <div class="dvbb-container-row">
+            <p>
+            
+                <div class="dvbb-container">
+                    <div class="dvbb-container-legend dv-grid-row">
+                        <div class="dv-grid-column-6 dv-text-bold">Username</div>
+                        <div class="dv-grid-column-2 dv-text-bold">Topics</div>
+                        <div class="dv-grid-column-2 dv-text-bold">Replies</div>
+                        <div class="dv-grid-column-5 dv-text-bold">User group</div>
+                        <div class="dv-grid-column-5 dv-text-bold">User subgroup</div>
+                        <div class="dv-grid-column-4 dv-text-bold">Delete</div>
+                    </div>
+                    <?php 
+                    foreach ($users as $user) {
+                        ?>
+                        <div class="dvbb-container-row dv-grid-row">
+                            <div class="dv-grid-column-6"><p><?=$user->username;?></p></div>
+                            <div class="dv-grid-column-2"><p><?=$user->getTopicCount();?></p></div>
+                            <div class="dv-grid-column-2"><p><?=$user->getReplyCount();?></p></div>
+                            <div class="dv-grid-column-5">
+                                <?php 
+                                $userGroup = (new group())->getById($user->group_id);
+                                if ($userGroup->id !== 1) {
+                                    ?>
+                                    <select name="usergroup[<?=$user->id;?>][main]" id="usergroup[<?=$user->id;?>][main]" class="dv-form-element">
+                                        <?php 
+                                        $userGroups = (new group())->getAll();
+                                        foreach($userGroups as $group) {
+                                            if ($group->id !== 1) {
+                                                ?>
+                                                <option value="<?=$group->id;?>" <?=($group->id == $user->group_id ? ' selected' : '');?>><?=$group->title;?></option>
+                                                <?php
+                                            }
+                                        }
+                                        ?>
+                                    </select>
+                                    <?php 
+                                } else {
+                                    ?>
+                                    <p>admin</p>
+                                    <?php 
+                                }
+                                ?>
+                            </div>
+                            <div class="dv-grid-column-5">
+                                <select name="usergroup[<?=$user->id;?>][sub]" id="usergroup[<?=$user->id;?>][sub]" class="dv-form-element">
+                                    <option value="0"></option>
+                                    <?php 
+                                    $subUserGroups = (new group())->getAll();
+                                    foreach($subUserGroups as $group) {
+                                        if ($group->id !== 1 && $group->id !== 2) {
+                                            ?>
+                                            <option value="<?=$group->id;?>" <?=($group->id == $user->sub_group_id ? ' selected' : '');?>><?=$group->title;?></option>
+                                            <?php
+                                        }
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="dv-grid-column-4">
+                                <div>
+                                    <p>
+                                        <?php 
+                                        if ($userGroup->id !== 1) {
+                                            ?>
+                                            <a href="<?=store::getRouter()->generate('admin-user-delete', array('id' => $user->id))?>">delete</a>
+                                            <?php 
+                                        } else {
+                                            ?>
+                                            <span class="dv-color-notice">can't remove admin</span>
+                                            <?php
+                                        }
+                                        ?>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <?php
+                    }
+                    ?>
+                </div>
+                
+            </p>
+        </div>
+    </div>
+    
+    <div class="dvbb-container">
+        <div class="dvbb-container-row dv-align-center">
+            <input type="submit" value="save groups" class="dv-form-button" />
+        </div>
+    </div>
+</form>

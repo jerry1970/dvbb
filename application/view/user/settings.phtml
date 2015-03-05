@@ -2,12 +2,12 @@
 // get the user
 $user = auth::getUser();
 // get the user's settings
-$settings = (new setting())->getByField('user_id', $user->id);
+$settings = (new setting())->getByCondition('user_id = ?', $user->id);
 foreach ($settings as $key => $setting) {
     $settings[$setting->key] = $setting;
 }
 
-if(store::getParam('error')) {
+if(store::getViewValue('error')) {
     ?>
     <div class="dvbb-container dvbb-container-row dv-notification-message dv-background-alert dv-color-white">
         The following errors have been found:
@@ -15,7 +15,7 @@ if(store::getParam('error')) {
     <div class="dvbb-container dvbb-container-row">
         <ul>
         <?php 
-        foreach (store::getParam('error') as $error) {
+        foreach (store::getViewValue('error') as $error) {
             ?>
             <li><?=$error;?></li>
             <?php 
@@ -24,7 +24,7 @@ if(store::getParam('error')) {
         </ul>
     </div>
     <?php 
-} elseif (store::getParam('success')) {
+} elseif (store::getViewValue('success')) {
     ?>
     <div class="dvbb-container dvbb-container-row dv-notification-message dv-background-correct dv-color-white">
         Your settings have been saved.
@@ -45,7 +45,7 @@ if(store::getParam('error')) {
             </p>
     
             <div class="dvbb-container">
-                <div class="dvbb-container-header">Change password</div>
+                <div class="dvbb-container-legend">Change password</div>
                 <div class="dvbb-container-row">
                     <p>
                         By clicking the below button, you will be sent an e-mail with a link to a password reset page.
@@ -59,11 +59,11 @@ if(store::getParam('error')) {
             </div>
             
             <div class="dvbb-container">
-                <div class="dvbb-container-header">Forum settings</div>
+                <div class="dvbb-container-legend">Forum settings</div>
                 <div class="dvbb-container-row">
                 
                     <?php 
-                    $posts_per_page = store::getConfigParam('posts_per_page');
+                    $posts_per_page = store::getConfigValue('posts_per_page');
                     if (isset($settings['posts_per_page'])) {
                         $posts_per_page = $settings['posts_per_page']->value;
                     }
@@ -87,7 +87,7 @@ if(store::getParam('error')) {
                     </div>
                 
                     <?php 
-                    $timezone = store::getConfigParam('timezone');
+                    $timezone = store::getConfigValue('timezone');
                     if (isset($settings['timezone'])) {
                         $timezone = $settings['timezone']->value;
                     }
@@ -130,7 +130,7 @@ if(store::getParam('error')) {
             </div>
             
             <div class="dvbb-container">
-                <div class="dvbb-container-header">User profile</div>
+                <div class="dvbb-container-legend">User profile</div>
                 <div class="dvbb-container-row">
                     
                     <?php 

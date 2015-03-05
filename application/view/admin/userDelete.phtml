@@ -1,0 +1,24 @@
+<?=tool::partial('admin/partial/nav.phtml')?>
+
+<?php 
+$user = store::getViewValue('user');
+?>
+
+<div class="dvbb-container">
+    <div class="dvbb-container-header">Delete user '<?=$user->username;?>'</div>
+    <div class="dvbb-container-row">
+        <p>
+            If you delete a user, all their posts will henceforth be attributed to 'nobody'. You can, if you want,
+            remove those posts too, from maintenance.
+        </p>
+    </div>
+</div>
+<form method="post" action="<?=store::getCurrentUrl();?>">
+    <div class="dvbb-container">
+        <div class="dvbb-container-row dv-align-center">
+        
+            <input type="submit" name="post" value="delete" class="dv-form-button dv-background-alert" />
+        
+        </div>
+    </div>
+</form>

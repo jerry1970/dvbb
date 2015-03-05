@@ -1,0 +1,101 @@
+<?=tool::partial('admin/partial/nav.phtml')?>
+
+<?php 
+$userGroups = (new group())->getAll();
+?>
+
+<div class="dvbb-container">
+    <div class="dvbb-container-header">Users</div>
+    <div class="dvbb-container-row">
+        <p>
+            Here you can add user groups, edit and delete them. If you delete a user group, all members in that group
+            will be added to the user group you can select before actually deleting.
+        </p>
+    </div>
+</div>
+
+<div class="dvbb-container">
+    <div class="dvbb-container-header">Manage existing</div>
+    <div class="dvbb-container-row">
+        <p>
+        
+            <div class="dvbb-container">
+                <div class="dvbb-container-legend dv-grid-row">
+                    <div class="dv-grid-column-16 dv-text-bold">Username</div>
+                    <div class="dv-grid-column-2 dv-text-bold">Members</div>
+                    <div class="dv-grid-column-2 dv-text-bold">Edit</div>
+                    <div class="dv-grid-column-4 dv-text-bold">Delete</div>
+                </div>
+                <?php 
+                foreach ($userGroups as $userGroup) {
+                    ?>
+                    <div class="dvbb-container-row dv-grid-row">
+                        <div class="dv-grid-column-16"><p><?=$userGroup->title;?></p></div>
+                        <div class="dv-grid-column-2">
+                            <p>
+                                <?php
+                                $userCount = count((new user())->getByCondition('group_id = ?', $userGroup->id));
+                                echo (int)$userCount;
+                                ?>
+                            </p>
+                        </div>
+                        <?php 
+                        // ignore usergroups 1 and 2 (admin and guest)
+                        if ($userGroup->id !== 1 && $userGroup->id !== 2) {
+                            ?>
+                            <div class="dv-grid-column-2">
+                                <p>
+                                    <a href="<?=store::getRouter()->generate('admin-usergroup-update', array('id' => $userGroup->id))?>">edit</a>
+                                </p>
+                            </div>
+                            <div class="dv-grid-column-4">
+                                <p>
+                                    <a href="<?=store::getRouter()->generate('admin-usergroup-delete', array('id' => $userGroup->id))?>">delete</a>
+                                </p>
+                            </div>
+                            <?php 
+                        } else {
+                            ?>
+                            <div class="dv-grid-column-6">
+                                <p>
+                                    <span class="dv-color-notice">can't edit/delete <?=$userGroup->title;?></span>
+                                </p>
+                            </div>
+                            <?php 
+                        }
+                        ?>
+                    </div>
+                    <?php
+                }
+                ?>
+            </div>
+            
+        </p>
+    </div>
+</div>
+    
+<form method="post" action="<?=store::getCurrentUrl();?>">
+    <div class="dvbb-container">
+        <div class="dvbb-container-header">Create new usergroup</div>
+        <div class="dvbb-container-row">
+
+            <div class="dv-grid-row">
+                <label class="dv-grid-column-8 dv-form-label" for="title">
+                    Title
+                </label>
+                <div class="dv-grid-column-16">
+                    <input name="title" id="title" type="text" value="" class="dv-form-element" />
+                </div>
+            </div>
+        
+        </div>
+    </div>
+
+    <div class="dvbb-container">
+        <div class="dvbb-container-row dv-align-center">
+        
+            <input type="submit" name="post" value="create" class="dv-form-button" />
+        
+        </div>
+    </div>
+</form>

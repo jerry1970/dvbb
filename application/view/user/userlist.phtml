@@ -11,34 +11,9 @@ $users = (new user())->getAll();
     </div>
     <?php 
     foreach ($users as $user) {
-        $topics = (new post())->getByFields(array(
-            array(
-                'key' => 'user_id',
-                'match' => '=',
-                'value' => $user->id,
-            ),
-            array(
-                'key' => 'forum_id',
-                'match' => 'IS NOT',
-                'value' => 'NULL',
-            ),
-        ));
-        $topicCount = count($topics);
-        $replies = (new post())->getByFields(array(
-            array(
-                'key' => 'user_id',
-                'match' => '=',
-                'value' => $user->id,
-            ),
-            array(
-                'key' => 'parent_id',
-                'match' => 'IS NOT',
-                'value' => 'NULL',
-            ),
-        ));
-        $replyCount = count($replies);
-        
-        $lastPost = (new post())->getByQuery('SELECT created_at FROM post WHERE user_id = \'' . $user->id . '\' ORDER BY id DESC LIMIT 1');
+        $topicCount = $user->getTopicCount();
+        $replyCount = $user->getReplyCount();
+        $lastPost = $user->getLastPost();
         ?>
         <div class="dvbb-container-row dv-grid-row">
             <div class="dv-grid-column-13">

@@ -1,0 +1,28 @@
+<?php 
+$reply = store::getViewValue('reply');
+$user = (new user())->getById($reply->user_id);
+?>
+
+<div class="dvbb-container">
+    <div class="dvbb-container-header">Delete reply</div>
+    <div class="dvbb-container-row dv-grid-row">
+        <p>
+            Are you sure you want to delete this reply?
+        </p>
+        <p>
+            <div class="dvbb-quote"><div class="dvbb-quote-username">Reply by <?=$user->username;?></div><?=$reply->body;?></div>
+        </p>
+        <p>
+            <span class="dv-color-alert">This cannot be undone!</span>
+    </div>
+</div>
+
+<form method="post" action="<?=store::getCurrentUrl()?>" class="dvbb-form">
+    <div class="dvbb-container">
+        <div class="dvbb-container-row dv-align-center">
+        
+            <input type="submit" name="post" value="delete reply" class="dv-form-button dv-background-alert" />
+        
+        </div>
+    </div>
+</form>

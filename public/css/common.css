@@ -4,6 +4,7 @@
  *
  * common.css is for your site-specific styles
  */
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
 
 a {
     color: #1f8bc2;
@@ -15,6 +16,10 @@ a:hover {
 }
 a.active {
     outline: 1px solid rgba(0, 0, 0, 0.5);
+}
+a[name] {
+    display: block;
+    height: 0;
 }
 p {
     margin: 0.5rem 0 1rem 0;
@@ -38,8 +43,7 @@ p:last-child {
     border: 1px solid #333;
     margin-bottom: 0.5rem;
 }
-.dvbb-subnavigation:last-child,
-.dvbb-container:last-child {
+.dvbb-subnavigation:last-child {
     margin-bottom: 0;
 }
 /* these elements all deserve some nice bottom borders */
@@ -65,13 +69,30 @@ p:last-child {
 .dvbb-container-row [class*='dv-grid-column-'] {
     padding-right: 1rem;
 }
+.dvbb-container-row [class*='dv-grid-column-']:last-child {
+    padding-right: 0;
+}
 .dvbb-subnavigation .dvbb-pagination-link {
     display: inline-block;
     padding: 0 0.25rem;
 }
 .dvbb-read-status {
+    display: inline-block;
     width: 1rem;
     height: 1rem;
+}
+.dvbb-topic-closed {
+    position: relative;
+    width: 1rem;
+    height: 1rem;
+    text-align: center;
+}
+.dvbb-topic-closed:after {
+    position: absolute;
+    content: "×";
+    font-size: 1.7rem;
+    top: -0.5rem;
+    left: 0;
 }
 
 /* subnavigation */
@@ -109,8 +130,19 @@ p:last-child {
 .dvbb-post img {
     max-width: 100%;
 }
-.dvbb-user-avatar {
-    margin-top: -0.75rem;
+
+/** bbcode styling */
+.dvbb-quote, .dvbb-code {
+    margin: 0.5rem 0;
+    padding: 0.25rem;
+    border: 1px solid grey;
+}
+.dvbb-quote-username {
+    display: block;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.2);
+    margin: -0.25rem -0.25rem 0.25rem -0.25rem;
+    padding: 0.25rem;
 }
 
 /* media query */
@@ -193,4 +225,15 @@ a.dv-form-button {
 }
 .dvbb-read-status.unread {
     background: #1f8bc2;
+}
+.dvbb-topic-closed {
+    color: #b33030;
+}
+a.dv-form-button.inactive {
+    color: #1f8bc2;
+    background: #fff;
+    outline: 0;
+}
+.dvbb-container-legend {
+    background: #ccc;
 }

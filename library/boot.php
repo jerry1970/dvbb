@@ -19,6 +19,9 @@ class boot {
         // require store class
         require('./library/store.php');
         
+        // start execution timer
+        store::startExecutionTimer();
+        
         // force UTC as default timezone
         date_default_timezone_set("UTC");
         
@@ -33,27 +36,16 @@ class boot {
         store::setUrl(str_replace('/public', '', $url));
         
         // initialize config from config/app.ini
-        store::setConfigParams(parse_ini_file(store::getPath() . '/application/config/config.ini'));
+        store::addConfigValues(parse_ini_file(store::getPath() . '/application/config/config.ini'));
         
         // open the database
-        store::setDb(new SQLite3(store::getPath() . '/application/storage/' . store::getConfigParam('sqliteDb')));
+        store::setDb(new SQLite3(store::getPath() . '/application/storage/' . store::getConfigValue('sqliteDb')));
         
-        // loop through get and add the values to the view params
-        $params = array();
-        foreach ($_GET as $key => $value) {
-            if ($key !== 'path') {
-                $params[$key] = $value;
-            }
-        }
-        store::addParams($params);
-        // loop through the post and add the values to the post params
-        $params = array();
-        foreach ($_POST as $key => $value) {
-            if ($key !== 'path') {
-                $params[$key] = $value;
-            }
-        }
-        store::addPostValues($params);
+        // add the values from the $_GET to the view values
+        store::addViewValues($_GET);
+        
+        // add the values from $_POST to the post values
+        store::addPostValues($_POST);
     }
     
 }

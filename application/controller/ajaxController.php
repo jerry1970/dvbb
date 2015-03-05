@@ -25,8 +25,24 @@ class ajaxController extends controller {
     }
     
     public function logout() {
-        session_destroy();
-        echo json_encode(array('status' => 'ok'));
+        if (auth::getUser()) {
+            session_destroy();
+            echo json_encode(array('status' => 'ok'));
+        } else {
+            tool::redirectToRoute('home');
+        }
+    }
+
+    public function topicSticky() {
+        $topic = (new post())->getById(store::getViewValue('id'));
+        
+        if ($topic->sticky) {
+            $topic->sticky = '';
+        } else {
+            $topic->sticky = 1;
+        }
+        $topic->save();
+        echo json_encode($topic);
     }
     
 }

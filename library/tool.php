@@ -54,9 +54,12 @@ class tool {
      */
     public static function getDateTime($date) {
         
-        $timezone = store::getConfigParam('timezone');
+        $timezone = store::getConfigValue('timezone');
         if (auth::getUser()) {
-            $setting = (new setting())->getByQuery('SELECT * FROM setting WHERE user_id = ' . auth::getUser()->id . ' AND key = \'timezone\'');
+            $setting = (new setting())->getByConditions(array(
+                'user_id = ?' => auth::getUser()->id,
+                'key = ?' => 'timezone',
+            ));
             if (count($setting) > 0) {
                 $timezone = $setting[0]->value;
             }
@@ -114,6 +117,7 @@ class tool {
             '~\[justify\](.*?)\[/justify\]~s',
             
             '~\[quote\](.*?)\[/quote\]~s',
+            '~\[quote=(.*?)\](((?R)|.*?)+)\[/quote\]~s',
             '~\[code\](.*?)\[/code\]~s',
             '~\[color=(.*?)\](.*?)\[/color\]~s',
             
@@ -134,8 +138,9 @@ class tool {
             '<div style="text-align:right;">$1</div>',
             '<div style="text-align:center;">$1</div>',
             '<div style="text-align:justify;">$1</div>',
-            
-            '<div class="dvbb-quote">$1</div>',
+
+            '<div class="dvbb-quote"><span class="dvbb-quote-username">quote</span>$1</div>',
+            '<div class="dvbb-quote"><span class="dvbb-quote-username">quoting $1</span>$2</div>',
             '<pre class="dvbb-code">$1</pre>',
             '<span style="color:$1;">$2</span>',
             
@@ -146,7 +151,10 @@ class tool {
         );
         
         // Replacing the BBcodes with corresponding HTML tags
-        return preg_replace($find, $replace, $text);
+        do {
+            $text = preg_replace($find, $replace, $text , -1 , $c);
+        } while($c > 0);
+        return $text;
         
     }
     
@@ -163,6 +171,34 @@ class tool {
             return 'data:' . $image->type . ';base64,' . $image->data;
         }
         return null;
+    }
+    
+    /**
+     * Loads and returns partial phtml if it exists. Looks only in /application/view/ and path given should be from
+     * there. So admin/partial/forums.phtml, for example.
+     * 
+     * @param unknown $path
+     * @return Ambigous <NULL, string>
+     */
+    public static function partial($path) {
+        $return = null;
+        
+        $path = store::getPath() . '/application/view/' . $path;
+        if (file_exists($path)) {
+            ob_start();
+            require($path);
+            $return = ob_get_clean();
+        }
+        
+        return $return;
+    }
+    
+    public static function getPostsPerPage() {
+        $posts_per_page = store::getConfigValue('posts_per_page');
+        if (auth::getUser()) {
+            $posts_per_page = auth::getUser()->getDefinitiveSetting('posts_per_page');
+        }
+        return $posts_per_page;
     }
     
 }

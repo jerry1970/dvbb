@@ -15,10 +15,11 @@ class store {
     static $basePath;
     static $url;
     static $router;
-    static $params = array();
-    static $post = array();
-    static $config = array();
+    static $viewValues = array();
+    static $postValues = array();
+    static $configValues = array();
     static $db;
+    static $executionTime = array();
     
     /**
      * Sets the local path
@@ -114,69 +115,59 @@ class store {
     }
     
     /**
-     * Adds an array of key/value pairs to the parameters
+     * Adds an array of key/value pairs to the view values
      * 
      * @param array $array
      * @return array
      */
-    public static function addParams($array = array()) {
+    public static function addViewValues($array = array()) {
         foreach($array as $key => $value) {
-            self::$params[$key] = $value;
+            self::$viewValues[$key] = $value;
         }
-        return self::$params;
+        return self::$viewValues;
     }
     
     /**
-     * Adds a single key/value pair to the parameters
+     * Adds a single key/value pair to the view values
      * 
      * @param string $key
      * @param mixed $value
      * @return array
      */
-    public static function addParam($key, $value) {
-        self::$params[$key] = $value;
-        return self::$params;
+    public static function addViewValue($key, $value) {
+        self::$viewValues[$key] = $value;
+        return self::$viewValues;
     }
     
     /**
-     * Removes a key/value pair from the parameters
+     * Removes a key/value pair from the view values
      * 
      * @param string $key
      * @return array
      */
-    public static function removeParam($key) {
-        unset(self::$params[$key]);
-        return self::$params;
+    public static function removeViewValue($key) {
+        unset(self::$viewValues[$key]);
+        return self::$viewValues;
     }
     
     /**
-     * Resets the view parameters and returns the empty view parameterss
-     * 
-     * @return array
-     */
-    public static function resetParams() {
-        self::$params = array();
-        return self::$params;
-    }
-    
-    /**
-     * Returns all view parameters
+     * Returns all view values
      * 
      * @return multitype:array
      */
-    public static function getParams() {
-        return self::$params;
+    public static function getViewValues() {
+        return self::$viewValues;
     }
     
     /**
-     * Returns a view parameters by key or false if the key doesn't exist
+     * Returns a view value by key or false if the key doesn't exist
      * 
      * @param string $key
      * @return string|null
      */
-    public static function getParam($key) {
-        if (isset(self::$params[$key])) {
-            return self::$params[$key];
+    public static function getViewValue($key) {
+        if (isset(self::$viewValues[$key])) {
+            return self::$viewValues[$key];
         }
         return null;
     }
@@ -194,27 +185,16 @@ class store {
     }
     
     /**
-     * Store config array and overwrite pre-existing config
-     * 
-     * @param array $array
-     * @return mixed
-     */
-    public static function setConfigParams($array = array()) {
-        self::$config = $array;
-        return self::$config;
-    }
-    
-    /**
      * Merge $config with existing config values, overwriting pre-existing values
      * 
      * @param array $array
      * @return array
      */
-    public static function addConfigParams($array = array()) {
+    public static function addConfigValues($array = array()) {
         foreach($array as $key => $value) {
-            self::$config[$key] = $value;
+            self::$configValues[$key] = $value;
         }
-        return self::$config;
+        return self::$configValues;
     }
     
     /**
@@ -222,8 +202,8 @@ class store {
      * 
      * @return array
      */
-    public static function getConfigParams() {
-        return self::$config;
+    public static function getConfigValues() {
+        return self::$configValues;
     }
     
     /**
@@ -232,11 +212,11 @@ class store {
      * @param string $key
      * @return mixed
      */
-    public static function getConfigParam($key) {
-        if (isset(self::$config[$key])) {
-            return self::$config[$key];
+    public static function getConfigValue($key) {
+        if (isset(self::$configValues[$key])) {
+            return self::$configValues[$key];
         }
-        return false;
+        return null;
     }
     
     /**
@@ -247,9 +227,9 @@ class store {
      */
     public static function addPostValues($array = array()) {
         foreach($array as $key => $value) {
-            self::$post[$key] = $value;
+            self::$postValues[$key] = $value;
         }
-        return self::$post;
+        return self::$postValues;
     }
     
     /**
@@ -258,7 +238,7 @@ class store {
      * @return array
      */
     public static function getPostValues() {
-        return self::$post;
+        return self::$postValues;
     }
     
     /**
@@ -268,8 +248,8 @@ class store {
      * @return mixed
      */
     public static function getPostValue($key) {
-        if (isset(self::$post[$key])) {
-            return self::$post[$key];
+        if (isset(self::$postValues[$key])) {
+            return self::$postValues[$key];
         }
         return false;
     }
@@ -290,6 +270,15 @@ class store {
      */
     public static function getDb() {
         return self::$db;
+    }
+    
+    public static function startExecutionTimer() {
+        self::$executionTime['start'] = microtime(true); 
+    }
+    
+    public static function endExecutionTimer() {
+        self::$executionTime['end'] = microtime(true);
+        return number_format(self::$executionTime['end'] - self::$executionTime['start'], 4);
     }
     
 }

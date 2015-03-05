@@ -1,0 +1,20 @@
+<?php 
+if(store::getViewValue('error')) {
+    ?>
+    <div class="dvbb-container dvbb-container-row dv-notification-message dv-background-alert dv-color-white">
+        <?=store::getViewValue('error');?>
+    </div> 
+    <?php 
+}
+?>
+
+<form method="post" action="<?=store::getCurrentUrl()?>" class="dvbb-form">
+    <div class="dvbb-container">
+        <div class="dvbb-container-header">Update reply to <?=store::getViewValue('topic')->title;?></div>
+        <div class="dvbb-container-row">
+        
+            <?=tool::partial('general/partial/reply.phtml')?>
+        
+        </div>
+    </div>
+</form>

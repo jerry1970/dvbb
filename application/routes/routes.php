@@ -23,7 +23,7 @@ $routes['forum'] = array(
     'action' => 'forum',
 );
 $routes['topic'] = array(
-    'method' => 'GET',
+    'method' => 'GET|POST',
     'path' => '/topic/[i:id]',
     'controller' => 'generalController',
     'action' => 'topic',
@@ -35,21 +35,18 @@ $routes['user-list'] = array(
     'path' => '/user/list',
     'controller' => 'userController',
     'action' => 'userlist',
-    'secure' => true,
 );
 $routes['user-profile'] = array(
     'method' => 'GET',
     'path' => '/user/[i:id]',
     'controller' => 'userController',
     'action' => 'profile',
-    'secure' => true,
 );
 $routes['user-settings'] = array(
     'method' => 'GET|POST',
     'path' => '/user/settings',
     'controller' => 'userController',
     'action' => 'settings',
-    'secure' => true,
 );
 
 // Create routes
@@ -58,14 +55,18 @@ $routes['topic-create'] = array(
     'path' => '/forum/[i:id]/add-topic',
     'controller' => 'topicController',
     'action' => 'create',
-    'secure' => true,
 );
 $routes['reply-create'] = array(
     'method' => 'GET|POST',
     'path' => '/topic/[i:id]/add-reply',
     'controller' => 'replyController',
     'action' => 'create',
-    'secure' => true,
+);
+$routes['reply-create-quote'] = array(
+    'method' => 'GET|POST',
+    'path' => '/topic/[i:id]/add-reply-quote/[i:quoteId]',
+    'controller' => 'replyController',
+    'action' => 'create',
 );
 $routes['register'] = array(
     'method' => 'GET|POST',
@@ -80,19 +81,34 @@ $routes['register-done'] = array(
     'action' => 'createDone',
 );
 
+// Reply routes
+$routes['reply-update'] = array(
+    'method' => 'GET|POST',
+    'path' => '/topic/reply/[i:id]/update',
+    'controller' => 'replyController',
+    'action' => 'update',
+);
+
 // AJAX routes
-$routes['login'] = array(
+$routes['ajax-login'] = array(
     'method' => 'POST',
     'path' => '/login',
     'controller' => 'ajaxController',
     'action' => 'login',
     'output' => 'json',
 );
-$routes['logout'] = array(
+$routes['ajax-logout'] = array(
     'method' => 'GET',
     'path' => '/logout',
     'controller' => 'ajaxController',
     'action' => 'logout',
+    'output' => 'json',
+);
+$routes['ajax-topic-sticky'] = array(
+    'method' => 'GET|POST',
+    'path' => '/topic/[i:id]/sticky',
+    'controller' => 'ajaxController',
+    'action' => 'topicSticky',
     'output' => 'json',
 );
 
@@ -103,6 +119,117 @@ $routes['token-redeem'] = array(
     'controller' => 'tokenController',
     'action' => 'redeem',
 );
+
+// Admin routes
+$routes['admin'] = array(
+    'method' => 'GET',
+    'path' => '/admin',
+    'controller' => 'adminController',
+    'action' => 'index',
+);
+
+$routes['admin-forums'] = array(
+    'method' => 'GET|POST',
+    'path' => '/admin/forums',
+    'controller' => 'adminController',
+    'action' => 'forums',
+);
+$routes['admin-forum-update'] = array(
+    'method' => 'GET|POST',
+    'path' => '/admin/forum/[i:id]/update',
+    'controller' => 'adminController',
+    'action' => 'forumUpdate',
+);
+$routes['admin-forum-delete'] = array(
+    'method' => 'GET|POST',
+    'path' => '/admin/forum/[i:id]/delete',
+    'controller' => 'adminController',
+    'action' => 'forumDelete',
+);
+$routes['admin-forum-create'] = array(
+    'method' => 'GET|POST',
+    'path' => '/admin/category/[i:id]/forum/create',
+    'controller' => 'adminController',
+    'action' => 'forumCreate',
+);
+$routes['admin-category-update'] = array(
+    'method' => 'GET|POST',
+    'path' => '/admin/category/[i:id]/update',
+    'controller' => 'adminController',
+    'action' => 'categoryUpdate',
+);
+$routes['admin-category-delete'] = array(
+    'method' => 'GET|POST',
+    'path' => '/admin/category/[i:id]/delete',
+    'controller' => 'adminController',
+    'action' => 'categoryDelete',
+);
+$routes['admin-category-create'] = array(
+    'method' => 'GET|POST',
+    'path' => '/admin/category/create',
+    'controller' => 'adminController',
+    'action' => 'categoryCreate',
+);
+
+$routes['admin-users'] = array(
+    'method' => 'GET|POST',
+    'path' => '/admin/users',
+    'controller' => 'adminController',
+    'action' => 'users',
+);
+$routes['admin-user-delete'] = array(
+    'method' => 'GET|POST',
+    'path' => '/admin/user/[i:id]/delete',
+    'controller' => 'adminController',
+    'action' => 'userDelete',
+);
+
+$routes['admin-usergroups'] = array(
+    'method' => 'GET|POST',
+    'path' => '/admin/usergroups',
+    'controller' => 'adminController',
+    'action' => 'usergroups',
+);
+$routes['admin-usergroup-update'] = array(
+    'method' => 'GET|POST',
+    'path' => '/admin/usergroup/[i:id]/update',
+    'controller' => 'adminController',
+    'action' => 'usergroupUpdate',
+);
+$routes['admin-usergroup-delete'] = array(
+    'method' => 'GET|POST',
+    'path' => '/admin/usergroup/[i:id]/delete',
+    'controller' => 'adminController',
+    'action' => 'usergroupDelete',
+);
+
+$routes['admin-maintenance'] = array(
+    'method' => 'GET',
+    'path' => '/admin/maintenance',
+    'controller' => 'adminController',
+    'action' => 'maintenance',
+);
+
+// moderation routes
+$routes['mod-topic-close'] = array(
+    'method' => 'GET|POST',
+    'path' => '/topic/[i:id]/close',
+    'controller' => 'modController',
+    'action' => 'topicClose',
+);
+$routes['mod-topic-delete'] = array(
+    'method' => 'GET|POST',
+    'path' => '/topic/[i:id]/delete',
+    'controller' => 'modController',
+    'action' => 'topicDelete',
+);
+$routes['mod-reply-delete'] = array(
+    'method' => 'GET|POST',
+    'path' => '/topic/reply/[i:id]/delete',
+    'controller' => 'modController',
+    'action' => 'replyDelete',
+);
+
 
 /**
  * Now map all the routes to AltoRouter if it exists

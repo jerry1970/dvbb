@@ -1,9 +1,17 @@
 <?php 
-$forum = store::getParam('forum');
+$forum = store::getViewValue('forum');
+$posts_per_page = tool::getPostsPerPage();
 
-$posts_per_page = store::getConfigParam('posts_per_page');
-if (auth::getUser()) {
-    $posts_per_page = auth::getUser()->getDefinitiveSetting('posts_per_page');
+// separate sticky from normal topics
+$topics = store::getViewValue('topics');
+$stickyTopics = array();
+$normalTopics = array();
+foreach ($topics as $topic) {
+    if ($topic->sticky) {
+        $stickyTopics[] = $topic;
+    } else {
+        $normalTopics[] = $topic;
+    }
 }
 ?>
 
@@ -12,7 +20,7 @@ if (auth::getUser()) {
         <?=$posts_per_page?> topics per page: 
         <?php
         $pages = array();
-        for ($i = 1; $i <= store::getParam('pageTotal'); $i++) {
+        for ($i = 1; $i <= store::getViewValue('pageTotal'); $i++) {
             $param = '';
             if ($i > 1) {
                 // only now do we actually add a parameter
@@ -20,10 +28,10 @@ if (auth::getUser()) {
             }
             // check if current page is 1 or otherwise
             $active = null;
-            if (store::getParam('page') && store::getParam('page') == $i) {
+            if (store::getViewValue('page') && store::getViewValue('page') == $i) {
                 // not page 1 but we ARE on this page
                 $active = 'active';
-            } elseif (!store::getParam('page') && $i == 1) {
+            } elseif (!store::getViewValue('page') && $i == 1) {
                 $active = 'active';
             }
             $pages[] = '<a href="' . store::getCurrentUrl() . $param . '" class="dvbb-pagination-link ' . $active . '">' . $i .'</a>';
@@ -37,7 +45,7 @@ if (auth::getUser()) {
     </div>
     <div class="dv-grid-column-12 dvbb-subnavigation-right">
         <?php 
-        if (auth::getUser()) {
+        if (auth::can('create', 'forum', $forum->id)) {
             ?>
             <a href="<?=store::getRouter()->generate('topic-create', array('id' => $forum->id));?>">new topic</a>
             <?php 
@@ -54,18 +62,71 @@ if (auth::getUser()) {
         <div class="dv-grid-column-7">Last Post</div>
     </div>
     <?php 
-    $topics = store::getParam('topics');
-    if (count($topics) > 0) {
-        foreach ($topics as $topic) {
+    // sticky topics
+    if (count($stickyTopics) > 0) {
+        ?>
+        <div class="dvbb-container-legend">
+            Sticky topics
+        </div>
+        <?php 
+        foreach ($stickyTopics as $topic) {
             $unread = $topic->getUnreadStatus();
             
             $url = store::getRouter()->generate('topic', array('id' => $topic->id));
-            $subPosts = count((new post())->getByField('parent_id', $topic->id));
+            $subPosts = count((new post())->getByCondition('parent_id = ?', $topic->id));
+            $user = (new user())->getById($topic->user_id);
+            ?>
+            <div class="dvbb-container-row dv-grid-row">
+                <div class="dv-grid-column-1 dv-align-center">
+                    <?php 
+                    if ($topic->closed) {
+                        ?>
+                        <div class="dvbb-topic-closed"></div>
+                        <?php 
+                    } else {
+                        ?>
+                        <div class="dvbb-read-status<?=($unread ? ' unread' : '');?>"></div>
+                        <?php 
+                    }
+                    ?>
+                </div>
+                <div class="dv-grid-column-14">
+                    <a href="<?=$url;?>"><?=$topic->title;?></a><br />
+                    <small style="color: grey"><?=$user->username;?> - posted <?=tool::getDateFormatted($topic->created_at)?></small>
+                </div>
+                <div class="dv-grid-column-2"><?=$subPosts;?></div>
+                <div class="dv-grid-column-7"><?=tool::getDateFormatted($topic->last_post_at)?></div>
+            </div>
+            <?php
+        }
+    }
+    // normal topics
+    ?>
+    <div class="dvbb-container-legend">
+        Normal topics
+    </div>
+    <?php 
+    if (count($normalTopics) > 0) {
+        foreach ($normalTopics as $topic) {
+            $unread = $topic->getUnreadStatus();
+            
+            $url = store::getRouter()->generate('topic', array('id' => $topic->id));
+            $subPosts = count((new post())->getByCondition('parent_id = ?', $topic->id));
             $user = (new user())->getById($topic->user_id);
             ?>
             <div class="dvbb-container-row dv-grid-row">
                 <div class="dv-grid-column-1">
-                    <div class="dvbb-read-status<?=($unread ? ' unread' : '');?>"></div>
+                    <?php 
+                    if ($topic->closed) {
+                        ?>
+                        <div class="dvbb-topic-closed"></div>
+                        <?php 
+                    } else {
+                        ?>
+                        <div class="dvbb-read-status<?=($unread ? ' unread' : '');?>"></div>
+                        <?php 
+                    }
+                    ?>
                 </div>
                 <div class="dv-grid-column-14">
                     <a href="<?=$url;?>"><?=$topic->title;?></a><br />
@@ -95,7 +156,7 @@ if (auth::getUser()) {
     </div>
     <div class="dv-grid-column-12 dvbb-subnavigation-right">
         <?php 
-        if (auth::getUser()) {
+        if (auth::can('create', 'forum', $forum->id)) {
             ?>
             <a href="<?=store::getRouter()->generate('topic-create', array('id' => $forum->id));?>">new topic</a>
             <?php 

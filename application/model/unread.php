@@ -20,32 +20,16 @@ class unread extends model {
     public function updateOrInsert() {
         
         $fields = array(
-            array(
-                'key' => 'user_id',
-                'match' => '=',
-                'value' => $this->user_id,
-            ),
-            array(
-                'key' => 'forum_id',
-                'match' => '=',
-                'value' => $this->forum_id,
-            ),
+            'user_id = ?' => $this->user_id,
+            'forum_id = ?' => $this->forum_id,
         );
         if ($this->post_id) {
-            $fields[] = array(
-                'key' => 'post_id',
-                'match' => '=',
-                'value' => $this->post_id,
-            );
+            $fields['post_id = ?'] = $this->post_id;
         } else {
-            $fields[] = array(
-                'key' => 'post_id',
-                'match' => 'IS',
-                'value' => 'NULL',
-            );
+            $fields['post_id IS NULL'] = null;
         }
         
-        $existing = $this->getByFields($fields);
+        $existing = $this->getByConditions($fields);
 
         if (count($existing) > 0) {
             $existing = $existing[0];

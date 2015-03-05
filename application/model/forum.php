@@ -16,11 +16,12 @@ class forum extends model {
     public $category_id;
     public $title;
     public $description;
+    public $sort;
 
     public function getUnreadStatus() {
         
         if (auth::getUser()) {
-            $topics = (new post())->getByField('forum_id', $this->id);
+            $topics = (new post())->getByCondition('forum_id = ?', $this->id);
             foreach ($topics as $topic) {
                 if ($topic->getUnreadStatus()) {
                     return true;

@@ -1,0 +1,46 @@
+<?=tool::partial('admin/partial/nav.phtml')?>
+
+<?php 
+$userGroup = store::getViewValue('userGroup');
+?>
+
+<form method="post" action="<?=store::getCurrentUrl();?>">
+    <div class="dvbb-container">
+        <div class="dvbb-container-header">Delete usergroup '<?=$userGroup->title;?>'</div>
+        <div class="dvbb-container-row">
+            <p>
+                Please select a group to move all existing users in this group to.
+            </p>
+            
+            <div class="dv-grid-row">
+                <label class="dv-grid-column-8 dv-form-label" for="description">
+                    Target usergroup
+                </label>
+                <div class="dv-grid-column-16">
+                    <?php
+                    ?>
+                    <select name="target" id="usergroup[<?=$user->id;?>]" class="dv-form-element">
+                        <?php 
+                        $userGroups = (new group())->getAll();
+                        foreach($userGroups as $group) {
+                            if ($group->id !== $userGroup->id && $group->title !== 'admin') {
+                                ?>
+                                <option value="<?=$group->id;?>" <?=($group->title == 'guest' ? ' selected' : '');?>><?=$group->title;?></option>
+                                <?php
+                            }
+                        }
+                        ?>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="dvbb-container">
+        <div class="dvbb-container-row dv-align-center">
+        
+            <input type="submit" name="post" value="delete" class="dv-form-button dv-background-alert" />
+        
+        </div>
+    </div>
+</form>

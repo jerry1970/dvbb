@@ -11,7 +11,7 @@ class tokenController extends controller {
 
     public function redeem() {
         // get the token
-        $token = (new token())->getByField('token', store::getParam('token'));
+        $token = (new token())->getByCondition('token = ?', store::getViewValue('token'));
         if (count($token) > 0) {
             $token = $token[0];
             if ($token->context == 'register_validate') {
@@ -22,7 +22,7 @@ class tokenController extends controller {
     
                 $token->delete();
                 
-                store::addParam('user', $user);
+                store::addViewValue('user', $user);
             }
         }
     }

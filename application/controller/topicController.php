@@ -10,15 +10,21 @@
 class topicController extends controller {
 
     public function create() {
-        $forum = (new forum())->getById(store::getParam('id'));
-        store::addParam('forum', $forum);
+        $forum = (new forum())->getById(store::getViewValue('id'));
+
+        if (!auth::can('create', 'forum', $forum->id)) {
+            // not allowed
+            tool::redirectToRoute('home');
+        }
+        
+        store::addViewValue('forum', $forum);
         
         if (store::getPostValues()) {
             // deal with post here
             $values = store::getPostValues();
             if (!empty($values['title']) && !empty($values['body'])) {
                 $createdAt = (new DateTime)->format('Y-m-d H:i:s');
-                $post = (new post())->generateFromRowSafe(array(
+                $post = (new post())->generateFromRow(array(
                     'forum_id' => $forum->id,
                     'user_id' => auth::getUser()->id,
                     'title' => $values['title'],
@@ -31,12 +37,18 @@ class topicController extends controller {
                     tool::redirectToRoute('topic', array('id' => $post->id));
                 }
             } else {
-                store::addParam(array('error' => 'All fields are required.'));
+                store::addViewValue(array('error' => 'All fields are required.'));
             }
         }
     }
 
     public function update() {
+
+        if (!auth::can('update', 'forum', $forum->id)) {
+            // not allowed
+            tool::redirectToRoute('home');
+        }
+        
     }
     
 }

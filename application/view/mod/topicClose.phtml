@@ -1,0 +1,21 @@
+<?php 
+$topic = store::getViewValue('topic');
+?>
+
+<div class="dvbb-container">
+    <div class="dvbb-container-header">Close topic '<?=$topic->title;?>'</div>
+    <div class="dvbb-container-row dv-grid-row">
+        Are you sure you want to close this topic? No more replies will be possible after this. You can open the topic
+        again later, however.
+    </div>
+</div>
+
+<form method="post" action="<?=store::getCurrentUrl()?>" class="dvbb-form">
+    <div class="dvbb-container">
+        <div class="dvbb-container-row dv-align-center">
+        
+            <input type="submit" name="post" value="close topic" class="dv-form-button dv-background-alert" />
+        
+        </div>
+    </div>
+</form>

@@ -1,0 +1,184 @@
+<?php 
+$rights = array();
+
+if (store::getViewValue('usergroup')) {
+    $grouprights = (new rights())->getByConditions(array(
+        'child_type = ?' => 'group',
+        'child_id = ?' => store::getViewValue('usergroup')->id,
+        'parent_type = ?' => 'default',
+    ));
+
+    // and save them
+    $rights[] = array(
+        'usergroup' => store::getViewValue('usergroup'),
+        'rights' => $grouprights[0],
+    );
+} else {
+    $usergroups = (new group())->getAll();
+    foreach ($usergroups as $usergroup) {
+        // get default rights
+        $grouprights = (new rights())->getByConditions(array(
+            'child_type = ?' => 'group',
+            'child_id = ?' => $usergroup->id,
+            'parent_type = ?' => 'default',
+        ));
+        
+        // get specific rights if we're told to do so
+        if (store::getViewValue('parent_type') && store::getViewValue('parent_id')) {
+            $grouprightsSpecific = (new rights())->getByConditions(array(
+                'child_type = ?' => 'group',
+                'child_id = ?' => $usergroup->id,
+                'parent_type = ?' => store::getViewValue('parent_type'),
+                'parent_id = ?' => store::getViewValue('parent_id'),
+            ));
+            if (count($grouprightsSpecific) > 0) {
+                $grouprights = $grouprightsSpecific;
+            }
+        }
+        
+        // and save them
+        $rights[] = array(
+            'usergroup' => $usergroup,
+            'rights' => $grouprights[0],
+        );
+    }
+}
+?>
+
+<div class="dvbb-container">
+    <div class="dvbb-container-header">Rights</div>
+    <div class="dvbb-container-row">
+        <p>
+            The following statuses can be applied to rights:
+            <ul>
+                <li>allow: the user group is allowed to act on this right</li>
+                <li>refuse: the user group is not allowed to act on this right</li>
+                <li>always allow: the user group is allowed to act on this right and no other right can override this</li>
+                <li>always refuse: the user group is not allowed to act on this right and no other right can override this</li>
+            </ul>
+        </p>
+        <p>
+
+            <div class="dvbb-container">
+                <div class="dvbb-container-legend dv-grid-row">
+                    <div class="dv-grid-column-6 dv-text-bold">Usergroup title</div>
+                    <div class="dv-grid-column-3 dv-text-bold">Create</div>
+                    <div class="dv-grid-column-3 dv-text-bold">Read</div>
+                    <div class="dv-grid-column-3 dv-text-bold">Update</div>
+                    <div class="dv-grid-column-3 dv-text-bold">Delete</div>
+                    <div class="dv-grid-column-3 dv-text-bold">Mod</div>
+                    <div class="dv-grid-column-3 dv-text-bold">Admin</div>
+                </div>
+                <?php 
+                foreach ($rights as $grouprights) {
+                    $options = array(
+                        0 => 'refuse',
+                        1 => 'allow',
+                        2 => 'always refuse',
+                        3 => 'always allow',
+                    );
+                    
+                    $rights = $grouprights['rights'];
+                    ?>
+                    <div class="dvbb-container-row dv-grid-row">
+                        <div class="dv-grid-column-6">
+                            <p>
+                                <?=$grouprights['usergroup']->title;?>
+                                <input type="hidden" name="rights[<?=$rights->child_id;?>][slug]" value="1" />
+                            </p>
+                        </div>
+                        
+                        <div class="dv-grid-column-3">
+                            <p>
+                                <select class="dv-text-small dvbb-rights-select" name="rights[<?=$rights->child_id;?>][create]" >
+                                    <?php 
+                                    foreach ($options as $value => $text) {
+                                        ?>
+                                        <option value="<?=$value;?>" <?=($rights->create == $value ? 'selected' : '');?>><?=$text;?></option>
+                                        <?php 
+                                    }
+                                    ?>
+                                </select>
+                            </p>
+                        </div>
+                        <div class="dv-grid-column-3">
+                            <p>
+                                <select class="dv-text-small dvbb-rights-select" name="rights[<?=$rights->child_id;?>][read]" >
+                                    <?php 
+                                    foreach ($options as $value => $text) {
+                                        ?>
+                                        <option value="<?=$value;?>" <?=($rights->read == $value ? 'selected' : '');?>><?=$text;?></option>
+                                        <?php 
+                                    }
+                                    ?>
+                                </select>
+                            </p>
+                        </div>
+                        <div class="dv-grid-column-3">
+                            <p>
+                                <select class="dv-text-small dvbb-rights-select" name="rights[<?=$rights->child_id;?>][update]" >
+                                    <?php 
+                                    foreach ($options as $value => $text) {
+                                        ?>
+                                        <option value="<?=$value;?>" <?=($rights->update == $value ? 'selected' : '');?>><?=$text;?></option>
+                                        <?php 
+                                    }
+                                    ?>
+                                </select>
+                            </p>
+                        </div>
+                        <div class="dv-grid-column-3">
+                            <p>
+                                <select class="dv-text-small dvbb-rights-select" name="rights[<?=$rights->child_id;?>][delete]" >
+                                    <?php 
+                                    foreach ($options as $value => $text) {
+                                        ?>
+                                        <option value="<?=$value;?>" <?=($rights->delete == $value ? 'selected' : '');?>><?=$text;?></option>
+                                        <?php 
+                                    }
+                                    ?>
+                                </select>
+                            </p>
+                        </div>
+                        <div class="dv-grid-column-3">
+                            <p>
+                                <select class="dv-text-small dvbb-rights-select" name="rights[<?=$rights->child_id;?>][mod]" >
+                                    <?php 
+                                    foreach ($options as $value => $text) {
+                                        ?>
+                                        <option value="<?=$value;?>" <?=($rights->mod == $value ? 'selected' : '');?>><?=$text;?></option>
+                                        <?php 
+                                    }
+                                    ?>
+                                </select>
+                            </p>
+                        </div>
+                        <div class="dv-grid-column-3">
+                            <p>
+                                <select class="dv-text-small dvbb-rights-select" name="rights[<?=$rights->child_id;?>][admin]" >
+                                    <?php 
+                                    foreach ($options as $value => $text) {
+                                        ?>
+                                        <option value="<?=$value;?>" <?=($rights->admin == $value ? 'selected' : '');?>><?=$text;?></option>
+                                        <?php 
+                                    }
+                                    ?>
+                                </select>
+                            </p>
+                        </div>
+                        
+                    </div>
+                    <?php 
+                }
+                ?>
+            </div>
+            
+            <script>
+                $.each($('.dvbb-rights-select'), function() {
+                    checkRightSelect(this);
+                });
+            </script>
+    
+        </p>
+    </div>
+</div>

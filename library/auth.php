@@ -2,7 +2,7 @@
 /**
  * auth class
  * 
- * This class provides authentication functionality
+ * This class provides authentication functionality and rights management
  * 
  * @copyright   2015 Robin de Graaf, devvoh webdevelopment
  * @license     MIT
@@ -10,7 +10,7 @@
  */
 
 class auth {
-   
+
     static $user = null;
     
     /**
@@ -20,8 +20,12 @@ class auth {
      * @return user|null
      */
     public static function setUser($user) {
+        // set the user if it's valid
         if ($user instanceof user) {
             self::$user = $user;
+            
+            // load the rights, we only want to do this once for performance reasons
+            self::$user->loadRights();
         }
         return self::$user;
     }
@@ -55,9 +59,23 @@ class auth {
                         password.password = \'' . $password . '\'';
         $dbResult = store::getDb()->query($query);
         if ($row = $dbResult->fetchArray(SQLITE3_ASSOC)) {
-            self::$user = (new user())->getById($row['id']);
+            self::setUser((new user())->getById($row['id']));
         }
-        return self::$user;
+        return self::getUser();
+    }
+
+    public static function can($right = null, $type = null, $id = null) {
+        // check if a user is set, and if so, 
+        if (!self::$user) {
+            // create fake guest user to check on
+            $guest = new user();
+            $guest->group_id = 2;
+            $return = $guest->can($right, $type, $id);
+        } else {
+            $return = self::$user->can($right, $type, $id);
+        }
+        
+        return $return;
     }
     
 }

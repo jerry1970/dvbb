@@ -7,7 +7,7 @@ if(store::getPostValues()) {
     $new_email = store::getPostValue('new_email');
     $new_email_confirm = store::getPostValue('new_email_confirm');
 }
-if(store::getParam('error')) {
+if(store::getViewValue('error')) {
     ?>
     <div class="dvbb-container dvbb-container-row dv-notification-message dv-background-alert dv-color-white">
         The following errors have been found:
@@ -15,7 +15,7 @@ if(store::getParam('error')) {
     <div class="dvbb-container dvbb-container-row">
         <ul>
         <?php 
-        foreach (store::getParam('error') as $error) {
+        foreach (store::getViewValue('error') as $error) {
             ?>
             <li><?=$error;?></li>
             <?php 

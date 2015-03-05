@@ -1,36 +1,12 @@
 <?php
-$user = (new user())->getById(store::getParam('id'));
+$user = (new user())->getById(store::getViewValue('id'));
 ?>
 <div class="dvbb-container">
     <div class="dvbb-container-header">Profile of <?=$user->username;?></div>
     <div class="dvbb-container-row">
         <?php 
-        $topics = (new post())->getByFields(array(
-            array(
-                'key' => 'user_id',
-                'match' => '=',
-                'value' => $user->id,
-            ),
-            array(
-                'key' => 'forum_id',
-                'match' => 'IS NOT',
-                'value' => 'NULL',
-            ),
-        ));
-        $topicCount = count($topics);
-        $replies = (new post())->getByFields(array(
-            array(
-                'key' => 'user_id',
-                'match' => '=',
-                'value' => $user->id,
-            ),
-            array(
-                'key' => 'parent_id',
-                'match' => 'IS NOT',
-                'value' => 'NULL',
-            ),
-        ));
-        $replyCount = count($replies);
+        $topicCount = $user->getTopicCount();
+        $replyCount = $user->getReplyCount();
         ?>
         Topics started: <?=$topicCount?><br />
         Replies posted: <?=$replyCount?><br />
