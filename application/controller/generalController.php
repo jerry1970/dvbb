@@ -71,37 +71,39 @@ class generalController extends controller {
     public function topic() {
         // get topic based on id
         $topic = (new post())->getById(store::getViewValue('id'));
-        
-        // handle post before we do any of the remaining logic so new replies are taken into account immediately
-        if (store::getPostValues()) {
-            $body = store::getPostValue('body');
-            if (!empty($body)) {
-                $now = (new DateTime())->format('Y-m-d H:i:s');
-                
-                $reply = new post();
-                $reply->created_at = $now;
-                $reply->updated_at = $now;
-                
-                $reply->user_id = auth::getUser()->id;
-                
-                $reply->title = $topic->title;
-                $reply->parent_id = $topic->id;
-                
-                $reply->body = store::getPostValue('body');
-                $reply->save();
-                
-                $topic->last_post_at = $now;
-                $topic->save();
-                
-                // now redirect to ourselves
-                $currentUrl = store::getCurrentUrl() . '?page=' . $topic->getLastPage() . '#post-' . $reply->id;
-                tool::redirect($currentUrl);
-            }
-        }
 
         if (!auth::can('read', 'forum', $topic->forum_id)) {
             // not allowed
             tool::redirectToRoute('home');
+        }
+        
+        // handle post (if allowed) before we do any of the remaining logic so new replies are taken into account
+        if (auth::can('create', 'forum', $topic->forum_id)) {
+            if (store::getPostValues()) {
+                $body = store::getPostValue('body');
+                if (!empty($body)) {
+                    $now = (new DateTime())->format('Y-m-d H:i:s');
+                    
+                    $reply = new post();
+                    $reply->created_at = $now;
+                    $reply->updated_at = $now;
+                    
+                    $reply->user_id = auth::getUser()->id;
+                    
+                    $reply->title = $topic->title;
+                    $reply->parent_id = $topic->id;
+                    
+                    $reply->body = store::getPostValue('body');
+                    $reply->save();
+                    
+                    $topic->last_post_at = $now;
+                    $topic->save();
+                    
+                    // now redirect to ourselves
+                    $currentUrl = store::getCurrentUrl() . '?page=' . $topic->getLastPage() . '#post-' . $reply->id;
+                    tool::redirect($currentUrl);
+                }
+            }
         }
         
         // store that the user has opened this topic now if we're logged in

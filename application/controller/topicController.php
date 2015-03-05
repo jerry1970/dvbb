@@ -41,14 +41,5 @@ class topicController extends controller {
             }
         }
     }
-
-    public function update() {
-
-        if (!auth::can('update', 'forum', $forum->id)) {
-            // not allowed
-            tool::redirectToRoute('home');
-        }
-        
-    }
     
 }

@@ -12,13 +12,13 @@ class replyController extends controller {
     public function create() {
         $topic = (new post())->getById(store::getViewValue('id'));
 
-        // get limit based on posts_per_page
-        $posts_per_page = tool::getPostsPerPage();
-
         if (!auth::can('create', 'forum', $topic->forum_id)) {
             // not allowed
             tool::redirectToRoute('home');
         }
+
+        // get limit based on posts_per_page
+        $posts_per_page = tool::getPostsPerPage();
         
         // a reply given to quote is optional
         $replyQuote = null;
@@ -74,14 +74,14 @@ class replyController extends controller {
         } else {
             $topic = $reply;
         }
-
-        // get limit based on posts_per_page
-        $posts_per_page = tool::getPostsPerPage();
         
         if (!auth::can('update', 'forum', $topic->forum_id)) {
             // not allowed
             tool::redirectToRoute('home');
         }
+
+        // get limit based on posts_per_page
+        $posts_per_page = tool::getPostsPerPage();
 
         if (store::getPostValues()) {
             // deal with post here
