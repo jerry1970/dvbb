@@ -6,13 +6,9 @@
                     <div class="dv-grid-column-12">
                         <a href="<?=store::getRouter()->generate('home');?>">index</a>
                         <?php 
-                        if (auth::can('read', 'page', 'user-list')) {
+                        if (auth::getUser()) {
                             ?>
                             - <a href="<?=store::getRouter()->generate('user-list');?>">user list</a> 
-                            <?php 
-                        }
-                        if (auth::getUser()) {
-                            ?> 
                             - <a href="<?=store::getRouter()->generate('user-settings');?>">settings</a>
                             <?php 
                         }

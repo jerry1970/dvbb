@@ -41,20 +41,24 @@ $(function() {
 
     // catch logout button click
     $('[data-ajax-url]').on('click', function() {
-        var ajaxUrl = $(this).data('ajax-url');
-        var ajaxRedirect = $(this).data('ajax-redirect');
-        $.get(
-            ajaxUrl,
-            function() {
-                // no redirect given means reload
-                if (ajaxRedirect === undefined) {
-                    window.location.reload();
-                } else {
-                    window.location.href = ajaxRedirect;
-                }
 
-            }
-        );
+        // ignore the login link
+        if ($(this).parents('.dvbb-login-form').length == 0) {
+            var ajaxUrl = $(this).data('ajax-url');
+            var ajaxRedirect = $(this).data('ajax-redirect');
+            $.get(
+                ajaxUrl,
+                function() {
+                    // no redirect given means reload
+                    if (ajaxRedirect === undefined) {
+                        window.location.reload();
+                    } else {
+                        window.location.href = ajaxRedirect;
+                    }
+
+                }
+            );
+        }
         return false;
     });
 
