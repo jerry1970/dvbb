@@ -155,4 +155,8 @@ class generalController extends controller {
         ));
     }
     
+    public function passwordReset() {
+        
+    }
+    
 }

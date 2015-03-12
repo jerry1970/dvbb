@@ -62,7 +62,7 @@ class tokenController extends controller {
                 
                 // now store the new password
                 $password->user_id = $user->id;
-                $password->password = md5(store::getPostValue('new_password'));
+                $password->password = password_hash(store::getPostValue('new_password'), PASSWORD_BCRYPT);
                 $password->save();
                 
                 // remove the token

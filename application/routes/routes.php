@@ -28,6 +28,12 @@ $routes['topic'] = array(
     'controller' => 'generalController',
     'action' => 'topic',
 );
+$routes['password-reset'] = array(
+    'method' => 'GET',
+    'path' => '/password-reset',
+    'controller' => 'generalController',
+    'action' => 'passwordReset',
+);
 
 // User routes
 $routes['user-list'] = array(

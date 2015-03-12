@@ -143,7 +143,7 @@ class userController extends controller {
                     // generate new password item model
                     $password = (new password())->generateFromRow(array(
                         'user_id' => $user->id,
-                        'password' => md5($values['new_password']),
+                        'password' => password_hash($values['new_password'], PASSWORD_BCRYPT),
                     ));
                     if ($password->save()) {
                         // create token and save it

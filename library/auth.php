@@ -47,20 +47,18 @@ class auth {
      * @return user|null
      */
     public static function authenticate($username, $password) {
-        $password = md5($password);
-        $query = '  SELECT 
-                        user.id 
-                    FROM user 
-                        INNER JOIN password 
-                            ON user.id = password.user_id 
-                    WHERE 
-                        user.username = \'' . SQLite3::escapeString($username) . '\'
-                        AND
-                        password.password = \'' . $password . '\'';
-        $dbResult = store::getDb()->query($query);
-        if ($row = $dbResult->fetchArray(SQLITE3_ASSOC)) {
-            self::setUser((new user())->getById($row['id']));
+        $user = (new user())->getByCondition('username = ?', $username);
+        if (count($user) > 0) {
+            $user = $user[0];
+            $userPassword = (new password())->getByCondition('user_id = ?', $user->id);
+            $userPassword = $userPassword[0];
+            if (password_verify($password, $userPassword->password)) {
+                // password is correct
+                self::setUser($user);
+            }
         }
+        
+        // null if user wasn't set after password verification above
         return self::getUser();
     }
 

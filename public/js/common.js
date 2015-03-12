@@ -18,7 +18,7 @@ $(function() {
         var data = {};
         data.username = $('.dvbb-login-form input[name="username"]').val();
         data.password = $('.dvbb-login-form input[name="password"]').val();
-        var ajaxUrl = $(this).attr('data-ajax-url');
+        var ajaxUrl = $(this).data('ajax-url');
         $.post(
             ajaxUrl,
             data,
