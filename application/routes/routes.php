@@ -48,6 +48,12 @@ $routes['user-settings'] = array(
     'controller' => 'userController',
     'action' => 'settings',
 );
+$routes['user-password-reset'] = array(
+    'method' => 'GET',
+    'path' => '/user/settings/password-reset',
+    'controller' => 'userController',
+    'action' => 'passwordReset',
+);
 
 // Create routes
 $routes['topic-create'] = array(
@@ -114,7 +120,7 @@ $routes['ajax-topic-sticky'] = array(
 
 // Token routes
 $routes['token-redeem'] = array(
-    'method' => 'GET',
+    'method' => 'GET|POST',
     'path' => '/token-redeem/[a:token]',
     'controller' => 'tokenController',
     'action' => 'redeem',

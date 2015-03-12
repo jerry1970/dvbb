@@ -6,8 +6,13 @@ $settings = (new setting())->getByCondition('user_id = ?', $user->id);
 foreach ($settings as $key => $setting) {
     $settings[$setting->key] = $setting;
 }
+// get the user's existing password_reset tokens
+$hasResetToken = (bool)(new token())->getByConditions(array(
+    'user_id = ?' => $user->id,
+    'context = ?' => 'password_reset', 
+));
 
-if(store::getViewValue('error')) {
+if(store::getViewValue('errors')) {
     ?>
     <div class="dvbb-container dvbb-container-row dv-notification-message dv-background-alert dv-color-white">
         The following errors have been found:
@@ -15,7 +20,7 @@ if(store::getViewValue('error')) {
     <div class="dvbb-container dvbb-container-row">
         <ul>
         <?php 
-        foreach (store::getViewValue('error') as $error) {
+        foreach (store::getViewValue('errors') as $error) {
             ?>
             <li><?=$error;?></li>
             <?php 
@@ -50,9 +55,19 @@ if(store::getViewValue('error')) {
                     <p>
                         By clicking the below button, you will be sent an e-mail with a link to a password reset page.
                     </p>
+                    <?php 
+                    if ($hasResetToken) {
+                        ?>
+                        <p class="dv-color-warning">
+                            There's an existing password reset request in the database. Check your e-mail and
+                            use the previously sent password reset request or click the button to request a new one.
+                        </p>
+                        <?php 
+                    }
+                    ?>
                     <p>
                         <div class="dv-align-center">
-                            <a href="@" class="dv-form-button">reset password</a>
+                            <a href="<?=store::getRouter()->generate('user-password-reset')?>" class="dv-form-button">request password reset e-mail</a>
                         </div>
                     </p>
                 </div>

@@ -1,7 +1,30 @@
 <?php 
 $user = store::getViewValue('user');
-if ($user) {
-    $title = 'Account validated';
+$token = store::getViewValue('token');
+
+if(store::getViewValue('errors')) {
+    ?>
+    <div class="dvbb-container dvbb-container-row dv-notification-message dv-background-alert dv-color-white">
+        The following errors have been found:
+    </div>
+    <div class="dvbb-container dvbb-container-row">
+        <ul>
+        <?php 
+        foreach (store::getViewValue('errors') as $error) {
+            ?>
+            <li><?=$error;?></li>
+            <?php 
+        }
+        ?>
+        </ul>
+    </div>
+    <?php 
+} elseif (store::getViewValue('success')) {
+    ?>
+    <div class="dvbb-container dvbb-container-row dv-notification-message dv-background-correct dv-color-white">
+        Success!
+    </div>
+    <?php 
 }
 ?>
 
@@ -10,24 +33,72 @@ if ($user) {
         <div class="dvbb-container-row dv-grid-row">
             <?php 
             if ($user) {
-                ?>
-                <p>
-                    Welcome, <?=$user->username?>!
-                </p>
-                <p>
-                    Your account has been succesfully validated. You can now log in with your username and password.
-                </p>
-                <?php 
+                if ($token->context === 'register_validate') {
+                    ?>
+                    
+                    <p>
+                        Welcome, <?=$user->username?>!
+                    </p>
+                    <p>
+                        Your account has been succesfully validated. You can now log in with your username and password.
+                    </p>
+                    <p>
+                        <a href="<?=store::getRouter()->generate('home')?>">Back to index</a>
+                    </p>
+                    
+                    <?php
+                } elseif ($token->context === 'password_reset') {
+                    
+                    if (store::getViewValue('success')) {
+                        ?>
+                        <p>
+                            Your password has been reset and if you were logged in before, you've been logged out.
+                            Log in with your new password to continue using the forum.
+                        </p>
+                        <p>
+                            <a href="<?=store::getRouter()->generate('home')?>">Back to index</a>
+                        </p>
+                        <?php 
+                    } else {
+                        ?>
+                        
+                        <p>
+                            You are now ready to set a new password, after which you'll have to log in (again) with your
+                            new password.
+                        </p>
+                        <p>
+                            <form method="post" action="<?=store::getCurrentUrl();?>">
+                                            
+                                <div class="dv-grid-row">
+                                    <label class="dv-grid-column-8 dv-form-label">Password</label>
+                                    <div class="dv-grid-column-16"><input type="password" name="new_password" class="dv-form-element" /></div>
+                                </div>
+                                <div class="dv-grid-row">
+                                    <label class="dv-grid-column-8 dv-form-label">Confirm password</label>
+                                    <div class="dv-grid-column-16"><input type="password" name="new_password_confirm" class="dv-form-element" /></div>
+                                </div>
+                                <div class="dv-grid-row">
+                                    <label class="dv-grid-column-8 dv-form-label"></label>
+                                    <input type="submit" value="set password" class="dv-form-button" />
+                                </div>
+    
+                            </form>
+                        </p>
+                        
+                        <?php 
+                    }
+                    
+                }
             } else {
                 ?>
                 <p>
                     The requested token is invalid and doesn't exist.
                 </p>
+                <p>
+                    <a href="<?=store::getRouter()->generate('home')?>">Back to index</a>
+                </p>
                 <?php 
             }
             ?>
-            <p>
-                <a href="<?=store::getRouter()->generate('home')?>">Back to index</a>
-            </p>
         </div>
     </div>

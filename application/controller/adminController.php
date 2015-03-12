@@ -58,7 +58,7 @@ class adminController extends controller
     {
         store::addViewValue('active', 'admin-forums');
         
-        $error = array();
+        $errors = array();
         if (store::getViewValue('create')) {
             // create a new forum object
             $forum = new forum();
@@ -79,12 +79,12 @@ class adminController extends controller
             $description = store::getPostValue('description');
             
             if (empty($title)) {
-                $error[] = 'Title can\'t be empty.';
+                $errors[] = 'Title can\'t be empty.';
             }
             if (empty($description)) {
-                $error[] = 'Description can\'t be empty.';
+                $errors[] = 'Description can\'t be empty.';
             }
-            if (count($error) === 0) {
+            if (count($errors) === 0) {
                 $forum->title = $title;
                 $forum->description = $description;
                 $forum->save();
@@ -134,7 +134,7 @@ class adminController extends controller
         }
         
         store::addViewValues(array(
-            'error' => $error,
+            'errors' => $errors,
             'forum' => $forum
         ));
     }
@@ -143,7 +143,7 @@ class adminController extends controller
     {
         store::addViewValue('active', 'admin-forums');
         
-        $error = array();
+        $errors = array();
         if (store::getViewValue('create')) {
             // create new category object
             $category = new category();
@@ -162,7 +162,7 @@ class adminController extends controller
             $title = store::getPostValue('title');
             
             if (empty($title)) {
-                $error[] = 'Title can\'t be empty.';
+                $errors[] = 'Title can\'t be empty.';
             } else {
                 $category->title = $title;
                 $category->save();
@@ -212,7 +212,7 @@ class adminController extends controller
         }
         
         store::addViewValues(array(
-            'error' => $error,
+            'errors' => $errors,
             'category' => $category
         ));
     }
@@ -488,7 +488,7 @@ class adminController extends controller
     {
         store::addViewValue('active', 'admin-usergroups');
         
-        $error = array();
+        $errors = array();
         if (store::getViewValue('create')) {
             // create new category object
             $usergroup = new category();
@@ -501,7 +501,7 @@ class adminController extends controller
             $title = store::getPostValue('title');
             
             if (empty($title)) {
-                $error[] = 'Title can\'t be empty.';
+                $errors[] = 'Title can\'t be empty.';
             } else {
                 $usergroup->title = $title;
                 $usergroup->save();
@@ -527,7 +527,7 @@ class adminController extends controller
         }
         
         store::addViewValues(array(
-            'error' => $error,
+            'errors' => $errors,
             'usergroup' => $usergroup
         ));
         

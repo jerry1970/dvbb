@@ -37,7 +37,7 @@ class topicController extends controller {
                     tool::redirectToRoute('topic', array('id' => $post->id));
                 }
             } else {
-                store::addViewValue(array('error' => 'All fields are required.'));
+                store::addViewValue(array('errors' => 'All fields are required.'));
             }
         }
     }

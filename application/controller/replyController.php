@@ -62,7 +62,7 @@ class replyController extends controller {
                     tool::redirect($url);
                 }
             } else {
-                store::addViewValue('error', 'All fields are required.');
+                store::addViewValue('errors', 'All fields are required.');
             }
         }
     }
@@ -105,7 +105,7 @@ class replyController extends controller {
                     tool::redirect($url);
                 }
             } else {
-                store::addViewValue('error', 'All fields are required.');
+                store::addViewValue('errors', 'All fields are required.');
             }
         }
         

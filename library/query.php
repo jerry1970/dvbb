@@ -69,7 +69,7 @@ class query {
     /**
      * Set the type of query we're going to do
      * 
-     * @param string $action
+     * @param string $action (select, insert, delete, update)
      */
     public function setAction($action) {
         if (in_array($action, array('select', 'insert', 'delete', 'update'))) {

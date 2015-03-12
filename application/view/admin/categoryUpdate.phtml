@@ -3,7 +3,7 @@
 <?php 
 $category = store::getViewValue('category');
 
-if(store::getViewValue('error')) {
+if(store::getViewValue('errors')) {
     ?>
     <div class="dvbb-container dvbb-container-row dv-notification-message dv-background-alert dv-color-white">
         The following errors have been found:
@@ -11,7 +11,7 @@ if(store::getViewValue('error')) {
     <div class="dvbb-container dvbb-container-row">
         <ul>
         <?php 
-        foreach (store::getViewValue('error') as $error) {
+        foreach (store::getViewValue('errors') as $error) {
             ?>
             <li><?=$error;?></li>
             <?php 

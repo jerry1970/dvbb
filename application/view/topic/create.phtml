@@ -5,10 +5,10 @@ if(store::getPostValues()) {
     $title = store::getPostValue('title');
     $body = store::getPostValue('body');
 }
-if(store::getViewValue('error')) {
+if(store::getViewValue('errors')) {
     ?>
     <div class="dvbb-container dvbb-container-row dv-notification-message dv-background-alert dv-color-white">
-        <?=store::getViewValue('error');?>
+        <?=store::getViewValue('errors');?>
     </div> 
     <?php 
 }
