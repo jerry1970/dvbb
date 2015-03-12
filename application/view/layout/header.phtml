@@ -10,6 +10,18 @@
         <link rel="stylesheet" type="text/css" media="all"  href="<?=store::getUrl();?>/public/css/lib/dv-import.css" />
         <link rel="stylesheet" type="text/css" media="all"  href="<?=store::getUrl();?>/public/css/common.css" />
         
+        <?php 
+        // if a theme_css is set in the config, load that file (if it exists)
+        if ((bool)store::getConfigValue('theme_css')) {
+            $themeLocation = store::getPath() . '/public/css/' . store::getConfigValue('theme_css');
+            if (file_exists($themeLocation)) {
+                ?>
+                <link rel="stylesheet" type="text/css" media="all"  href="<?=store::getUrl();?>/public/css/<?=store::getConfigValue('theme_css');?>" />
+                <?php 
+            }
+        }
+        ?>
+        
         <script src="<?=store::getUrl();?>/public/js/lib/jquery-1.11.2.min.js"></script>
         <script src="<?=store::getUrl();?>/public/js/lib/html5shiv.js"></script>
         <script src="<?=store::getUrl();?>/public/js/common.js"></script>

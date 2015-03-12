@@ -34,9 +34,18 @@ class boot {
         // now get the complete public url & store it
         $url = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']);
         store::setUrl(str_replace('/public', '', $url));
-        
-        // initialize config from config/app.ini
-        store::addConfigValues(parse_ini_file(store::getPath() . '/application/config/config.ini'));
+
+        // initialize config from config/config.ini
+        if (file_exists(store::getPath() . '/application/config/config.ini')) {
+            store::addConfigValues(parse_ini_file(store::getPath() . '/application/config/config.ini'));
+        } else {
+            // without config.ini, refuse to run
+            die('NO CONFIG.INI FOUND');
+        }
+        // and if it exists, overwrite values with values from config/custom.ini
+        if (file_exists(store::getPath() . '/application/config/custom.ini')) {
+            store::addConfigValues(parse_ini_file(store::getPath() . '/application/config/custom.ini'));
+        }
         
         // open the database
         store::setDb(new SQLite3(store::getPath() . '/application/storage/' . store::getConfigValue('sqliteDb')));
