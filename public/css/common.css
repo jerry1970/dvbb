@@ -4,7 +4,6 @@
  *
  * common.css is for your site-specific styles
  */
-@import url(http://fonts.googleapis.com/css?family=Open+Sans);
 
 a {
     color: #1f8bc2;
@@ -185,55 +184,3 @@ p:last-child {
     }
 }
 
-
-/* default colors and whatnot */
-body {
-    background: #777;
-}
-.dvbb-forum {
-    background-color: #fff;
-}
-.dvbb-header,
-.dvbb-navigation,
-.dvbb-container-header,
-.dv-form-button {
-    background: #1f8bc2;
-    color: #fff;
-    border-color: rgba(0, 0, 0, 0.7);
-}
-a.dv-form-button {
-    text-decoration: none;
-    color: inherit;
-    color: #fff;
-}
-.dv-form-button:hover {
-    background: #026395;
-    color: #ccc;
-}
-.dvbb-header a,
-.dvbb-navigation a,
-.dvbb-container-header a {
-    color: rgba(255, 255, 255, 0.7);
-}
-.dvbb-header a:hover,
-.dvbb-navigation a:hover,
-.dvbb-container-header a:hover {
-    color: rgba(255, 255, 255, 1);
-}
-.dvbb-read-status {
-    background: #ccc;
-}
-.dvbb-read-status.unread {
-    background: #1f8bc2;
-}
-.dvbb-topic-closed {
-    color: #b33030;
-}
-a.dv-form-button.inactive {
-    color: #1f8bc2;
-    background: #fff;
-    outline: 0;
-}
-.dvbb-container-legend {
-    background: #ccc;
-}

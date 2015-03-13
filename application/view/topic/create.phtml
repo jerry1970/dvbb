@@ -25,7 +25,63 @@ if(store::getViewValue('errors')) {
             </div>
             <div class="dv-grid-row">
                 <label class="dv-grid-column-8 dv-form-label">Topic content</label>
-                <div class="dv-grid-column-16"><textarea name="body" class="dv-form-element"><?=$body;?></textarea></div>
+                <div class="dv-grid-column-16">
+                
+                    <div class="dvbb-container-row dvbb-bbcode-buttons">
+                        <a href="#" class="dv-form-button" data-bbcode-tag="b" data-bbcode-target=".dvbb-topic-textarea" title="Bold">
+                            <i class="fa fa-fw fa-bold"></i>
+                        </a>
+                        <a href="#" class="dv-form-button" data-bbcode-tag="i" data-bbcode-target=".dvbb-topic-textarea" title="Italic">
+                            <i class="fa fa-fw fa-italic"></i>
+                        </a>
+                        <a href="#" class="dv-form-button" data-bbcode-tag="u" data-bbcode-target=".dvbb-topic-textarea" title="Underline">
+                            <i class="fa fa-fw fa-underline"></i>
+                        </a>
+                        <a href="#" class="dv-form-button" data-bbcode-tag="s" data-bbcode-target=".dvbb-topic-textarea" title="Strikethrough">
+                            <i class="fa fa-fw fa-strikethrough"></i>
+                        </a>
+                        <a href="#" class="dv-form-button" data-bbcode-tag="color" data-bbcode-target=".dvbb-topic-textarea" title="Color">
+                            <i class="fa fa-fw fa-eyedropper"></i>
+                        </a>
+                        
+                        &nbsp; &nbsp; 
+                        
+                        <a href="#" class="dv-form-button" data-bbcode-tag="left" data-bbcode-target=".dvbb-topic-textarea" title="Align left">
+                            <i class="fa fa-fw fa-align-left"></i>
+                        </a>
+                        <a href="#" class="dv-form-button" data-bbcode-tag="center" data-bbcode-target=".dvbb-topic-textarea" title="Align center">
+                            <i class="fa fa-fw fa-align-center"></i>
+                        </a>
+                        <a href="#" class="dv-form-button" data-bbcode-tag="right" data-bbcode-target=".dvbb-topic-textarea" title="Align right">
+                            <i class="fa fa-fw fa-align-right"></i>
+                        </a>
+                        <a href="#" class="dv-form-button" data-bbcode-tag="justify" data-bbcode-target=".dvbb-topic-textarea" title="Align justify">
+                            <i class="fa fa-fw fa-align-justify"></i>
+                        </a>
+                        
+                        &nbsp; &nbsp; 
+                        
+                        <a href="#" class="dv-form-button" data-bbcode-tag="quote" data-bbcode-target=".dvbb-topic-textarea" title="Quote">
+                            <i class="fa fa-fw fa-quote-right"></i>
+                        </a>
+                        <a href="#" class="dv-form-button" data-bbcode-tag="code" data-bbcode-target=".dvbb-topic-textarea" title="Code">
+                            <i class="fa fa-fw fa-code"></i>
+                        </a>
+                        
+                        &nbsp; &nbsp; 
+                        
+                        <a href="#" class="dv-form-button" data-bbcode-tag="url" data-bbcode-target=".dvbb-topic-textarea" title="Link">
+                            <i class="fa fa-fw fa-link"></i>
+                        </a>
+                        <a href="#" class="dv-form-button" data-bbcode-tag="img" data-bbcode-target=".dvbb-topic-textarea" title="Image">
+                            <i class="fa fa-fw fa-image"></i>
+                        </a>
+                        <a href="#" class="dv-form-button" data-bbcode-tag="video" data-bbcode-target=".dvbb-topic-textarea" title="Video">
+                            <i class="fa fa-fw fa-youtube"></i>
+                        </a>
+                    </div>
+                    <textarea name="body" class="dvbb-topic-textarea dv-form-element"><?=$body;?></textarea>
+                </div>
             </div>
         
         </div>

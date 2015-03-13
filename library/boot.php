@@ -18,6 +18,7 @@ class boot {
         
         // require store class
         require('./library/store.php');
+        require('./library/database.php');
         
         // start execution timer
         store::startExecutionTimer();
@@ -48,7 +49,10 @@ class boot {
         }
         
         // open the database
-        store::setDb(new SQLite3(store::getPath() . '/application/storage/' . store::getConfigValue('sqliteDb')));
+//         store::setDb(new SQLite3(store::getPath() . '/application/storage/' . store::getConfigValue('sqliteDb')));
+        
+        // start db (by simply generating a new instance) and store
+        store::setDb(new database());
         
         // add the values from the $_GET to the view values
         store::addViewValues($_GET);
