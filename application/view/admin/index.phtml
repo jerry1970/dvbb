@@ -20,22 +20,17 @@
     </div>
 </div>
 
-<div class="dvbb-container">
-    <div class="dvbb-container-header">custom.ini</div>
-    <div class="dvbb-container-row">
-        <?php
-        if (file_exists(store::getPath() . '/application/config/custom.ini')) {
-            $configContents = file_get_contents(store::getPath() . '/application/config/custom.ini');
-            ?>
+
+<?php
+if (file_exists(store::getPath() . '/application/config/custom.ini')) {
+    $configContents = file_get_contents(store::getPath() . '/application/config/custom.ini');
+    ?>
+    <div class="dvbb-container">
+        <div class="dvbb-container-header">custom.ini</div>
+        <div class="dvbb-container-row">
             <pre class="dvbb-code"><?=$configContents;?></pre>
-            <?php 
-        } else {
-            ?>
-            <p class="dv-color-notice">
-                No custom.ini found.
-            </p>
-            <?php 
-        }
-        ?>
+        </div>
     </div>
-</div>
+    <?php 
+}
+?>

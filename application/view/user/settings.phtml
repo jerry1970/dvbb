@@ -14,7 +14,7 @@ $hasResetToken = (bool)(new token())->getByConditions(array(
 
 if(store::getViewValue('errors')) {
     ?>
-    <div class="dvbb-container dvbb-container-row dv-notification-message dv-background-alert dv-color-white">
+    <div class="dvbb-container dvbb-container-row dv-notification-message dv-background-alert dv-color-white dvbb-errors">
         The following errors have been found:
     </div>
     <div class="dvbb-container dvbb-container-row">
@@ -42,9 +42,9 @@ if(store::getViewValue('errors')) {
 <script src="<?=store::getUrl();?>/public/js/lib/jquery.datetimepicker.js"></script>
 
 <form method="post" action="<?=store::getCurrentUrl();?>" enctype="multipart/form-data">
-    <div class="dvbb-container">
-        <div class="dvbb-container-header">Settings for <?=$user->username;?></div>
-        <div class="dvbb-container-row">
+    <div class="dvbb-container dvbb-settings">
+        <div class="dvbb-container-header dvbb-settings-header">Settings for <?=$user->username;?></div>
+        <div class="dvbb-container-row dvbb-settings-form">
             <p>
                 Here you can update your password, settings for the forum and your profile.
             </p>
@@ -65,10 +65,8 @@ if(store::getViewValue('errors')) {
                         <?php 
                     }
                     ?>
-                    <p>
-                        <div class="dv-align-center">
-                            <a href="<?=store::getRouter()->generate('user-password-reset')?>" class="dv-form-button">request password reset e-mail</a>
-                        </div>
+                    <p class="dv-align-center">
+                        <a href="<?=store::getRouter()->generate('user-password-reset')?>" class="dv-form-button">request password reset e-mail</a>
                     </p>
                 </div>
             </div>
@@ -85,7 +83,7 @@ if(store::getViewValue('errors')) {
                     $posts_per_page_values = array(10, 25, 50);
                     ?>
                     <div class="dv-grid-row">
-                        <label class="dv-grid-column-8 dv-form-label" for="posts_per_page">
+                        <label class="dv-grid-column-8 dvbb-form-label" for="posts_per_page">
                             Posts per page
                         </label>
                         <div class="dv-grid-column-16">
@@ -108,7 +106,7 @@ if(store::getViewValue('errors')) {
                     }
                     ?>
                     <div class="dv-grid-row">
-                        <label class="dv-grid-column-8 dv-form-label" for="timezone">
+                        <label class="dv-grid-column-8 dvbb-form-label" for="timezone">
                             Timezone settings<br />
                         </label>
                         <div class="dv-grid-column-16">
@@ -132,7 +130,7 @@ if(store::getViewValue('errors')) {
                         </div>
                     </div>
                     <div class="dv-grid-row">
-                        <div class="dv-grid-column-8 dv-form-label">
+                        <div class="dv-grid-column-8 dvbb-form-label">
                             <small class="dv-color-notice">Current UTC time (+0:00): <?=(new DateTime())->format('H:i:s')?></small>
                         </div>
                         <div class="dv-grid-column-16" style="padding: 0.5em 0;">
@@ -155,7 +153,7 @@ if(store::getViewValue('errors')) {
                     }
                     ?>
                     <div class="dv-grid-row">
-                        <label class="dv-grid-column-8 dv-form-label" for="email">
+                        <label class="dv-grid-column-8 dvbb-form-label" for="email">
                             E-mail address
                         </label>
                         <div class="dv-grid-column-12">
@@ -183,7 +181,7 @@ if(store::getViewValue('errors')) {
                     }
                     ?>
                     <div class="dv-grid-row">
-                        <label class="dv-grid-column-8 dv-form-label" for="birthdate">
+                        <label class="dv-grid-column-8 dvbb-form-label" for="birthdate">
                             Birthdate
                         </label>
                         <div class="dv-grid-column-12">
@@ -214,7 +212,7 @@ if(store::getViewValue('errors')) {
                     }
                     ?>
                     <div class="dv-grid-row">
-                        <label class="dv-grid-column-8 dv-form-label" for="location">
+                        <label class="dv-grid-column-8 dvbb-form-label" for="location">
                             Location
                         </label>
                         <div class="dv-grid-column-12">
@@ -232,7 +230,7 @@ if(store::getViewValue('errors')) {
                     </div>
                 
                     <div class="dv-grid-row">
-                        <label class="dv-grid-column-8 dv-form-label" for="avatar">
+                        <label class="dv-grid-column-8 dvbb-form-label" for="avatar">
                             Avatar upload
                         </label>
                         <div class="dv-grid-column-16">
@@ -245,7 +243,7 @@ if(store::getViewValue('errors')) {
                         $src = tool::getBase64ImageSrc($avatar);
                         ?>
                         <div class="dv-grid-row">
-                            <label class="dv-grid-column-8 dv-form-label" for="avatar">
+                            <label class="dv-grid-column-8 dvbb-form-label" for="avatar">
                                 Current avatar
                             </label>
                             <div class="dv-grid-column-16">
@@ -263,7 +261,7 @@ if(store::getViewValue('errors')) {
                     }
                     ?>
                     <div class="dv-grid-row">
-                        <label class="dv-grid-column-8 dv-form-label" for="signature">
+                        <label class="dv-grid-column-8 dvbb-form-label" for="signature">
                             Signature
                         </label>
                         <div class="dv-grid-column-16">
@@ -271,7 +269,7 @@ if(store::getViewValue('errors')) {
                         </div>
                     </div>
                     <div class="dv-grid-row">
-                        <label class="dv-grid-column-8 dv-form-label" for="signature">
+                        <label class="dv-grid-column-8 dvbb-form-label" for="signature">
                             Preview current signature
                         </label>
                         <div class="dv-grid-column-16">

@@ -30,7 +30,7 @@ $posts_per_page = tool::getPostsPerPage();
         <?php 
         if ($topic->closed) {
             ?>
-            <span class="dv-color-notice">Topic is closed</span>
+            <div class="dvbb-topic-closed">Topic is closed</div>
             <?php 
         } else {
             if (auth::can('create', 'forum', $topic->forum_id)) {
@@ -60,15 +60,15 @@ $posts_per_page = tool::getPostsPerPage();
             }
             ?>
             <a name="post-<?=$subPost->id;?>"></a>
-            <div class="dvbb-container-row dv-grid-row">
-                <div class="dv-grid-column-5">
+            <div class="dvbb-container-row dv-grid-row dvbb-post">
+                <div class="dv-grid-column-5 dvbb-post-user">
                     <div>
-                        <strong><?=$user->username?></strong><br />
-                        <?=$userGroup->title?><br />
+                        <div class="dvbb-user-name"><?=$user->username?></div>
+                        <div class="dvbb-user-group"><?=$userGroup->title?></div>
                         <?php 
                         if ($userSubGroup) {
                             ?>
-                            <small class="dv-color-notice"><?=$userSubGroup->title;?></small>
+                            <div class="dvbb-user-group-sub"><?=$userSubGroup->title;?></div>
                             <?php 
                         }
                         ?>
@@ -83,7 +83,7 @@ $posts_per_page = tool::getPostsPerPage();
                         }
                         ?>
                     </div>
-                    <p class="dv-color-notice">
+                    <div class="dvbb-user-info">
                         <?php 
                         if (isset($settings['location'])) {
                             if (!isset($settings['location_visible']) || $settings['location_visible']->value) {
@@ -93,8 +93,8 @@ $posts_per_page = tool::getPostsPerPage();
                             }
                         }
                         ?>
-                    </p>
-                    <p>
+                    </div>
+                    <div class="dvbb-user-links">
                         <?php
                         // show some links to logged in users and only if a user has an id
                         if (auth::getUser() && $user->id) {
@@ -103,16 +103,16 @@ $posts_per_page = tool::getPostsPerPage();
                             <?php 
                         }
                         ?>
-                    </p>
+                    </div>
                 </div>
-                <div class="dv-grid-column-19 dvbb-post">
-                    <span class="dv-color-notice">
-                        <small>
-                            posted <?=tool::getDateFormatted($subPost->created_at)?>
-                        </small>
-                    </span>
+                <div class="dv-grid-column-19 dvbb-post-content">
+                    <div class="dvbb-post-content-created">
+                        posted <?=tool::getDateFormatted($subPost->created_at)?>
+                    </div>
                     
-                    <?=tool::nl2p(tool::fromBB($subPost->body));?>
+                    <div class="dvbb-post-content-body">
+                        <?=tool::nl2p(tool::fromBB($subPost->body));?>
+                    </div>
                     
                     <?php 
                     // look for updates
@@ -134,18 +134,7 @@ $posts_per_page = tool::getPostsPerPage();
                     }
                     if ($updated) {
                         ?>
-                        <small class="dv-color-notice"><?=$updated;?></small>
-                        <?php 
-                    }
-                    ?>
-                    
-                    <?php 
-                    // if the user has a signature, show it
-                    if (isset($settings['signature'])) {
-                        ?>
-                        <div class="dvbb-signature">
-                            <?=nl2br(tool::fromBB($settings['signature']->value));?>
-                        </div>
+                        <div class="dvbb-post-content-updated"><?=$updated;?></div>
                         <?php 
                     }
                     ?>
@@ -164,12 +153,28 @@ $posts_per_page = tool::getPostsPerPage();
                 <div class="dvbb-container-row dv-grid-row">
                     <div class="dv-grid-column-5"></div>
                     <?php 
+                    // if the user has a signature, show it
+                    if (isset($settings['signature'])) {
+                        ?>
+                        <div class="dv-grid-column-19 dvbb-user-signature">
+                            <?=nl2br(tool::fromBB($settings['signature']->value));?>
+                        </div>
+                        <?php 
+                    }
+                    ?>
+                </div>
+                <div class="dvbb-container-row dv-grid-row dvbb-post-actions">
+                    <div class="dv-grid-column-5"></div>
+                    <?php 
+                    // If the user can create here, they're allowed to quote
                     $canQuote = auth::can('create', 'forum', $topic->forum_id);
+                    // If the user can update in here and this post belongs to the user, allow user edit
                     $canUpdateOwn = (auth::can('update', 'forum', $topic->forum_id) && auth::getUser()->id === $subPost->user_id);
+                    // If the user can mod, allow mod options, allow mod edit and delete
                     $canMod = auth::can('mod', 'forum', $topic->forum_id);
                     ?>
                     
-                    <div class="dv-grid-column-9 dv-text-small">
+                    <div class="dv-grid-column-9 dvbb-post-actions-left">
                         <?php 
                         if ($canQuote) {
                             ?>
@@ -188,7 +193,7 @@ $posts_per_page = tool::getPostsPerPage();
                     if ($canMod) {
                         $isTopic = ($topic->id === $subPost->id);
                         ?>
-                        <div class="dv-grid-column-10 dv-align-right dv-text-small">
+                        <div class="dv-grid-column-10 dvbb-post-actions-right">
                             moderate: 
                             <a href="<?=store::getRouter()->generate('mod-reply-delete', array('id' => $subPost->id));?>">delete <?=($isTopic ? 'topic':'post');?></a>
                         </div>
@@ -209,10 +214,10 @@ if (store::getViewValue('page')) {
 }
 if (auth::can('create', 'forum', $topic->forum_id)) {
     ?>
-    <form method="post" action="<?=$currentUrl;?>" style="margin-bottom: 0.5em;">
-        <div class="dvbb-container">
-            <div class="dvbb-container-header">Post new reply as <?=auth::getUser()->username;?></div>
-            <div class="dvbb-container-row">
+    <form method="post" action="<?=$currentUrl;?>">
+        <div class="dvbb-container dvbb-topic-reply">
+            <div class="dvbb-container-header dvbb-topic-reply-header">Post new reply as <?=auth::getUser()->username;?></div>
+            <div class="dvbb-container-row dvbb-topic-reply-form">
     
                 <?php 
                 if ($topic->closed) {
@@ -236,9 +241,9 @@ if (auth::can('mod', 'forum', $topic->forum_id)) {
     $ajaxUrl = store::getRouter()->generate('ajax-topic-sticky', array('id' => $topic->id));
     $ajaxRedirect = store::getRouter()->generate('forum', array('id' => $topic->forum_id));
     ?>
-    <div class="dvbb-container">
+    <div class="dvbb-container dvbb-mod-topic">
         <div class="dvbb-container-row">
-            <div class="dv-align-right dv-text-small">
+            <div class="dv-align-right">
                 moderator options: 
                 <a href="<?=store::getRouter()->generate('mod-topic-close', array('id' => $topic->id));?>"><?=($topic->closed ? 'open' : 'close');?> topic</a> - 
                 <a href="<?=store::getRouter()->generate('mod-topic-delete', array('id' => $topic->id));?>">delete topic</a> - 
@@ -251,7 +256,7 @@ if (auth::can('mod', 'forum', $topic->forum_id)) {
 ?>
 
 <nav class="dv-grid-row dvbb-subnavigation">
-    <div class="dv-grid-column-12">
+    <div class="dv-grid-column-12 dvbb-subnavigation-left">
         <?=$posts_per_page?> posts per page: 
         <?=$pages;?>
     </div>

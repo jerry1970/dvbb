@@ -2,8 +2,8 @@
             <?php 
             if (store::getConfigValue('maintenance_mode') == 0) {
                 ?>
-                <nav class="dvbb-navigation dv-grid-row">
-                    <div class="dv-grid-column-12">
+                <nav class="dvbb-navigation dvbb-navigation-top dv-grid-row">
+                    <div class="dv-grid-column-12 dvbb-navigation-top-left">
                         <a href="<?=store::getRouter()->generate('home');?>">index</a>
                         <?php 
                         if (auth::getUser()) {
@@ -14,7 +14,7 @@
                         }
                         ?>
                     </div>
-                    <div class="dv-grid-column-12 dv-align-right">
+                    <div class="dv-grid-column-12 dvbb-navigation-top-right">
                         <?php
                         if (auth::getUser()) {
                             ?>

@@ -5,7 +5,7 @@ if(store::getPostValues()) {
 }
 if(store::getViewValue('errors')) {
     ?>
-    <div class="dvbb-container dvbb-container-row dv-notification-message dv-background-alert dv-color-white">
+    <div class="dvbb-container dvbb-container-row dv-notification-message dv-background-alert dv-color-white dvbb-errors">
         <?=store::getViewValue('errors');?>
     </div> 
     <?php 
@@ -13,9 +13,9 @@ if(store::getViewValue('errors')) {
 ?>
 
 <form method="post" action="<?=store::getCurrentUrl()?>" class="dvbb-form">
-    <div class="dvbb-container">
-        <div class="dvbb-container-header">New reply to <?=store::getViewValue('topic')->title;?></div>
-        <div class="dvbb-container-row">
+    <div class="dvbb-container dvbb-topic-reply">
+        <div class="dvbb-container-header dvbb-topic-reply-header">New reply to <?=store::getViewValue('topic')->title;?></div>
+        <div class="dvbb-container-row dvbb-topic-reply-form">
         
             <?=tool::partial('general/partial/reply.phtml')?>
         

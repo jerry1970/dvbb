@@ -4,7 +4,7 @@ $token = store::getViewValue('token');
 
 if(store::getViewValue('errors')) {
     ?>
-    <div class="dvbb-container dvbb-container-row dv-notification-message dv-background-alert dv-color-white">
+    <div class="dvbb-container dvbb-container-row dv-notification-message dv-background-alert dv-color-white dvbb-errors">
         The following errors have been found:
     </div>
     <div class="dvbb-container dvbb-container-row">
@@ -58,6 +58,7 @@ if(store::getViewValue('errors')) {
                         <p>
                             <a href="<?=store::getRouter()->generate('home')?>">Back to index</a>
                         </p>
+                        
                         <?php 
                     } else {
                         ?>
@@ -66,24 +67,22 @@ if(store::getViewValue('errors')) {
                             You are now ready to set a new password, after which you'll have to log in (again) with your
                             new password.
                         </p>
-                        <p>
-                            <form method="post" action="<?=store::getCurrentUrl();?>">
-                                            
-                                <div class="dv-grid-row">
-                                    <label class="dv-grid-column-8 dv-form-label">Password</label>
-                                    <div class="dv-grid-column-16"><input type="password" name="new_password" class="dv-form-element" /></div>
-                                </div>
-                                <div class="dv-grid-row">
-                                    <label class="dv-grid-column-8 dv-form-label">Confirm password</label>
-                                    <div class="dv-grid-column-16"><input type="password" name="new_password_confirm" class="dv-form-element" /></div>
-                                </div>
-                                <div class="dv-grid-row">
-                                    <label class="dv-grid-column-8 dv-form-label"></label>
-                                    <input type="submit" value="set password" class="dv-form-button" />
-                                </div>
-    
-                            </form>
-                        </p>
+                        <form method="post" action="<?=store::getCurrentUrl();?>">
+                                        
+                            <div class="dv-grid-row">
+                                <label class="dv-grid-column-8 dvbb-form-label">Password</label>
+                                <div class="dv-grid-column-16"><input type="password" name="new_password" class="dv-form-element" /></div>
+                            </div>
+                            <div class="dv-grid-row">
+                                <label class="dv-grid-column-8 dvbb-form-label">Confirm password</label>
+                                <div class="dv-grid-column-16"><input type="password" name="new_password_confirm" class="dv-form-element" /></div>
+                            </div>
+                            <div class="dv-grid-row">
+                                <label class="dv-grid-column-8 dvbb-form-label"></label>
+                                <input type="submit" value="set password" class="dv-form-button" />
+                            </div>
+
+                        </form>
                         
                         <?php 
                     }

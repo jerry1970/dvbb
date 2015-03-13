@@ -10,10 +10,14 @@ $user = (new user())->getById($reply->user_id);
             Are you sure you want to delete this reply?
         </p>
         <p>
-            <div class="dvbb-quote"><div class="dvbb-quote-username">Reply by <?=$user->username;?></div><?=$reply->body;?></div>
+            <div class="dvbb-quote">
+                <div class="dvbb-quote-username">Reply by <?=$user->username;?></div>
+                <div class="dvbb-quote-body"><?=$reply->body;?></div>
+            </div>
         </p>
-        <p>
-            <span class="dv-color-alert">This cannot be undone!</span>
+        <p class="dv-color-alert">
+            This cannot be undone!
+        </p>
     </div>
 </div>
 

@@ -9,7 +9,7 @@ $active = array(
 
 $active[store::getViewValue('active')] = true;
 ?>
-<div class="dvbb-container">
+<div class="dvbb-container dvbb-admin-buttons">
     <div class="dvbb-container-row dv-align-center">
         <a href="<?=store::getRouter()->generate('admin')?>" class="dv-form-button <?=($active['admin']?'':'inactive');?>">Index</a>
         <a href="<?=store::getRouter()->generate('admin-forums')?>" class="dv-form-button <?=($active['admin-forums']?'':'inactive');?>">Categories & forums</a>

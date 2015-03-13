@@ -24,13 +24,14 @@ foreach ($categories as $category) {
         }
         if ($forumsToShow) {
             ?>
-            <div class="dvbb-container dvbb-forum-list">
-                <div class="dvbb-container-header"><?=$category->title?></div>
-                <div class="dvbb-container-legend dv-grid-row">
-                    <div class="dv-grid-column-13">Forum</div>
-                    <div class="dv-grid-column-2">Topics</div>
-                    <div class="dv-grid-column-2">Replies</div>
-                    <div class="dv-grid-column-7">Last Post</div>
+            <div class="dvbb-container dvbb-category">
+                <div class="dvbb-container-header dvbb-category-header"><?=$category->title?></div>
+                <div class="dvbb-container-legend dvbb-category-legend dv-grid-row">
+                    <div class="dv-grid-column-1 dvbb-category-legend-status">Read</div>
+                    <div class="dv-grid-column-12 dvbb-category-legend-forum">Forum</div>
+                    <div class="dv-grid-column-2 dvbb-category-legend-topics">Topics</div>
+                    <div class="dv-grid-column-2 dvbb-category-legend-replies">Replies</div>
+                    <div class="dv-grid-column-7 dvbb-category-legend-lastpost">Last Post</div>
                 </div>
                 <?php 
                 foreach ($visibleForums as $forum) {
@@ -58,17 +59,23 @@ foreach ($categories as $category) {
                     }
                     $unread = $forum->getUnreadStatus();
                     ?>
-                    <div class="dvbb-container-row dv-grid-row">
-                        <div class="dv-grid-column-1">
-                            <div class="dvbb-read-status<?=($unread ? ' unread' : '');?>"></div>
+                    <div class="dvbb-container-row dvbb-forum dv-grid-row">
+                        <div class="dv-grid-column-1 dvbb-status">
+                            <?php
+                            $status = 'read'; 
+                            if ($unread) {
+                                $status = 'unread';
+                            }
+                            ?>
+                            <div class="dvbb-status-icon status-<?=$status;?>"></div>
                         </div>
-                        <div class="dv-grid-column-12">
+                        <div class="dv-grid-column-12 dvbb-forum-title">
                             <a href="<?=$url;?>"><?=$forum->title;?></a><br />
                             <small style="color: grey"><?=$forum->description;?></small>
                         </div>
-                        <div class="dv-grid-column-2"><?=$topicCount;?></div>
-                        <div class="dv-grid-column-2"><?=$replyCount;?></div>
-                        <div class="dv-grid-column-7">
+                        <div class="dv-grid-column-2 dvbb-forum-topics"><?=$topicCount;?></div>
+                        <div class="dv-grid-column-2 dvbb-forum-replies"><?=$replyCount;?></div>
+                        <div class="dv-grid-column-7 dvbb-forum-lastpost">
                             <?php 
                             if ($lastPost) {
                                 $url = store::getRouter()->generate('topic', array('id' => $lastPost->id));
@@ -91,7 +98,7 @@ foreach ($categories as $category) {
                                     $url .= '?page=' . $page;
                                 }
                                 ?>
-                                <a href="<?=$url;?>#post-<?=$anchorId;?>"><?=$lastPost->title;?></a><br />
+                                <a href="<?=$url;?>#post-<?=$anchorId;?>" class="dvbb-forum-lastpost-link"><?=$lastPost->title;?></a><br />
                                 <small style="color: grey"><?=$user->username?> at <?=tool::getDateFormatted($lastPost->last_post_at);?></small>
                                 <?php 
                             } else {
@@ -106,10 +113,8 @@ foreach ($categories as $category) {
                 
                 if (!$forumShown) {
                     ?>
-                    <div class="dvbb-container-row dv-grid-row">
-                        <div class="dv-grid-column-24">
-                            <span class="dv-color-notice">No forums</span>
-                        </div>
+                    <div class="dvbb-container-row dvbb-forum-no-forum dv-color-notice">
+                        No forums
                     </div>
                     <?php 
                 }
@@ -123,8 +128,8 @@ foreach ($categories as $category) {
 }
 if (!$categoriesShown) {
     ?>
-    <div class="dvbb-container dvbb-container-row">
-        <span class="dv-color-notice">No categories</span>
+    <div class="dvbb-container dvbb-container-row dvbb-forum-no-category dv-color-notice">
+        No categories
     </div>
     <?php 
 }
@@ -144,18 +149,18 @@ foreach ($posts as $post) {
 }
 ?>
 
-<div class="dvbb-container">
-    <div class="dvbb-container-header">Forum statistics</div>
+<div class="dvbb-container dvbb-forum-stats">
+    <div class="dvbb-container-header dvbb-forum-stats-header">Forum statistics</div>
     <div class="dvbb-container-row">
-        <div class="dv-grid-row">
+        <div class="dv-grid-row dvbb-forum-stats-member">
             <div class="dv-grid-column-4">Total members</div>
             <div class="dv-grid-column-4"><?=$users;?></div>
         </div>
-        <div class="dv-grid-row">
+        <div class="dv-grid-row dvbb-forum-stats-topic">
             <div class="dv-grid-column-4">Total topics</div>
             <div class="dv-grid-column-4"><?=$topics;?></div>
         </div>
-        <div class="dv-grid-row">
+        <div class="dv-grid-row dvbb-forum-stats-reply">
             <div class="dv-grid-column-4">Total replies</div>
             <div class="dv-grid-column-4"><?=$replies;?></div>
         </div>

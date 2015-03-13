@@ -2,7 +2,7 @@
 $forum = store::getViewValue('forum');
 $posts_per_page = tool::getPostsPerPage();
 
-// separate sticky from normal topics
+// separate sticky from normal topics, we do this like this to prevent multiple queries where unnecessary
 $topics = store::getViewValue('topics');
 $stickyTopics = array();
 $normalTopics = array();
@@ -54,18 +54,19 @@ foreach ($topics as $topic) {
     </div>
 </nav>
 
-<div class="dvbb-container dvbb-forum-list">
-    <div class="dvbb-container-header"><?=$forum->title?></div>
-    <div class="dvbb-container-legend dv-grid-row">
-        <div class="dv-grid-column-15">Thread / Author</div>
-        <div class="dv-grid-column-2">Replies</div>
-        <div class="dv-grid-column-7">Last Post</div>
+<div class="dvbb-container">
+    <div class="dvbb-container-header dvbb-forum-header"><?=$forum->title?></div>
+    <div class="dvbb-container-legend dvbb-forum-legend dv-grid-row">
+        <div class="dv-grid-column-1 dvbb-forum-legend-status">Read</div>
+        <div class="dv-grid-column-14 dvbb-forum-legend-title">Thread / Author</div>
+        <div class="dv-grid-column-2 dvbb-forum-legend-replies">Replies</div>
+        <div class="dv-grid-column-7 dvbb-forum-legend-lastpost">Last Post</div>
     </div>
     <?php 
     // sticky topics
     if (count($stickyTopics) > 0) {
         ?>
-        <div class="dvbb-container-legend">
+        <div class="dvbb-container-legend dv-color-notice dvbb-forum-list-sticky">
             Sticky topics
         </div>
         <?php 
@@ -76,33 +77,31 @@ foreach ($topics as $topic) {
             $subPosts = count((new post())->getByCondition('parent_id = ?', $topic->id));
             $user = (new user())->getById($topic->user_id);
             ?>
-            <div class="dvbb-container-row dv-grid-row">
-                <div class="dv-grid-column-1 dv-align-center">
-                    <?php 
+            <div class="dvbb-container-row dv-grid-row dvbb-topic">
+                <div class="dv-grid-column-1 dvbb-status">
+                    <?php
+                    $status = 'read'; 
                     if ($topic->closed) {
-                        ?>
-                        <div class="dvbb-topic-closed"></div>
-                        <?php 
-                    } else {
-                        ?>
-                        <div class="dvbb-read-status<?=($unread ? ' unread' : '');?>"></div>
-                        <?php 
+                        $status = 'closed';
+                    } elseif ($unread) {
+                        $status = 'unread';
                     }
                     ?>
+                    <div class="dvbb-status-icon status-<?=$status;?>"></div>
                 </div>
-                <div class="dv-grid-column-14">
+                <div class="dv-grid-column-14 dvbb-topic-title">
                     <a href="<?=$url;?>"><?=$topic->title;?></a><br />
                     <small style="color: grey"><?=$user->username;?> - posted <?=tool::getDateFormatted($topic->created_at)?></small>
                 </div>
-                <div class="dv-grid-column-2"><?=$subPosts;?></div>
-                <div class="dv-grid-column-7"><?=tool::getDateFormatted($topic->last_post_at)?></div>
+                <div class="dv-grid-column-2 dvbb-topic-replies"><?=$subPosts;?></div>
+                <div class="dv-grid-column-7 dvbb-topic-lastpost"><?=tool::getDateFormatted($topic->last_post_at)?></div>
             </div>
             <?php
         }
     }
     // normal topics
     ?>
-    <div class="dvbb-container-legend">
+    <div class="dvbb-container-legend dv-color-notice dvbb-forum-list-normal">
         Normal topics
     </div>
     <?php 
@@ -114,35 +113,31 @@ foreach ($topics as $topic) {
             $subPosts = count((new post())->getByCondition('parent_id = ?', $topic->id));
             $user = (new user())->getById($topic->user_id);
             ?>
-            <div class="dvbb-container-row dv-grid-row">
-                <div class="dv-grid-column-1">
-                    <?php 
+            <div class="dvbb-container-row dv-grid-row dvbb-topic">
+                <div class="dv-grid-column-1 dvbb-status">
+                    <?php
+                    $status = 'read'; 
                     if ($topic->closed) {
-                        ?>
-                        <div class="dvbb-topic-closed"></div>
-                        <?php 
-                    } else {
-                        ?>
-                        <div class="dvbb-read-status<?=($unread ? ' unread' : '');?>"></div>
-                        <?php 
+                        $status = 'closed';
+                    } elseif ($unread) {
+                        $status = 'unread';
                     }
                     ?>
+                    <div class="dvbb-status-icon status-<?=$status;?>"></div>
                 </div>
-                <div class="dv-grid-column-14">
+                <div class="dv-grid-column-14 dvbb-topic-title">
                     <a href="<?=$url;?>"><?=$topic->title;?></a><br />
                     <small style="color: grey"><?=$user->username;?> - posted <?=tool::getDateFormatted($topic->created_at)?></small>
                 </div>
-                <div class="dv-grid-column-2"><?=$subPosts;?></div>
-                <div class="dv-grid-column-7"><?=tool::getDateFormatted($topic->last_post_at)?></div>
+                <div class="dv-grid-column-2 dvbb-topic-replies"><?=$subPosts;?></div>
+                <div class="dv-grid-column-7 dvbb-topic-lastpost"><?=tool::getDateFormatted($topic->last_post_at)?></div>
             </div>
             <?php
         }
     } else {
         ?>
-        <div class="dvbb-container-row dv-grid-row">
-            <div class="dv-grid-column-24">
-                <span class="dv-color-notice">No posts yet.</span>
-            </div>
+        <div class="dvbb-container-row dv-grid-row dvbb-forum-no-topics">
+            No topics
         </div>
         <?php 
     }
@@ -150,7 +145,7 @@ foreach ($topics as $topic) {
 </div>
 
 <nav class="dv-grid-row dvbb-subnavigation">
-    <div class="dv-grid-column-12">
+    <div class="dv-grid-column-12 dvbb-subnavigation-left">
         <?=$posts_per_page;?> topics per page: 
         <?=$pages;?>
     </div>

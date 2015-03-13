@@ -2,12 +2,12 @@
 $users = (new user())->getAll();
 ?>
 <div class="dvbb-container">
-    <div class="dvbb-container-header">User list</div>
-    <div class="dvbb-container-legend dv-grid-row">
-        <div class="dv-grid-column-13 dv-text-bold">Username</div>
-        <div class="dv-grid-column-2 dv-text-bold">Topics</div>
-        <div class="dv-grid-column-2 dv-text-bold">Replies</div>
-        <div class="dv-grid-column-7 dv-text-bold">Last Post</div>
+    <div class="dvbb-container-header dvbb-userlist">User list</div>
+    <div class="dvbb-container-legend dv-grid-row dvbb-userlist-legend">
+        <div class="dv-grid-column-13 dv-text-bold dvbb-userlist-legend-username">Username</div>
+        <div class="dv-grid-column-2 dv-text-bold dvbb-userlist-legend-topics">Topics</div>
+        <div class="dv-grid-column-2 dv-text-bold dvbb-userlist-legend-replies">Replies</div>
+        <div class="dv-grid-column-7 dv-text-bold dvbb-userlist-legend-lastpost">Last Post</div>
     </div>
     <?php 
     foreach ($users as $user) {
@@ -16,12 +16,12 @@ $users = (new user())->getAll();
         $lastPost = $user->getLastPost();
         ?>
         <div class="dvbb-container-row dv-grid-row">
-            <div class="dv-grid-column-13">
+            <div class="dv-grid-column-13 dvbb-userlist-username">
                 <a href="<?=store::getRouter()->generate('user-profile', array('id' => $user->id));?>"><?=$user->username;?></a>
             </div>
-            <div class="dv-grid-column-2"><?=$topicCount?></div>
-            <div class="dv-grid-column-2"><?=$replyCount?></div>
-            <div class="dv-grid-column-7"><?=(isset($lastPost[0]) ? tool::getDateFormatted($lastPost[0]->created_at) : '--');?></div>
+            <div class="dv-grid-column-2 dvbb-userlist-topics"><?=$topicCount?></div>
+            <div class="dv-grid-column-2 dvbb-userlist-replies"><?=$replyCount?></div>
+            <div class="dv-grid-column-7 dvbb-userlist-created"><?=(isset($lastPost[0]) ? tool::getDateFormatted($lastPost[0]->created_at) : '--');?></div>
         </div>
         <?php
     }

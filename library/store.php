@@ -192,7 +192,9 @@ class store {
      */
     public static function addConfigValues($array = array()) {
         foreach($array as $key => $value) {
-            self::$configValues[$key] = $value;
+            if ((bool)$value) {
+                self::$configValues[$key] = $value;
+            }
         }
         return self::$configValues;
     }

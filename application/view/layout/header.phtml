@@ -30,9 +30,11 @@
     </head>
     
     <body>
-        <div class="dvbb-forum dv-width-site dv-margin-auto">
+        <div class="dvbb-width">
             <header class="dvbb-header">
-                <?=store::getConfigValue('name');?>
+                <span class="dvbb-header-name">
+                    <?=store::getConfigValue('name');?>
+                </span>
             </header>
             <?=tool::partial('layout/partial/nav.phtml')?>
         

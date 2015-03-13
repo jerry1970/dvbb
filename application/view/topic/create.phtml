@@ -15,16 +15,16 @@ if(store::getViewValue('errors')) {
 ?>
 
 <form method="post" action="<?=store::getCurrentUrl()?>" class="dvbb-form">
-    <div class="dvbb-container">
-        <div class="dvbb-container-header">New topic in <?=store::getViewValue('forum')->title;?></div>
-        <div class="dvbb-container-row">
+    <div class="dvbb-container dvbb-topic-create">
+        <div class="dvbb-container-header dvbb-topic-create-header">New topic in <?=store::getViewValue('forum')->title;?></div>
+        <div class="dvbb-container-row dvbb-topic-create-form">
         
             <div class="dv-grid-row">
-                <label class="dv-grid-column-8 dv-form-label">Topic title</label>
+                <label class="dv-grid-column-8 dvbb-form-label">Topic title</label>
                 <div class="dv-grid-column-16"><input type="text" name="title" class="dv-form-element" value="<?=$title?>" /></div>
             </div>
             <div class="dv-grid-row">
-                <label class="dv-grid-column-8 dv-form-label">Topic content</label>
+                <label class="dv-grid-column-8 dvbb-form-label">Topic content</label>
                 <div class="dv-grid-column-16">
                 
                     <div class="dvbb-container-row dvbb-bbcode-buttons">

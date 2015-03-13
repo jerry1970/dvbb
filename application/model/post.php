@@ -64,18 +64,23 @@ class post extends model {
             'user_id = ?' => auth::getUser()->id,
             'post_id = ?' => $this->id,
         ));
-        $replies = (new post())->getByCondition('parent_id = ?', $this->id);
-    
-        $unreadDate = new DateTime($unread[0]->created_at);
-    
-        $replyFirstUnseen = null;
-        foreach ($replies as $reply) {
-            $replyDate = new DateTime($reply->created_at);
-    
-            if ($replyDate > $unreadDate) {
-                $replyFirstUnseen = $reply;
-                break;
+        
+        if (count($unread) > 0) {
+            $replies = (new post())->getByCondition('parent_id = ?', $this->id);
+        
+            $unreadDate = new DateTime($unread[0]->created_at);
+        
+            $replyFirstUnseen = null;
+            foreach ($replies as $reply) {
+                $replyDate = new DateTime($reply->created_at);
+        
+                if ($replyDate > $unreadDate) {
+                    $replyFirstUnseen = $reply;
+                    break;
+                }
             }
+        } else {
+            $replyFirstUnseen = $this;
         }
         return $replyFirstUnseen;
     }

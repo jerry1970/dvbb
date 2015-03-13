@@ -1,51 +1,178 @@
-/* default colors and whatnot */
-body {
-    background: #777;
+@media screen and (min-width: 1000px) {
+    
+    body {
+        background: linear-gradient(
+            to bottom, 
+            rgba(120, 120, 120, 1) 0%,
+            rgba(180, 180, 180, 1) 100%
+        ); 
+    }
+    
+    a {
+        color: #239edb;
+        text-decoration: none;
+    }
+    a:hover {
+        color: #1873a0;
+        text-decoration: underline;
+    }
+    
+    .dvbb-width {
+        width: 1000px;
+        margin: auto;
+    }
+    
+    /* header */
+    .dvbb-header {
+        height: 4rem;
+        background: #2d3945;
+    }
+    .dvbb-header-name {
+        position: relative;
+        display: inline-block;
+        line-height: 6rem;
+        height: 6rem;
+        background: #239edb;
+        color: #fff;
+        width: 30%;
+        text-align: center;
+        
+        text-transform: uppercase;
+        z-index: 10;
+    }
+    .dvbb-navigation {
+        background: #fff;
+        line-height: 2rem;
+        padding: 0 0.5rem;
+    }
+    .dvbb-navigation-top {
+        padding-left: calc(30% + 0.5rem);
+        margin-bottom: 1rem;
+    }
+    .dvbb-navigation-bottom {
+        margin-top: 1rem;
+    }
+    
+    /* subnavigation */
+    .dvbb-subnavigation {
+        background: #fff;
+        line-height: 2rem;
+        padding: 0 0.5rem;
+        margin: 1rem 0;
+    }
+    
+    /* login form */
+    .dvbb-login-form {
+        padding: 0.5rem 0.5rem 0 0.5rem;
+    }
+    
+    /* container styling */
+    .dvbb-container {
+        background: #fff;
+    }
+    .dvbb-container-header {
+        background: #239edb;
+        color: #fff;
+        line-height: 2rem;
+        padding: 0 0.5rem;
+    }
+    .dvbb-container-legend {
+        color: #54b5e6;
+        font-size: 0.75rem;
+        padding: 0.5rem 0.5rem 0.4rem 0.5rem;
+        border-bottom: 1px solid #ddd;
+    }
+    .dvbb-container-row {
+        padding: 0.5rem;
+    }
+    
+    /* admin */
+    .dvbb-admin-buttons {
+        background: #2d3945;
+    }
+    .dv-form-button {
+        background: #239edb;
+        color: #fff;
+    }
+    .dv-form-button:hover {
+        background: #1873a0;
+        color: #fff;
+        text-decoration: none;
+    }
+    
+    /* status style */
+    .dvbb-status-icon {
+        display: block;
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+    
+    /* status icons */
+    .dvbb-status-icon.status-unread:after,
+    .dvbb-status-icon.status-read:after {
+        font-family: 'FontAwesome';
+        font-size: 1.5rem;
+        content: '\f06d';
+        margin-left: 0.25rem;
+    }
+    .dvbb-status-icon.status-closed:after {
+        font-family: 'FontAwesome';
+        font-size: 1.5rem;
+        content: '\f00d';
+        margin-left: 0.25rem;
+    }
+    
+    /* status colors */
+    .dvbb-status-icon.status-read,
+    .dvbb-status-icon.status-closed {
+        color: #bbb;
+    }
+    .dvbb-status-icon.status-unread {
+        color: #239edb;
+    }
+    
+    /* form textareas */
+    textarea.dvbb-reply-textarea,
+    textarea.dvbb-topic-textarea {
+        height: 17rem;
+    }
+    
+    /* user info */
+    .dvbb-user-group,
+    .dvbb-user-group-sub,
+    .dvbb-user-info {
+        color: #777;
+        font-size: 0.8rem;
+    }
+    .dvbb-user-links {
+        margin-top: 1rem;
+    }
+    .dvbb-user-signature {
+        border-top: 1px solid #aaa;
+        padding-top: 0.5rem;
+        color: #777;
+    }
+    
+    /* post styles */
+    .dvbb-post-content-created {
+        color: #777;
+        font-size: 0.8rem;
+        margin-bottom: 0.75rem;
+    }
+    .dvbb-mod-topic,
+    .dvbb-post-actions {
+        background: #ddd;
+        font-size: 0.8rem;
+    }
+    .dvbb-bbcode-buttons {
+        padding: 0 0 0.5rem 0;
+    }
+    
 }
-.dvbb-forum {
-    background-color: #fff;
-}
-.dvbb-header,
-.dvbb-navigation,
-.dvbb-container-header,
-.dv-form-button {
-    background: #1f8bc2;
-    color: #fff;
-    border-color: rgba(0, 0, 0, 0.7);
-}
-a.dv-form-button {
-    text-decoration: none;
-    color: inherit;
-    color: #fff;
-}
-.dv-form-button:hover {
-    background: #026395;
-    color: #ccc;
-}
-.dvbb-header a,
-.dvbb-navigation a,
-.dvbb-container-header a {
-    color: rgba(255, 255, 255, 0.7);
-}
-.dvbb-header a:hover,
-.dvbb-navigation a:hover,
-.dvbb-container-header a:hover {
-    color: rgba(255, 255, 255, 1);
-}
-.dvbb-read-status {
-    background: #ccc;
-}
-.dvbb-read-status.unread {
-    background: #1f8bc2;
-}
-.dvbb-topic-closed {
-    color: #b33030;
-}
-a.dv-form-button.inactive {
-    color: #1f8bc2;
-    background: #fff;
-    outline: 0;
-}
-.dvbb-container-legend {
-    background: #ccc;
+@media screen and (max-width: 999px) {
+    
+    .dvbb-width {
+        width: 100%;
+    }
+    
 }

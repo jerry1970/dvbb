@@ -28,28 +28,28 @@ if(store::getViewValue('errors')) {
 ?>
 
 <form method="post" action="<?=store::getCurrentUrl()?>" class="dvbb-form">
-    <div class="dvbb-container">
-        <div class="dvbb-container-header">New user account</div>
-        <div class="dvbb-container-row">
+    <div class="dvbb-container dvbb-register">
+        <div class="dvbb-container-header dvbb-register-header">New user account</div>
+        <div class="dvbb-container-row dvbb-register-form">
         
             <div class="dv-grid-row">
-                <label class="dv-grid-column-8 dv-form-label">Username</label>
+                <label class="dv-grid-column-8 dvbb-form-label">Username</label>
                 <div class="dv-grid-column-16"><input type="text" name="new_username" class="dv-form-element" value="<?=$new_username?>" /></div>
             </div>
             <div class="dv-grid-row">
-                <label class="dv-grid-column-8 dv-form-label">Password</label>
+                <label class="dv-grid-column-8 dvbb-form-label">Password</label>
                 <div class="dv-grid-column-16"><input type="password" name="new_password" class="dv-form-element" /></div>
             </div>
             <div class="dv-grid-row">
-                <label class="dv-grid-column-8 dv-form-label">Confirm password</label>
+                <label class="dv-grid-column-8 dvbb-form-label">Confirm password</label>
                 <div class="dv-grid-column-16"><input type="password" name="new_password_confirm" class="dv-form-element" /></div>
             </div>
             <div class="dv-grid-row">
-                <label class="dv-grid-column-8 dv-form-label">E-mail</label>
+                <label class="dv-grid-column-8 dvbb-form-label">E-mail</label>
                 <div class="dv-grid-column-16"><input type="text" name="new_email" class="dv-form-element" value="<?=$new_email?>" /></div>
             </div>
             <div class="dv-grid-row">
-                <label class="dv-grid-column-8 dv-form-label">Confirm e-mail</label>
+                <label class="dv-grid-column-8 dvbb-form-label">Confirm e-mail</label>
                 <div class="dv-grid-column-16"><input type="text" name="new_email_confirm" class="dv-form-element" value="<?=$new_email_confirm?>" /></div>
             </div>
         

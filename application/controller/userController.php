@@ -243,8 +243,10 @@ class userController extends controller {
                 
                 // everything else goes into settings, but first we delete existing values
                 $settings = $user->getSettings();
-                foreach ($settings as $setting) {
-                    $setting->delete();
+                if (count($settings) > 0) {
+                    foreach ($settings as $setting) {
+                        $setting->delete();
+                    }
                 }
                 // now loop through the post settings
                 foreach ($values as $key => $value) {
